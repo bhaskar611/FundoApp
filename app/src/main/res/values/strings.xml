@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">FundoApp</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="not_registered_sign_up_here">Not registered? Register here</string>
+    <string name="sign_in">Sign In</string>
+    <string name="fundoo_app">Fundoo App</string>
+    <string name="welcome_you_are_logged_in">Welcome! You are logged in</string>
+    <string name="logout">Logout</string>
+    <string name="email1">Email</string>
+    <string name="password1">Password</string>
+    <string name="already_have_an_account_sign_in_here">Already have an account? Sign in here</string>
+    <string name="register">Register</string>
+    <string name="name">name</string>
+    <string name="phone">phone</string>
+</resources>
