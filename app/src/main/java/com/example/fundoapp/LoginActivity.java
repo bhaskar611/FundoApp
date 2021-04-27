@@ -1,66 +1,66 @@
 package com.example.fundoapp;
 
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.common.SignInButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
-
+    private SignInButton signInButton;
+    private GoogleSignInClient mGoogleSignInClient;
+    private  String TAG = "LoginActivity";
+    private int RC_SIGN_IN = 1;
     EditText emailId, passwordId;
     Button btnSignIn;
-    TextView textViewvSignUp,forgotpassword;
+    TextView textViewSignUp,forgotpassword;
     FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String Flag = "Logged_In";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        findViews();
+        setupClickListeners();
+        setForgotpassword();
+
+    }
+    private void findViews(){
+
+        signInButton = findViewById(R.id.sign_in_button);
         mFirebaseAuth = FirebaseAuth.getInstance();
         emailId = findViewById(R.id.editText);
         passwordId = findViewById(R.id.editText2);
         btnSignIn = findViewById(R.id.button2);
-        textViewvSignUp = findViewById(R.id.textView);
+        textViewSignUp = findViewById(R.id.textView);
         forgotpassword = findViewById(R.id.textView3);
 
-        mAuthStateListener = firebaseAuth -> {
-            FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
-            if( mFirebaseUser != null ){
-                Toast.makeText(LoginActivity.this,"You are logged in",Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-                startActivity(i);
-                finish();
-            }
-            else{
-                Toast.makeText(LoginActivity.this,"Please Login",Toast.LENGTH_SHORT).show();
-            }
-        };
+    }
 
+    private void setupClickListeners(){
         btnSignIn.setOnClickListener( v -> signInValidation());
 
-        textViewvSignUp.setOnClickListener(v -> {
-            Intent intSignUp = new Intent(LoginActivity.this, MainActivity.class);
+        textViewSignUp.setOnClickListener(v -> {
+            Intent intSignUp = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(intSignUp);
         });
 
+    }
+
+    private void setForgotpassword(){
         forgotpassword.setOnClickListener( v -> {
             final EditText resetMail = new EditText(v.getContext());
             final AlertDialog.Builder passwordResetDialog = new AlertDialog.Builder(v.getContext());
@@ -84,6 +84,7 @@ public class LoginActivity extends AppCompatActivity {
 
         });
     }
+
     public void signInValidation(){
         String email = emailId.getText().toString();
         String password = passwordId.getText().toString();
@@ -99,8 +100,6 @@ public class LoginActivity extends AppCompatActivity {
         } else  if(!password.matches("(^(?=.*[A-Z]))(?=.*[0-9])(?=.*[a-z])(?=.*[@*&^%#-*+!]{1}).{8,}$")) {
             passwordId.setError("Please enter Valid password");
             passwordId.requestFocus();
-        }else  if(email.isEmpty() && password.isEmpty()){
-            Toast.makeText(LoginActivity.this,"Fields Are Empty!",Toast.LENGTH_SHORT).show();
         }
         else  if(!(email.isEmpty() && password.isEmpty())){
             mFirebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, task -> {
@@ -108,6 +107,11 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this,"Login Error, Please Login Again",Toast.LENGTH_SHORT).show();
                 }
                 else{
+                    SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean(Flag,true );
+                    editor.apply();
+                    finish();
                     Intent intToHome = new Intent(LoginActivity.this,HomeActivity.class);
                     startActivity(intToHome);
                 }
@@ -118,10 +122,5 @@ public class LoginActivity extends AppCompatActivity {
 
         }
 
-    }
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 }
