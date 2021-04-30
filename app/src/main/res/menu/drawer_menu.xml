@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/note"
+            android:icon="@drawable/ic_baseline_note_24"
+            android:title="Note"/>
+
+        <item android:id="@+id/remainder"
+            android:icon="@drawable/ic_remainder_24"
+            android:title="Remainder"/>
+
+        <item android:id="@+id/archive"
+            android:icon="@drawable/ic_baseline_archive_24"
+            android:title="Archive"/>
+
+        <item android:id="@+id/delete"
+            android:icon="@drawable/ic_baseline_delete_24"
+            android:title="Delete"/>
+
+
+        <item android:id="@+id/help"
+            android:icon="@drawable/ic_baseline_help_24"
+            android:title="Help and Feedback"/>
+        <item android:id="@+id/logout"
+            android:icon="@drawable/ic_baseline_logout_24"
+            android:title="@string/logout"/>
+    </group>
+</menu>
