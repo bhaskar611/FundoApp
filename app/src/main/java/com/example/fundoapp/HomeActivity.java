@@ -1,10 +1,8 @@
 package com.example.fundoapp;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,19 +13,17 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
-
 import com.google.firebase.auth.FirebaseAuth;
 
-import static com.example.fundoapp.LoginActivity.Flag;
-import static com.example.fundoapp.LoginActivity.SHARED_PREFS;
-
 public class HomeActivity extends AppCompatActivity {
-
-    Button btnLogout;
     FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private DrawerLayout drawer;
+    SharedPreference sharedPreference;
 
+    public HomeActivity(){
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +32,7 @@ public class HomeActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
+        sharedPreference = new SharedPreference(this);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this::onNavigationItemSelected);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
@@ -50,41 +47,39 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.note:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new NotesFragment()).commit();
-                break;
-            case R.id.archive:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new Archive_Fragment()).commit();
-                break;
-            case R.id.remainder:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new ReminderFragment()).commit();
-                break;
-            case R.id.logout:
-                FirebaseAuth.getInstance().signOut();
-                SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean(Flag,false);
-                editor.apply();
-                finish();
-                Intent intToMain = new Intent(HomeActivity.this, LoginActivity.class);
-                startActivity(intToMain);
-                finish();
-
-                break;
-                case R.id.delete:
-                    Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();
-                     break;
-            case R.id.help:
-                Toast.makeText(this, "Send", Toast.LENGTH_SHORT).show();
-                break;
+        item.getItemId();
+        if (item.getItemId() == R.id.note) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new NotesFragment()).commit();
+        } else if (item.getItemId() == R.id.archive) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new Archive_Fragment()).commit();
+        }else if (item.getItemId() == R.id.addNotes) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new AddNotes_Fragment()).commit();
+        } else if (item.getItemId() == R.id.remainder) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new ReminderFragment()).commit();
+        } else if (item.getItemId() == R.id.logout) {
+            logout();
+        } else if (item.getItemId() == R.id.delete) {
+            Toast.makeText(this, "Delete", Toast.LENGTH_SHORT).show();
+        } else if (item.getItemId() == R.id.help) {
+            Toast.makeText(this, "Help", Toast.LENGTH_SHORT).show();
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private void logout() {
+        FirebaseAuth.getInstance().signOut();
+        sharedPreference.setLoggedIN(false);
+        finish();
+        Intent intToMain = new Intent(HomeActivity.this, LoginActivity.class);
+        startActivity(intToMain);
+        finish();
+    }
+
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -93,4 +88,5 @@ public class HomeActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
 }
