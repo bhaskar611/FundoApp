@@ -1,7 +1,6 @@
 package com.example.fundoapp;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
@@ -29,6 +28,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 public class LoginActivity extends AppCompatActivity {
     private SignInButton signInButton;
     private GoogleSignInClient mGoogleSignInClient;
+
     private final String TAG = "LoginActivity";
     private final int RC_SIGN_IN = 1;
     EditText emailId, passwordId;
@@ -36,8 +36,11 @@ public class LoginActivity extends AppCompatActivity {
     TextView textViewSignUp,forgotpassword;
     FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-    public static final String SHARED_PREFS = "sharedPrefs";
-    public static final String Flag = "Logged_In";
+    SharedPreference sharedPreference;
+
+    public LoginActivity(){
+
+    }
 
     @Override
     protected void onStart() {
@@ -79,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        sharedPreference = new SharedPreference(this);
     }
 
     private void setupClickListeners(){
@@ -159,14 +163,14 @@ public class LoginActivity extends AppCompatActivity {
             passwordResetDialog.setMessage("Enter Your Email To Received Reset Link.");
             passwordResetDialog.setView(resetMail);
 
-            passwordResetDialog.setPositiveButton("Yes", (dialog, which) -> {
+            passwordResetDialog.setPositiveButton("Conform", (dialog, which) -> {
                 // extract the email and send reset link
                 String mail = resetMail.getText().toString();
                 mFirebaseAuth.sendPasswordResetEmail(mail).addOnSuccessListener(aVoid -> Toast.makeText(LoginActivity.this, "Reset Link Sent To Your Email.", Toast.LENGTH_SHORT).show()).addOnFailureListener(e -> Toast.makeText(LoginActivity.this, "Error ! Reset Link is Not Sent" + e.getMessage(), Toast.LENGTH_SHORT).show());
 
             });
 
-            passwordResetDialog.setNegativeButton("No", (dialog, which) -> {
+            passwordResetDialog.setNegativeButton("Cancel", (dialog, which) -> {
                 // close the dialog
             });
 
@@ -198,10 +202,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this,"Login Error, Please Login Again",Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putBoolean(Flag,true );
-                    editor.apply();
+                    sharedPreference.setLoggedIN(true);
                     finish();
                     Intent intToHome = new Intent(LoginActivity.this,HomeActivity.class);
                     startActivity(intToHome);
