@@ -38,9 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     SharedPreference sharedPreference;
 
-    public LoginActivity(){
 
-    }
 
     @Override
     protected void onStart() {
