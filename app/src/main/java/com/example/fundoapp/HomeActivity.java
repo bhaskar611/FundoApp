@@ -21,9 +21,7 @@ public class HomeActivity extends AppCompatActivity {
     private DrawerLayout drawer;
     SharedPreference sharedPreference;
 
-    public HomeActivity(){
 
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +52,6 @@ public class HomeActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.archive) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new Archive_Fragment()).commit();
-        }else if (item.getItemId() == R.id.addNotes) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new AddNotes_Fragment()).commit();
         } else if (item.getItemId() == R.id.remainder) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new ReminderFragment()).commit();
