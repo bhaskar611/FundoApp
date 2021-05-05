@@ -13,10 +13,6 @@ public class SplashActivity extends AppCompatActivity {
     private boolean isLoggedIn;
     SharedPreference sharedPreference;
 
-    public SplashActivity(){
-
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
