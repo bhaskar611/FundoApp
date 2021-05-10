@@ -1,6 +1,6 @@
 package com.example.fundoapp;
 import android.content.Context;
-import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,13 +10,14 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fundoapp.model.Note;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
-//    List<String> titles;
-//    List<String> content;
+
     private final ArrayList<Note> notesList;
     private final Context context;
 
@@ -29,17 +30,23 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.notes_layout,parent,false);
+        Log.e("bhaskar", "onCreateViewHolder: " );
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-        holder.noteTitle.setText(notesList.get(position).getTitle());
-        holder.noteContent.setText(notesList.get(position).getContent());
-        final int code = getRandomColor();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            holder.mCardView.setCardBackgroundColor(holder.view.getResources().getColor(code,null));
-        }
+        Note note = notesList.get(position);
+        holder.noteTitle.setText(note.getTitle());
+        holder.noteContent.setText(note.getContent());
+        Log.e("bhaskar", "onBindViewHolder: "+position );
+//        Note note = new Note()
+//        holder.noteTitle.setText(notesList.get(position).getTitle());
+//        holder.noteContent.setText(notesList.get(position).getContent());
+       // final int code = getRandomColor();
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            holder.mCardView.setCardBackgroundColor(holder.view.getResources().getColor(code,null));
+//        }
 
 
     }
@@ -66,6 +73,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
+        Log.e("bhaskar", "get Item Count: " + notesList.size());
         return notesList.size();
     }
 
