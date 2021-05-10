@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -15,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fundoapp.Adapter;
 import com.example.fundoapp.FireBaseNoteManager;
-import com.example.fundoapp.Note;
+import com.example.fundoapp.model.Note;
 import com.example.fundoapp.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -37,11 +38,7 @@ public class NotesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notes, container, false);
-        findViews(view);
-        return inflater.inflate(R.layout.fragment_notes, container, false);
-    }
-
-    private void findViews(View view) {
+       // findViews(view);
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView = view.findViewById(R.id.recyclerview);
@@ -51,20 +48,53 @@ public class NotesFragment extends Fragment {
         fireBaseNoteManager = new FireBaseNoteManager();
 
 
-        fireBaseNoteManager.getAllNotes(notes -> {
-            Log.e("bhaskar", "onNoteReceived: " + notes);
+
+
+        return inflater.inflate(R.layout.fragment_notes, container, false);
+    }
+
+//    private void findViews(View view) {
+//        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+//        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+//        recyclerView = view.findViewById(R.id.recyclerview);
+//        recyclerView.setLayoutManager(linearLayoutManager);
+//        recyclerView.setHasFixedSize(true);
+//        //recyclerView.setAdapter(notesAdapter);
+//        fireBaseNoteManager = new FireBaseNoteManager();
+//
+//
+//        fireBaseNoteManager.getAllNotes(notesList -> {
+//            Log.e("bhaskar", "onNoteReceived: " + notesList);
+//
+//
+//
+//            notesAdapter = new Adapter(notesList,this.getContext());
+//
+//            recyclerView.setAdapter(notesAdapter);
+//        });
+////        Adapter notesAdapter = new Adapter(notes);
+////        recyclerView.setAdapter(notesAdapter);
+//
+//
+//    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        fireBaseNoteManager.getAllNotes(notesList -> {
+            Log.e("bhaskar", "onNoteReceived: " + notesList);
 
 
 
-            notesAdapter = new Adapter(notes,this.getContext());
+            notesAdapter = new Adapter(notesList,this.getContext());
 
             recyclerView.setAdapter(notesAdapter);
+            notesAdapter.notifyDataSetChanged();
         });
-//        Adapter notesAdapter = new Adapter(notes);
-//        recyclerView.setAdapter(notesAdapter);
-
-
     }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
         super.onActivityCreated(savedInstanceState);
