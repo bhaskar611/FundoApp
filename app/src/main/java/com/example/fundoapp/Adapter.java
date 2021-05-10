@@ -1,4 +1,5 @@
 package com.example.fundoapp;
+import android.content.Context;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +18,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 //    List<String> titles;
 //    List<String> content;
     private final ArrayList<Note> notesList;
+    private final Context context;
 
-    public Adapter(ArrayList<Note> notesList){
+    public Adapter(ArrayList<Note> notesList, Context context){
         this.notesList = notesList;
+        this.context = context;
     }
 
     @NonNull
