@@ -1,4 +1,4 @@
-package com.example.fundoapp;
+package com.example.fundoapp.dashboard;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.fundoapp.R;
+import com.example.fundoapp.SharedPreference;
+import com.example.fundoapp.fragments.Archive_Fragment;
+import com.example.fundoapp.fragments.NotesFragment;
+import com.example.fundoapp.fragments.ReminderFragment;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
