@@ -7,6 +7,9 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.fundoapp.authentication.LoginActivity;
+import com.example.fundoapp.dashboard.HomeActivity;
+
 
 public class SplashActivity extends AppCompatActivity {
 

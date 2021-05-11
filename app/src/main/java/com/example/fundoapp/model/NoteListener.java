@@ -1,6 +1,4 @@
-package com.example.fundoapp;
-
-import com.example.fundoapp.model.Note;
+package com.example.fundoapp.model;
 
 import java.util.ArrayList;
 

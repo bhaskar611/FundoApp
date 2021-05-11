@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fundoapp.Adapter;
-import com.example.fundoapp.FireBaseNoteManager;
-import com.example.fundoapp.model.Note;
 import com.example.fundoapp.R;
+import com.example.fundoapp.model.FireBaseNoteManager;
+import com.example.fundoapp.model.Note;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -83,11 +83,11 @@ public class NotesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         fireBaseNoteManager.getAllNotes(notesList -> {
-            Log.e("bhaskar", "onNoteReceived: " + notesList);
+           Log.e("bhaskar", "onNoteReceived: " + notesList);
 
 
 
-            notesAdapter = new Adapter(notesList,this.getContext());
+          notesAdapter = new Adapter(notesList,this.getContext());
 
             recyclerView.setAdapter(notesAdapter);
             notesAdapter.notifyDataSetChanged();

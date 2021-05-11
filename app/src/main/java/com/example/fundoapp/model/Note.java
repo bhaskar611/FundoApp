@@ -1,4 +1,4 @@
-package com.example.fundoapp;
+package com.example.fundoapp.model;
 
 public class Note {
     private  String title;

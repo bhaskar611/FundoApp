@@ -9,7 +9,7 @@
             android:title="Note"/>
 
         <item android:id="@+id/remainder"
-            android:icon="@drawable/ic_remainder_24"
+            android:icon="@drawable/ic_baseline_remainder_24"
             android:title="Remainder"/>
 
         <item android:id="@+id/archive"

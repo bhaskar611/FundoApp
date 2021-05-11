@@ -8,7 +8,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.fundoapp.LoginActivity;
 import com.example.fundoapp.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -52,7 +51,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void setupClickListeners(){
         btnSignUp.setOnClickListener( v -> registerUser());
         textViewSignIn.setOnClickListener(v -> {
-            Intent i = new Intent(RegisterActivity.this, com.example.fundoapp.LoginActivity.class);
+            Intent i = new Intent(RegisterActivity.this,LoginActivity.class);
             startActivity(i);
         });
     }

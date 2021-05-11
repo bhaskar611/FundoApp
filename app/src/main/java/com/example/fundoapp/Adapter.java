@@ -10,9 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fundoapp.model.Note;
+
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
@@ -49,25 +49,25 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     }
 
-    private int getRandomColor() {
-
-        List<Integer> colorCode = new ArrayList<>();
-        colorCode.add(R.color.gray);
-        colorCode.add(R.color.pink);
-        colorCode.add(R.color.lightgreen);
-        colorCode.add(R.color.skyblue);
-        colorCode.add(R.color.color1);
-        colorCode.add(R.color.color2);
-        colorCode.add(R.color.color3);
-        colorCode.add(R.color.color4);
-        colorCode.add(R.color.color5);
-        colorCode.add(R.color.green);
-
-        Random randomColor = new Random();
-        int number = randomColor.nextInt(colorCode.size());
-        return colorCode.get(number);
-
-    }
+//    private int getRandomColor() {
+//
+//        List<Integer> colorCode = new ArrayList<>();
+//        colorCode.add(R.color.gray);
+//        colorCode.add(R.color.pink);
+//        colorCode.add(R.color.lightgreen);
+//        colorCode.add(R.color.skyblue);
+//        colorCode.add(R.color.color1);
+//        colorCode.add(R.color.color2);
+//        colorCode.add(R.color.color3);
+//        colorCode.add(R.color.color4);
+//        colorCode.add(R.color.color5);
+//        colorCode.add(R.color.green);
+//
+//        Random randomColor = new Random();
+//        int number = randomColor.nextInt(colorCode.size());
+//        return colorCode.get(number);
+//
+//    }
 
     @Override
     public int getItemCount() {
