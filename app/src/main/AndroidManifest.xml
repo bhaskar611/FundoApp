@@ -17,12 +17,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".authentication.LoginActivity" />
         <activity
-            android:name=".HomeActivity"
+            android:name=".dashboard.HomeActivity"
             android:theme="@style/AppTheme.NoActionBar"
             />
-        <activity android:name=".RegisterActivity">
+        <activity android:name=".authentication.RegisterActivity">
 
         </activity>
     </application>

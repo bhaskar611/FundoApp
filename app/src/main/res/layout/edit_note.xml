@@ -50,7 +50,7 @@
         android:layout_marginRight="30dp"
         android:layout_gravity="bottom|end"
         android:id="@+id/saveeditnote"
-        android:src="@drawable/ic_baseline_edit_24"
+        android:src="@drawable/edit"
         android:background="#A1F4AB"
         app:maxImageSize="40dp"
 

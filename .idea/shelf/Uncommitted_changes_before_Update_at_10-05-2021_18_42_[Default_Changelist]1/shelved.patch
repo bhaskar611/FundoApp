@@ -1,0 +1,2742 @@
+Index: app/src/main/java/com/example/fundoapp/notedetails.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.fundoapp;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.appcompat.widget.Toolbar;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.fragment.app.FragmentManager;\r\nimport androidx.fragment.app.FragmentTransaction;\r\n\r\nimport com.example.fundoapp.dashboard.HomeActivity;\r\nimport com.google.android.material.floatingactionbutton.FloatingActionButton;\r\n\r\npublic class notedetails extends Fragment {\r\n\r\n\r\n    private TextView mtitleofnotedetail,mcontentofnotedetail;\r\n    FloatingActionButton mgotoeditnote;\r\n    HomeActivity homeActivity;\r\n\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        //  View view = inflater.inflate(R.layout.fragment_notes, container, false);\r\n        return inflater.inflate(R.layout.note_details, container, false);\r\n    }\r\n\r\n    @Override\r\n    public void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n\r\n        mtitleofnotedetail= mtitleofnotedetail.findViewById(R.id.titleofnotedetail);\r\n         mcontentofnotedetail = mtitleofnotedetail.findViewById(R.id.contentofnotedetail);\r\n        mgotoeditnote= mgotoeditnote.findViewById(R.id.gotoeditnote);\r\n        Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.toolbarofnotedetail);\r\n        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);\r\n        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);\r\n\r\n        Intent data=getActivity().getIntent();\r\n\r\n        mgotoeditnote.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                Fragment fragment = new editnote();\r\n                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();\r\n                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();\r\n                fragmentTransaction.replace(R.id.fragment_container, fragment);\r\n                fragmentTransaction.addToBackStack(null);\r\n                fragmentTransaction.commit();\r\n            }\r\n        });\r\n\r\n        mcontentofnotedetail.setText(data.getStringExtra(\"content\"));\r\n        mtitleofnotedetail.setText(data.getStringExtra(\"title\"));\r\n    }\r\n\r\n    @Override\r\n    public boolean onOptionsItemSelected(@NonNull MenuItem item) {\r\n\r\n        if(item.getItemId()==android.R.id.home)\r\n        {\r\n            homeActivity.onBackPressed();\r\n        }\r\n\r\n        return super.onOptionsItemSelected(item);\r\n    }\r\n}\r\n
+===================================================================
+--- app/src/main/java/com/example/fundoapp/notedetails.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/java/com/example/fundoapp/fragments/notedetails.java	(date 1620651991015)
+@@ -1,4 +1,4 @@
+-package com.example.fundoapp;
++package com.example.fundoapp.fragments;
+ 
+ import android.content.Intent;
+ import android.os.Bundle;
+@@ -16,6 +16,7 @@
+ import androidx.fragment.app.FragmentManager;
+ import androidx.fragment.app.FragmentTransaction;
+ 
++import com.example.fundoapp.R;
+ import com.example.fundoapp.dashboard.HomeActivity;
+ import com.google.android.material.floatingactionbutton.FloatingActionButton;
+ 
+Index: app/src/main/java/com/example/fundoapp/FireBaseNoteManager.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.fundoapp;\r\n\r\nimport android.util.Log;\r\n\r\nimport com.google.android.gms.tasks.OnSuccessListener;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\nimport com.google.firebase.firestore.QuerySnapshot;\r\n\r\npublic class FireBaseNoteManager {\r\n\r\n    FirebaseUser firebaseUser;\r\n    FirebaseFirestore firebaseFirestore;\r\n\r\n    void getAllNotes() {\r\n        firebaseUser= FirebaseAuth.getInstance().getCurrentUser();\r\n        firebaseFirestore=FirebaseFirestore.getInstance();\r\n        firebaseFirestore.collection(\"Users\").document(firebaseUser.getUid())\r\n                .collection(\"myNotes\").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {\r\n            @Override\r\n            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {\r\n                int i;\r\n                for (i=0;i<queryDocumentSnapshots.size();i++){\r\n                    Log.e(\"bhaskar\", \"onSuccess: \"+queryDocumentSnapshots.getDocuments().get(i) );\r\n                }\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/fundoapp/FireBaseNoteManager.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/java/com/example/fundoapp/FireBaseNoteManager.java	(date 1620651991005)
+@@ -1,19 +1,21 @@
+ package com.example.fundoapp;
+ 
+-import android.util.Log;
+-
++import com.example.fundoapp.model.Note;
+ import com.google.android.gms.tasks.OnSuccessListener;
+ import com.google.firebase.auth.FirebaseAuth;
+ import com.google.firebase.auth.FirebaseUser;
+ import com.google.firebase.firestore.FirebaseFirestore;
+ import com.google.firebase.firestore.QuerySnapshot;
+ 
++import java.util.ArrayList;
++
+ public class FireBaseNoteManager {
+ 
+     FirebaseUser firebaseUser;
+     FirebaseFirestore firebaseFirestore;
+ 
+-    void getAllNotes() {
++    public void getAllNotes(NoteListener listener) {
++        ArrayList<Note> noteList = new ArrayList<Note>();
+         firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
+         firebaseFirestore=FirebaseFirestore.getInstance();
+         firebaseFirestore.collection("Users").document(firebaseUser.getUid())
+@@ -22,11 +24,21 @@
+             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                 int i;
+                 for (i=0;i<queryDocumentSnapshots.size();i++){
+-                    Log.e("bhaskar", "onSuccess: "+queryDocumentSnapshots.getDocuments().get(i) );
++                   String title = queryDocumentSnapshots.getDocuments().get(i).getString("title");
++                    String content = queryDocumentSnapshots.getDocuments().get(i).getString("content");
++                    //Log.e("bhaskar", "onSuccess: "+queryDocumentSnapshots.getDocuments().get(i).getString("title") );
++                    Note note = new Note(title,content);
++                    noteList.add(note);
++
+                 }
++                listener.onNoteReceived(noteList);
+ 
+             }
++
++
+         });
+     }
+ 
++
+ }
++
+Index: app/src/main/java/com/example/fundoapp/Note.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.fundoapp;\r\n\r\npublic class Note {\r\n    private  String title;\r\n    private  String content;\r\n    public Note(String title,String content){\r\n        this.title = title;\r\n        this.content = content;\r\n    }\r\n\r\n    public  String getTitle() {\r\n        return title;\r\n    }\r\n\r\n    public void setTitle(String title) {\r\n        this.title = title;\r\n    }\r\n\r\n    public  String getContent() {\r\n        return content;\r\n    }\r\n\r\n    public void setContent(String content) {\r\n        this.content = content;\r\n    }\r\n}\r\n
+===================================================================
+--- app/src/main/java/com/example/fundoapp/Note.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/java/com/example/fundoapp/model/Note.java	(date 1620651991245)
+@@ -1,4 +1,4 @@
+-package com.example.fundoapp;
++package com.example.fundoapp.model;
+ 
+ public class Note {
+     private  String title;
+@@ -8,6 +8,14 @@
+         this.content = content;
+     }
+ 
++    @Override
++    public String toString() {
++        return "Note{" +
++                "title='" + title + '\'' +
++                ", content='" + content + '\'' +
++                '}';
++    }
++
+     public  String getTitle() {
+         return title;
+     }
+Index: app/src/main/java/com/example/fundoapp/editnote.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.fundoapp;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.EditText;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.appcompat.widget.Toolbar;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.fragment.app.FragmentManager;\r\nimport androidx.fragment.app.FragmentTransaction;\r\n\r\nimport com.example.fundoapp.dashboard.HomeActivity;\r\nimport com.example.fundoapp.fragments.NotesFragment;\r\nimport com.google.android.material.floatingactionbutton.FloatingActionButton;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\nimport com.google.firebase.firestore.DocumentReference;\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\n\r\nimport java.util.HashMap;\r\nimport java.util.Map;\r\n\r\npublic class editnote extends Fragment {\r\n\r\n    Intent data;\r\n    EditText medittitleofnote,meditcontentofnote;\r\n    FloatingActionButton msaveeditnote;\r\n    FirebaseFirestore firebaseFirestore;\r\n    FirebaseUser firebaseUser;\r\n    HomeActivity homeActivity;\r\n\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        //  View view = inflater.inflate(R.layout.fragment_notes, container, false);\r\n        return inflater.inflate(R.layout.edit_note, container, false);\r\n    }\r\n\r\n    @Override\r\n    public void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n\r\n        medittitleofnote= medittitleofnote.findViewById(R.id.edittitleofnote);\r\n        meditcontentofnote= meditcontentofnote.findViewById(R.id.editcontentofnote);\r\n        msaveeditnote= msaveeditnote.findViewById(R.id.saveeditnote);\r\n\r\n        data=getActivity().getIntent();\r\n\r\n        firebaseFirestore=FirebaseFirestore.getInstance();\r\n        firebaseUser=FirebaseAuth.getInstance().getCurrentUser();\r\n\r\n\r\n        Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.toolbarofeditnote);\r\n        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);\r\n        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);\r\n\r\n\r\n\r\n        msaveeditnote.setOnClickListener(v -> {\r\n            //Toast.makeText(getApplicationContext(),\"savebuton click\",Toast.LENGTH_SHORT).show();\r\n\r\n            String newtitle=medittitleofnote.getText().toString();\r\n            String newcontent=meditcontentofnote.getText().toString();\r\n\r\n            if(newtitle.isEmpty()||newcontent.isEmpty())\r\n            {\r\n                Toast.makeText(getContext(),\"Something is empty\",Toast.LENGTH_SHORT).show();\r\n            }\r\n            else\r\n            {\r\n                DocumentReference documentReference=firebaseFirestore.collection(\"Users\").document(firebaseUser.getUid()).collection(\"myNotes\").document(data.getStringExtra(\"noteId\"));\r\n                Map<String,Object> note=new HashMap<>();\r\n                note.put(\"title\",newtitle);\r\n                note.put(\"content\",newcontent);\r\n                documentReference.set(note).addOnSuccessListener(aVoid -> {\r\n                    Toast.makeText(getContext(),\"Note is updated\",Toast.LENGTH_SHORT).show();\r\n                    Fragment fragment = new NotesFragment();\r\n                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();\r\n                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();\r\n                    fragmentTransaction.replace(R.id.fragment_container, fragment);\r\n                    fragmentTransaction.addToBackStack(null);\r\n                    fragmentTransaction.commit();\r\n                }).addOnFailureListener(e -> Toast.makeText(getContext(),\"Failed To update\",Toast.LENGTH_SHORT).show());\r\n            }\r\n\r\n        });\r\n\r\n\r\n        String notetitle=data.getStringExtra(\"title\");\r\n        String notecontent=data.getStringExtra(\"content\");\r\n        meditcontentofnote.setText(notecontent);\r\n        medittitleofnote.setText(notetitle);\r\n    }\r\n\r\n    @Override\r\n    public boolean onOptionsItemSelected(@NonNull MenuItem item) {\r\n\r\n        if(item.getItemId()==android.R.id.home)\r\n        {\r\n            homeActivity.onBackPressed();\r\n        }\r\n\r\n        return super.onOptionsItemSelected(item);\r\n    }\r\n\r\n\r\n}\r\n
+===================================================================
+--- app/src/main/java/com/example/fundoapp/editnote.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/java/com/example/fundoapp/fragments/editnote.java	(date 1620651991026)
+@@ -1,4 +1,4 @@
+-package com.example.fundoapp;
++package com.example.fundoapp.fragments;
+ 
+ import android.content.Intent;
+ import android.os.Bundle;
+@@ -17,8 +17,8 @@
+ import androidx.fragment.app.FragmentManager;
+ import androidx.fragment.app.FragmentTransaction;
+ 
++import com.example.fundoapp.R;
+ import com.example.fundoapp.dashboard.HomeActivity;
+-import com.example.fundoapp.fragments.NotesFragment;
+ import com.google.android.material.floatingactionbutton.FloatingActionButton;
+ import com.google.firebase.auth.FirebaseAuth;
+ import com.google.firebase.auth.FirebaseUser;
+Index: app/src/main/java/com/example/fundoapp/LoginActivity.java
+===================================================================
+--- app/src/main/java/com/example/fundoapp/LoginActivity.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/java/com/example/fundoapp/LoginActivity.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
+@@ -1,216 +0,0 @@
+-package com.example.fundoapp;
+-
+-import android.content.Intent;
+-import android.os.Bundle;
+-import android.util.Log;
+-import android.view.WindowManager;
+-import android.widget.Button;
+-import android.widget.EditText;
+-import android.widget.TextView;
+-import android.widget.Toast;
+-
+-import androidx.annotation.Nullable;
+-import androidx.appcompat.app.AlertDialog;
+-import androidx.appcompat.app.AppCompatActivity;
+-
+-import com.google.android.gms.auth.api.signin.GoogleSignIn;
+-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+-import com.google.android.gms.common.SignInButton;
+-import com.google.android.gms.common.api.ApiException;
+-import com.google.android.gms.tasks.Task;
+-import com.google.firebase.auth.AuthCredential;
+-import com.google.firebase.auth.FirebaseAuth;
+-import com.google.firebase.auth.FirebaseUser;
+-import com.google.firebase.auth.GoogleAuthProvider;
+-
+-public class LoginActivity extends AppCompatActivity {
+-    private SignInButton signInButton;
+-    private GoogleSignInClient mGoogleSignInClient;
+-
+-    private final String TAG = "LoginActivity";
+-    private final int RC_SIGN_IN = 1;
+-    EditText emailId, passwordId;
+-    Button btnSignIn;
+-    TextView textViewSignUp,forgotpassword;
+-    FirebaseAuth mFirebaseAuth;
+-    private FirebaseAuth.AuthStateListener mAuthStateListener;
+-    SharedPreference sharedPreference;
+-
+-
+-
+-    @Override
+-    protected void onStart() {
+-        super.onStart();
+-
+-
+-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+-        if(user!=null){
+-            Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
+-            startActivity(intent);
+-        }
+-
+-
+-    }
+-
+-    @Override
+-    protected void onCreate(Bundle savedInstanceState) {
+-        super.onCreate(savedInstanceState);
+-        setContentView(R.layout.activity_login);
+-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+-
+-        findViews();
+-        setupClickListeners();
+-        setForgotpassword();
+-
+-    }
+-    private void findViews(){
+-
+-        signInButton = findViewById(R.id.sign_in_button);
+-        mFirebaseAuth = FirebaseAuth.getInstance();
+-        emailId = findViewById(R.id.editText);
+-        passwordId = findViewById(R.id.editText2);
+-        btnSignIn = findViewById(R.id.button2);
+-        textViewSignUp = findViewById(R.id.textView);
+-        forgotpassword = findViewById(R.id.textView3);
+-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+-                .requestIdToken(getString(R.string.default_web_client_id))
+-                .requestEmail()
+-                .build();
+-
+-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+-        sharedPreference = new SharedPreference(this);
+-    }
+-
+-    private void setupClickListeners(){
+-        btnSignIn.setOnClickListener( v -> signInValidation());
+-
+-        textViewSignUp.setOnClickListener(v -> {
+-            Intent intSignUp = new Intent(LoginActivity.this, RegisterActivity.class);
+-            startActivity(intSignUp);
+-        });
+-
+-        signInButton.setOnClickListener(view -> signIn());
+-
+-    }
+-
+-    private void signIn(){
+-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+-        startActivityForResult(signInIntent, RC_SIGN_IN);
+-    }
+-
+-    @Override
+-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+-        super.onActivityResult(requestCode, resultCode, data);
+-
+-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+-        if (requestCode == RC_SIGN_IN) {
+-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+-            try {
+-                // Google Sign In was successful, authenticate with Firebase
+-                GoogleSignInAccount account = task.getResult(ApiException.class);
+-                assert account != null;
+-                Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId() );
+-                firebaseAuthWithGoogle(account.getIdToken());
+-            } catch (ApiException e) {
+-                // Google Sign In failed, update UI appropriately
+-                Log.w(TAG, "Google sign in failed", e);
+-            }
+-        }
+-    }
+-
+-    private void firebaseAuthWithGoogle(String idToken) {
+-
+-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+-        mFirebaseAuth.signInWithCredential(credential)
+-                .addOnCompleteListener(this, task -> {
+-                    if (task.isSuccessful()) {
+-                        // Sign in success, update UI with the signed-in user's information
+-                        Log.d(TAG, "signInWithCredential:success");
+-                        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+-                        Intent intent = new Intent(LoginActivity.this,HomeActivity.class);
+-                        startActivity(intent);
+-                        finish();
+-                        updateUI(user);
+-                    } else {
+-                        // If sign in fails, display a message to the user.
+-                        Log.w(TAG, "signInWithCredential:failure", task.getException());
+-                        updateUI(null);
+-                    }
+-                });
+-    }
+-
+-    private void updateUI(FirebaseUser user) {
+-
+-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
+-        if(account !=  null){
+-            String personName = account.getDisplayName();
+-            String personEmail = account.getEmail();
+-
+-            Toast.makeText(LoginActivity.this,personName + personEmail ,Toast.LENGTH_SHORT).show();
+-        }
+-
+-    }
+-
+-    private void setForgotpassword(){
+-        forgotpassword.setOnClickListener( v -> {
+-            final EditText resetMail = new EditText(v.getContext());
+-            final AlertDialog.Builder passwordResetDialog = new AlertDialog.Builder(v.getContext());
+-            passwordResetDialog.setTitle("Reset Password ?");
+-            passwordResetDialog.setMessage("Enter Your Email To Received Reset Link.");
+-            passwordResetDialog.setView(resetMail);
+-
+-            passwordResetDialog.setPositiveButton("Conform", (dialog, which) -> {
+-                // extract the email and send reset link
+-                String mail = resetMail.getText().toString();
+-                mFirebaseAuth.sendPasswordResetEmail(mail).addOnSuccessListener(aVoid -> Toast.makeText(LoginActivity.this, "Reset Link Sent To Your Email.", Toast.LENGTH_SHORT).show()).addOnFailureListener(e -> Toast.makeText(LoginActivity.this, "Error ! Reset Link is Not Sent" + e.getMessage(), Toast.LENGTH_SHORT).show());
+-
+-            });
+-
+-            passwordResetDialog.setNegativeButton("Cancel", (dialog, which) -> {
+-                // close the dialog
+-            });
+-
+-            passwordResetDialog.create().show();
+-
+-
+-        });
+-    }
+-
+-    public void signInValidation(){
+-        String email = emailId.getText().toString();
+-        String password = passwordId.getText().toString();
+-        if(email.isEmpty()){
+-            emailId.setError("Please enter email id");
+-            emailId.requestFocus();
+-        } else if(!email.matches("^[a-zA-Z]+([._+-]{0,1}[a-zA-Z0-9]+)*@[a-zA-Z0-9]+.[a-zA-Z]{2,4}+(?:\\.[a-z]{2,}){0,1}$")) {
+-            emailId.setError("Please enter valid email id");
+-            emailId.requestFocus();
+-        }else  if(password.isEmpty()){
+-            passwordId.setError("Please enter your password");
+-            passwordId.requestFocus();
+-        } else  if(!password.matches("(^(?=.*[A-Z]))(?=.*[0-9])(?=.*[a-z])(?=.*[@*&^%#-*+!]{1}).{8,}$")) {
+-            passwordId.setError("Please enter Valid password");
+-            passwordId.requestFocus();
+-        }
+-        else  if(!(email.isEmpty() && password.isEmpty())){
+-            mFirebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, task -> {
+-                if(!task.isSuccessful()){
+-                    Toast.makeText(LoginActivity.this,"Login Error, Please Login Again",Toast.LENGTH_SHORT).show();
+-                }
+-                else{
+-                    sharedPreference.setLoggedIN(true);
+-                    finish();
+-                    Intent intToHome = new Intent(LoginActivity.this,HomeActivity.class);
+-                    startActivity(intToHome);
+-                }
+-            });
+-        }
+-        else{
+-            Toast.makeText(LoginActivity.this,"Error Occurred!",Toast.LENGTH_SHORT).show();
+-
+-        }
+-
+-    }
+-}
+Index: app/src/main/java/com/example/fundoapp/firebasemodel.java
+===================================================================
+--- app/src/main/java/com/example/fundoapp/firebasemodel.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/java/com/example/fundoapp/firebasemodel.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
+@@ -1,36 +0,0 @@
+-package com.example.fundoapp;
+-
+-public class firebasemodel {
+-
+-    private String title;
+-    private String content;
+-
+-
+-    public firebasemodel()
+-    {
+-
+-    }
+-
+-    public  firebasemodel (String title, String content)
+-    {
+-        this.title=title;
+-        this.content=content;
+-    }
+-
+-
+-    public String getTitle() {
+-        return title;
+-    }
+-
+-    public void setTitle(String title) {
+-        this.title = title;
+-    }
+-
+-    public String getContent() {
+-        return content;
+-    }
+-
+-    public void setContent(String content) {
+-        this.content = content;
+-    }
+-}
+Index: app/src/main/res/layout/frgment_addnotes.xml
+===================================================================
+--- app/src/main/res/layout/frgment_addnotes.xml	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/res/layout/frgment_addnotes.xml	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
+@@ -1,75 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:app="http://schemas.android.com/apk/res-auto"
+-    xmlns:tools="http://schemas.android.com/tools"
+-    android:layout_width="match_parent"
+-    android:layout_height="match_parent">
+-
+-    <androidx.cardview.widget.CardView
+-        android:id="@+id/card_view"
+-        android:layout_width="match_parent"
+-        android:layout_height="wrap_content"
+-        android:layout_margin="18dp"
+-        app:cardBackgroundColor="#d9d9d9"
+-        app:cardCornerRadius="8dp"
+-        app:cardElevation="6dp"
+-        app:contentPadding="4dp">
+-
+-
+-        <LinearLayout
+-            android:layout_width="match_parent"
+-            android:layout_height="match_parent"
+-            android:layout_marginBottom="30dp"
+-            android:orientation="vertical"
+-            android:padding="15dp">
+-
+-            <TextView
+-                android:id="@+id/textViewTitle"
+-                style="@style/TextAppearance.AppCompat.Headline"
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content"
+-                android:fontFamily="@font/aclonica"
+-                android:text="Title"
+-                android:textSize="24dp" />
+-
+-            <EditText
+-                android:id="@+id/editTextTitle"
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content"
+-                android:hint="Enter title here"
+-                android:paddingTop="20dp"
+-                android:textColor="@color/black"
+-                android:textSize="20dp" />
+-
+-            <TextView
+-                android:id="@+id/textViewDescription"
+-                style="@style/TextAppearance.AppCompat.Body1"
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content"
+-                android:fontFamily="@font/aclonica"
+-                android:paddingTop="20dp"
+-                android:text="Description"
+-                android:textSize="24dp" />
+-
+-            <EditText
+-                android:id="@+id/editTextDescription"
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content"
+-                android:hint="Enter description here"
+-                android:paddingTop="20dp"
+-                android:textColor="@color/black"
+-                android:textSize="20dp" />
+-
+-            <Button
+-                android:id="@+id/noteSaveBtn"
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content"
+-                android:layout_marginTop="40dp"
+-                android:backgroundTint="#177CD6"
+-                android:padding="15dp"
+-                android:text="Save"
+-                android:textSize="20sp" />
+-
+-        </LinearLayout>
+-    </androidx.cardview.widget.CardView>
+-</ScrollView>
+\ No newline at end of file
+Index: app/src/main/java/com/example/fundoapp/RegisterActivity.java
+===================================================================
+--- app/src/main/java/com/example/fundoapp/RegisterActivity.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/java/com/example/fundoapp/RegisterActivity.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
+@@ -1,152 +0,0 @@
+-package com.example.fundoapp;
+-import android.content.Intent;
+-import android.os.Bundle;
+-import android.widget.Button;
+-import android.widget.EditText;
+-import android.widget.TextView;
+-import android.widget.Toast;
+-
+-import androidx.appcompat.app.AppCompatActivity;
+-
+-import com.google.firebase.auth.FirebaseAuth;
+-
+-public class RegisterActivity extends AppCompatActivity {
+-   private EditText emailId, passwordId;
+-   private Button btnSignUp;
+-   private TextView nameId,textViewSignIn,phoneId;
+-   private FirebaseAuth mFirebaseAuth;
+-
+-
+-    @Override
+-    protected void onCreate(Bundle savedInstanceState) {
+-        super.onCreate(savedInstanceState);
+-        setContentView(R.layout.activity_main);
+-
+-        findViews();
+-        setupClickListeners();
+-    }
+-
+-    private void findViews() {
+-        mFirebaseAuth = FirebaseAuth.getInstance();
+-        emailId = findViewById(R.id.editText);
+-        passwordId = findViewById(R.id.editText2);
+-        btnSignUp = findViewById(R.id.button2);
+-        textViewSignIn = findViewById(R.id.textView);
+-        nameId = findViewById(R.id.editTextName);
+-        phoneId = findViewById(R.id.editTextPhone);
+-
+-    }
+-
+-    private void setupClickListeners(){
+-        btnSignUp.setOnClickListener( v -> registerUser());
+-        textViewSignIn.setOnClickListener(v -> {
+-            Intent i = new Intent(RegisterActivity.this,LoginActivity.class);
+-            startActivity(i);
+-        });
+-    }
+-
+-    private boolean isValidName(String name){
+-
+-        if(name.isEmpty()) {
+-            nameId.setError("Please enter name id");
+-            nameId.requestFocus();
+-            return false;
+-        } else if(name.matches("[0-9*$%#&^()@!_+{}';]*")) {
+-            nameId.setError("Please enter proper name id");
+-            nameId.requestFocus();
+-            return false;
+-
+-        }else{
+-            return true;
+-        }
+-    }
+-
+-    private boolean isValidEmail(String email){
+-
+-         if(email.isEmpty()) {
+-            emailId.setError("Please enter email id");
+-            emailId.requestFocus();
+-            return false;
+-        } else if(!email.matches("^[a-zA-Z]+([._+-]{0,1}[a-zA-Z0-9]+)*@[a-zA-Z0-9]+.[a-zA-Z]{2,4}+(?:\\.[a-z]{2,}){0,1}$")) {
+-            emailId.setError("Please enter valid email id");
+-            emailId.requestFocus();
+-             return false;
+-        }else{
+-            return true;
+-        }
+-    }
+-
+-    private boolean isValidPassword(String password){
+-
+-        if(password.isEmpty()) {
+-            passwordId.setError("Please enter your password");
+-            passwordId.requestFocus();
+-            return false;
+-        } else  if(!password.matches("(^(?=.*[A-Z]))(?=.*[0-9])(?=.*[a-z])(?=.*[@*&^%#-*+!]{1}).{8,}$")) {
+-            passwordId.setError("Please enter Valid password");
+-            passwordId.requestFocus();
+-            return false;
+-        }else{
+-            return true;
+-        }
+-    }
+-
+-    private boolean isValidPhone(String phone){
+-
+-        if(phone.isEmpty()) {
+-            phoneId.setError("Please enter phone id");
+-            phoneId.requestFocus();
+-            return false;
+-        } else if(!phone.matches("(([0-9]{2})?)[ ][0-9]{10}")) {
+-            phoneId.setError("Please enter valid phone id");
+-            phoneId.requestFocus();
+-            return false;
+-        }else{
+-            return true;
+-        }
+-    }
+-
+-    public void registerUser() {
+-        String email = emailId.getText().toString();
+-        String password = passwordId.getText().toString();
+-        String name = nameId.getText().toString();
+-        String phone = phoneId.getText().toString();
+-
+-        if (!isValidName(name)) {
+-            return;
+-        }
+-        else if (!isValidEmail(email)) {
+-            return;
+-        }else if (!isValidPassword(password)) {
+-            return;
+-        } else if (!isValidPhone(phone)) {
+-            return;
+-        } else  if(email.isEmpty() && password.isEmpty()) {
+-            Toast.makeText(RegisterActivity.this,"Fields Are Empty!",
+-                    Toast.LENGTH_SHORT).show();
+-        } else  if(!(email.isEmpty() && password.isEmpty())) {
+-
+-            mFirebaseAuth.createUserWithEmailAndPassword(email, password)
+-                    .addOnCompleteListener(RegisterActivity.this,
+-                            task -> {
+-                                if(!task.isSuccessful()) {
+-                                    Toast.makeText(RegisterActivity.this,"SignUp Unsuccessful, Please Try Again",
+-                                            Toast.LENGTH_SHORT).show();
+-                                }
+-                                else {
+-
+-                                    startActivity(new Intent(RegisterActivity.this,LoginActivity.class));
+-                                }
+-                            });
+-        }
+-        else{
+-            Toast.makeText(RegisterActivity.this,"Error Occurred!",
+-                    Toast.LENGTH_SHORT).show();
+-
+-        }
+-    }
+-
+-
+-
+-
+-}
+\ No newline at end of file
+Index: app/src/main/java/com/example/fundoapp/AddNotes_Fragment.java
+===================================================================
+--- app/src/main/java/com/example/fundoapp/AddNotes_Fragment.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/java/com/example/fundoapp/AddNotes_Fragment.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
+@@ -1,75 +0,0 @@
+-package com.example.fundoapp;
+-
+-import android.os.Bundle;
+-import android.view.LayoutInflater;
+-import android.view.View;
+-import android.view.ViewGroup;
+-import android.widget.EditText;
+-import android.widget.ProgressBar;
+-import android.widget.Toast;
+-
+-import androidx.annotation.Nullable;
+-import androidx.fragment.app.Fragment;
+-
+-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+-import com.google.firebase.auth.FirebaseAuth;
+-import com.google.firebase.auth.FirebaseUser;
+-import com.google.firebase.firestore.DocumentReference;
+-import com.google.firebase.firestore.FirebaseFirestore;
+-
+-import java.util.HashMap;
+-import java.util.Map;
+-import java.util.Objects;
+-
+-public class AddNotes_Fragment extends Fragment {
+-
+-    private EditText mcreatetitleofnote,mcreatecontentofnote;
+-    FirebaseAuth firebaseAuth;
+-    FirebaseUser firebaseUser;
+-    FirebaseFirestore firebaseFirestore;
+-    ProgressBar mprogressbarofcreatenote;
+-
+-
+-    @Override
+-    public View onCreateView(LayoutInflater inflater,  ViewGroup container, @Nullable Bundle savedInstanceState) {
+-        return inflater.inflate(R.layout.fragment_addnotes, container, false);
+-    }
+-
+-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+-
+-        super.onActivityCreated(savedInstanceState);
+-
+-        FloatingActionButton msavenote = (FloatingActionButton) Objects.requireNonNull(getView()).findViewById(R.id.savenote);
+-        mcreatecontentofnote = (EditText) getView().findViewById(R.id.createcontentofnote);
+-        mcreatetitleofnote = (EditText) getView().findViewById(R.id.createtitleofnote);
+-        mprogressbarofcreatenote = (ProgressBar) getView().findViewById(R.id.progressbarofcreatenote);
+-        firebaseAuth = FirebaseAuth.getInstance();
+-        firebaseFirestore = FirebaseFirestore.getInstance();
+-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+-
+-        msavenote.setOnClickListener(v -> {
+-            String title=mcreatetitleofnote.getText().toString();
+-            String content=mcreatecontentofnote.getText().toString();
+-            String user = firebaseUser.getDisplayName();
+-            if(title.isEmpty() || content.isEmpty())
+-            {
+-                Toast.makeText(getContext(),"Both field are Require",Toast.LENGTH_SHORT).show();
+-            }
+-            else
+-            {
+-                mprogressbarofcreatenote.setVisibility(View.VISIBLE);
+-                DocumentReference documentReference=firebaseFirestore.collection(firebaseUser.getDisplayName())
+-                        .document(firebaseUser.getUid()).collection("myNotes").document();
+-                Map<String ,Object> note= new HashMap<>();
+-                note.put("title",title);
+-                note.put("content",content);
+-                note.put("user",user);
+-
+-                documentReference.set(note).addOnSuccessListener(aVoid -> Toast.makeText(getContext(),
+-                        "Note Created Succesffuly",Toast.LENGTH_SHORT).show()).
+-                        addOnFailureListener(e -> Toast.makeText(getContext(),"Failed To Create Note",Toast.LENGTH_SHORT).show());
+-                           mprogressbarofcreatenote.setVisibility(View.INVISIBLE);
+-            }
+-        });
+-    }
+-}
+\ No newline at end of file
+Index: app/src/main/java/com/example/fundoapp/NotesFragment.java
+===================================================================
+--- app/src/main/java/com/example/fundoapp/NotesFragment.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/java/com/example/fundoapp/NotesFragment.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
+@@ -1,40 +0,0 @@
+-package com.example.fundoapp;
+-
+-import android.os.Bundle;
+-import android.view.LayoutInflater;
+-import android.view.View;
+-import android.view.ViewGroup;
+-
+-import androidx.annotation.Nullable;
+-import androidx.fragment.app.Fragment;
+-import androidx.fragment.app.FragmentManager;
+-import androidx.fragment.app.FragmentTransaction;
+-
+-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+-
+-public class NotesFragment extends Fragment {
+-
+-    @Nullable
+-    @Override
+-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+-        View view = inflater.inflate(R.layout.fragment_notes, container, false);
+-        return inflater.inflate(R.layout.fragment_notes, container, false);
+-    }
+-
+-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+-
+-        super.onActivityCreated(savedInstanceState);
+-
+-        FloatingActionButton addnote = (FloatingActionButton)getView().findViewById(R.id.addNotes);
+-        addnote.setOnClickListener(v -> {
+-            Fragment fragment = new AddNotes_Fragment();
+-            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+-            fragmentTransaction.replace(R.id.fragment_container, fragment);
+-            fragmentTransaction.addToBackStack(null);
+-            fragmentTransaction.commit();
+-
+-        });
+-
+-    }
+-}
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_addnotes.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<RelativeLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\"com.example.fundoapp.HomeActivity\">\r\n\r\n\r\n\r\n    <androidx.appcompat.widget.Toolbar\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"?attr/actionBarSize\"\r\n        android:id=\"@+id/toolbarofcreatenote\"\r\n        android:background=\"@color/white\">\r\n\r\n\r\n        <EditText\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"match_parent\"\r\n            android:paddingTop=\"12dp\"\r\n            android:textSize=\"20sp\"\r\n            android:textStyle=\"bold\"\r\n            android:textColor=\"@color/black\"\r\n            android:hint=\"Enter your note title here\"\r\n            android:id=\"@+id/createtitleofnote\" />\r\n\r\n    </androidx.appcompat.widget.Toolbar>\r\n\r\n    <EditText\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:textSize=\"15sp\"\r\n        android:background=\"#faf7f7\"\r\n        android:gravity=\"top|left\"\r\n        android:textColor=\"@color/black\"\r\n        android:hint=\"Enter your note content here\"\r\n        android:layout_below=\"@id/toolbarofcreatenote\"\r\n        android:padding=\"15dp\"\r\n        android:id=\"@+id/createcontentofnote\">\r\n\r\n    </EditText>\r\n\r\n\r\n    <com.google.android.material.floatingactionbutton.FloatingActionButton\r\n\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_alignParentBottom=\"true\"\r\n        android:layout_alignParentRight=\"true\"\r\n        android:layout_marginBottom=\"30dp\"\r\n        android:layout_marginRight=\"30dp\"\r\n        android:layout_gravity=\"bottom|end\"\r\n        android:id=\"@+id/savenote\"\r\n        android:src=\"@drawable/ic_baseline_save_24\"\r\n        android:background=\"#A1F4FB\"\r\n        app:maxImageSize=\"56dp\"\r\n\r\n        >\r\n\r\n    </com.google.android.material.floatingactionbutton.FloatingActionButton>\r\n\r\n    <ProgressBar\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_centerInParent=\"true\"\r\n        android:visibility=\"invisible\"\r\n        android:id=\"@+id/progressbarofcreatenote\"\r\n        android:layout_marginTop=\"10dp\">\r\n\r\n    </ProgressBar>\r\n\r\n</RelativeLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/fragment_addnotes.xml	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/res/layout/fragment_addnotes.xml	(date 1620380923578)
+@@ -4,7 +4,7 @@
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+-    tools:context="com.example.fundoapp.HomeActivity">
++    tools:context="com.example.fundoapp.dashboard.HomeActivity">
+ 
+ 
+ 
+Index: app/src/main/res/layout/activity_home.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:background=\"@drawable/walpaper\"\r\n    tools:context=\".HomeActivity\">\r\n\r\n    <TextView\r\n        android:id=\"@+id/textView2\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"163dp\"\r\n        android:layout_marginTop=\"223dp\"\r\n        android:layout_marginEnd=\"163dp\"\r\n        android:layout_marginBottom=\"269dp\"\r\n        android:text=\"@string/welcome_you_are_logged_in\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n    <Button\r\n        android:id=\"@+id/logout\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"8dp\"\r\n        android:layout_marginTop=\"28dp\"\r\n        android:layout_marginEnd=\"8dp\"\r\n        android:text=\"@string/logout\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/textView2\" />\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_home.xml	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/res/layout/activity_home.xml	(date 1620204700129)
+@@ -1,36 +1,41 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
++<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     xmlns:tools="http://schemas.android.com/tools"
++    android:id="@+id/drawer_layout"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+-    android:background="@drawable/walpaper"
+-    tools:context=".HomeActivity">
++    android:fitsSystemWindows="true"
++    tools:context="com.example.fundoapp.dashboard.HomeActivity"
++    tools:openDrawer="start">
++
++    <LinearLayout
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:orientation="vertical">
+ 
+-    <TextView
+-        android:id="@+id/textView2"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:layout_marginStart="163dp"
+-        android:layout_marginTop="223dp"
+-        android:layout_marginEnd="163dp"
+-        android:layout_marginBottom="269dp"
+-        android:text="@string/welcome_you_are_logged_in"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent" />
++        <androidx.appcompat.widget.Toolbar
++            android:id="@+id/toolbar"
++            android:layout_width="match_parent"
++            android:layout_height="?attr/actionBarSize"
++            android:background="#177CD6"
++            android:elevation="4dp"
++            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
++            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+ 
+-    <Button
+-        android:id="@+id/logout"
++        <FrameLayout
++            android:id="@+id/fragment_container"
++            android:layout_width="match_parent"
++            android:layout_height="match_parent" />
++    </LinearLayout>
++
++    <com.google.android.material.navigation.NavigationView
++        android:id="@+id/nav_view"
+         android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:layout_marginStart="8dp"
+-        android:layout_marginTop="28dp"
+-        android:layout_marginEnd="8dp"
+-        android:text="@string/logout"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
++        android:layout_height="match_parent"
++        android:layout_gravity="start"
++        app:headerLayout="@layout/navigation_header"
++        app:menu="@menu/drawer_menu" />
++
+ 
+-</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
++</androidx.drawerlayout.widget.DrawerLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_archive.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/fragment_archive.xml	(date 1619773153469)
++++ app/src/main/res/layout/fragment_archive.xml	(date 1619773153469)
+@@ -0,0 +1,12 @@
++<?xml version="1.0" encoding="utf-8"?>
++<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:background="@android:color/holo_red_light">
++    <TextView
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_centerInParent="true"
++        android:text="Archive Fragment"
++        android:textSize="30sp" />
++</RelativeLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/note_details.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<RelativeLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".notedetails\">\r\n\r\n    <androidx.appcompat.widget.Toolbar\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"?attr/actionBarSize\"\r\n        android:id=\"@+id/toolbarofnotedetail\"\r\n        android:background=\"@color/white\">\r\n\r\n\r\n        <TextView\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"match_parent\"\r\n            android:paddingTop=\"12dp\"\r\n            android:textSize=\"25sp\"\r\n            android:textStyle=\"bold\"\r\n            android:text=\"Title Displayerd Here\"\r\n            android:textColor=\"@color/black\"\r\n            android:id=\"@+id/titleofnotedetail\" />\r\n\r\n    </androidx.appcompat.widget.Toolbar>\r\n\r\n    <TextView\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:textSize=\"17sp\"\r\n        android:background=\"#faf7f7\"\r\n        android:gravity=\"top|left\"\r\n        android:textColor=\"@color/black\"\r\n        android:hint=\"Enter your note content here\"\r\n        android:layout_below=\"@id/toolbarofnotedetail\"\r\n        android:padding=\"15dp\"\r\n        android:id=\"@+id/contentofnotedetail\">\r\n\r\n    </TextView>\r\n\r\n\r\n    <com.google.android.material.floatingactionbutton.FloatingActionButton\r\n\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_alignParentBottom=\"true\"\r\n        android:layout_alignParentRight=\"true\"\r\n        android:layout_marginBottom=\"30dp\"\r\n        android:layout_marginRight=\"30dp\"\r\n        android:layout_gravity=\"bottom|end\"\r\n        android:id=\"@+id/gotoeditnote\"\r\n        android:src=\"@drawable/ic_baseline_edit_24\"\r\n        android:background=\"#A1F4FB\"\r\n        app:maxImageSize=\"40dp\"\r\n\r\n        >\r\n\r\n    </com.google.android.material.floatingactionbutton.FloatingActionButton>\r\n\r\n\r\n\r\n</RelativeLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/note_details.xml	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/res/layout/note_details.xml	(date 1620651991127)
+@@ -4,7 +4,7 @@
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+-    tools:context=".notedetails">
++    tools:context=".fragments.notedetails">
+ 
+     <androidx.appcompat.widget.Toolbar
+         android:layout_width="match_parent"
+Index: app/src/main/res/layout/activity_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:background=\"@drawable/walpaper\"\r\n    tools:context=\".MainActivity\">\r\n    <TextView\r\n        android:id=\"@+id/textView1\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:fontFamily=\"@font/aclonica\"\r\n        android:text=\"@string/fundoo_app\"\r\n        android:textColor=\"#FFEB3B\"\r\n        android:textSize=\"25sp\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.19\" />\r\n\r\n    <EditText\r\n        android:id=\"@+id/editText\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginLeft=\"84dp\"\r\n        android:layout_marginTop=\"152dp\"\r\n        android:layout_marginRight=\"85dp\"\r\n        android:layout_marginBottom=\"313dp\"\r\n        android:ems=\"10\"\r\n        android:hint=\"@string/email\"\r\n        android:inputType=\"textEmailAddress\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        android:autofillHints=\"\" />\r\n\r\n    <EditText\r\n        android:id=\"@+id/editText2\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"85dp\"\r\n        android:layout_marginTop=\"8dp\"\r\n        android:layout_marginEnd=\"85dp\"\r\n        android:layout_marginBottom=\"8dp\"\r\n        android:ems=\"10\"\r\n        android:hint=\"@string/password\"\r\n        android:inputType=\"textPassword\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/editText\"\r\n        app:layout_constraintVertical_bias=\"0.052\"\r\n        android:autofillHints=\"\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/textView\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"163dp\"\r\n        android:layout_marginEnd=\"163dp\"\r\n        android:layout_marginBottom=\"136dp\"\r\n        android:text=\"@string/already_have_an_account_sign_in_here\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\" />\r\n\r\n    <Button\r\n        android:id=\"@+id/button2\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"8dp\"\r\n        android:layout_marginTop=\"8dp\"\r\n        android:layout_marginEnd=\"8dp\"\r\n        android:layout_marginBottom=\"8dp\"\r\n        android:text=\"@string/register\"\r\n        app:layout_constraintBottom_toTopOf=\"@+id/textView\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/editText2\" />\r\n\r\n\r\n    <EditText\r\n        android:id=\"@+id/editTextPhone\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:ems=\"10\"\r\n        android:inputType=\"phone\"\r\n        android:hint=\"@string/phone\"\r\n        app:layout_constraintBottom_toTopOf=\"@+id/button2\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/editText2\" />\r\n\r\n    <EditText\r\n        android:id=\"@+id/editTextName\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:ems=\"10\"\r\n        android:inputType=\"textPersonName\"\r\n        android:hint=\"@string/name\"\r\n        app:layout_constraintBottom_toTopOf=\"@+id/editText\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/textView1\" />\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_main.xml	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/res/layout/activity_main.xml	(date 1620651560559)
+@@ -5,7 +5,8 @@
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     android:background="@drawable/walpaper"
+-    tools:context=".MainActivity">
++    tools:context=".authentication.RegisterActivity">
++
+     <TextView
+         android:id="@+id/textView1"
+         android:layout_width="wrap_content"
+@@ -13,47 +14,49 @@
+         android:fontFamily="@font/aclonica"
+         android:text="@string/fundoo_app"
+         android:textColor="#FFEB3B"
+-        android:textSize="25sp"
++        android:textSize="36sp"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.497"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintVertical_bias="0.19" />
++        app:layout_constraintVertical_bias="0.152" />
+ 
+     <EditText
+         android:id="@+id/editText"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
++        android:layout_width="381dp"
++        android:layout_height="62dp"
+         android:layout_marginLeft="84dp"
+         android:layout_marginTop="152dp"
+         android:layout_marginRight="85dp"
+         android:layout_marginBottom="313dp"
++        android:autofillHints=""
+         android:ems="10"
+         android:hint="@string/email"
+         android:inputType="textEmailAddress"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent"
+-        android:autofillHints="" />
++        app:layout_constraintTop_toTopOf="parent" />
+ 
+     <EditText
+         android:id="@+id/editText2"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
++        android:layout_width="382dp"
++        android:layout_height="63dp"
+         android:layout_marginStart="85dp"
+         android:layout_marginTop="8dp"
+         android:layout_marginEnd="85dp"
+         android:layout_marginBottom="8dp"
++        android:autofillHints=""
+         android:ems="10"
+         android:hint="@string/password"
+         android:inputType="textPassword"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.496"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/editText"
+-        app:layout_constraintVertical_bias="0.052"
+-        android:autofillHints="" />
++        app:layout_constraintVertical_bias="0.0" />
+ 
+     <TextView
+         android:id="@+id/textView"
+@@ -69,8 +72,8 @@
+ 
+     <Button
+         android:id="@+id/button2"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
++        android:layout_width="167dp"
++        android:layout_height="64dp"
+         android:layout_marginStart="8dp"
+         android:layout_marginTop="8dp"
+         android:layout_marginEnd="8dp"
+@@ -79,30 +82,34 @@
+         app:layout_constraintBottom_toTopOf="@+id/textView"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/editText2" />
++        app:layout_constraintTop_toBottomOf="@+id/editText2"
++        app:layout_constraintVertical_bias="0.59000003" />
+ 
+ 
+     <EditText
+         android:id="@+id/editTextPhone"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
++        android:layout_width="383dp"
++        android:layout_height="55dp"
+         android:ems="10"
+-        android:inputType="phone"
+         android:hint="@string/phone"
++        android:inputType="phone"
+         app:layout_constraintBottom_toTopOf="@+id/button2"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/editText2" />
++        app:layout_constraintTop_toBottomOf="@+id/editText2"
++        app:layout_constraintVertical_bias="0.32999998" />
+ 
+     <EditText
+         android:id="@+id/editTextName"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
++        android:layout_width="390dp"
++        android:layout_height="44dp"
+         android:ems="10"
++        android:hint="@string/name"
+         android:inputType="textPersonName"
+-        android:hint="@string/name"
+         app:layout_constraintBottom_toTopOf="@+id/editText"
+         app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.502"
+         app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/textView1" />
++        app:layout_constraintTop_toBottomOf="@+id/textView1"
++        app:layout_constraintVertical_bias="0.784" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    package=\"com.example.fundoapp\">\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/Theme.FundoApp\">\r\n        <activity android:name=\".SplashActivity\">\r\n\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n        <activity android:name=\".LoginActivity\" />\r\n        <activity\r\n            android:name=\".HomeActivity\"\r\n            android:theme=\"@style/AppTheme.NoActionBar\"\r\n            />\r\n        <activity android:name=\".RegisterActivity\">\r\n\r\n        </activity>\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/AndroidManifest.xml	(date 1620651560538)
+@@ -1,5 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
+     package="com.example.fundoapp">
+ 
+     <application
+@@ -9,7 +10,8 @@
+         android:roundIcon="@mipmap/ic_launcher_round"
+         android:supportsRtl="true"
+         android:theme="@style/Theme.FundoApp">
+-        <activity android:name=".SplashActivity">
++        <activity android:name=".ui.SplashActivity"
++            tools:ignore="Instantiatable">
+ 
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+@@ -17,14 +19,10 @@
+                 <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
+         </activity>
+-        <activity android:name=".LoginActivity" />
+         <activity
+-            android:name=".HomeActivity"
++            android:name=".dashboard.HomeActivity"
+             android:theme="@style/AppTheme.NoActionBar"
+-            />
+-        <activity android:name=".RegisterActivity">
+-
+-        </activity>
++            tools:ignore="Instantiatable" />
+     </application>
+ 
+ </manifest>
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_reminder.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/fragment_reminder.xml	(date 1619773153436)
++++ app/src/main/res/layout/fragment_reminder.xml	(date 1619773153436)
+@@ -0,0 +1,12 @@
++<?xml version="1.0" encoding="utf-8"?>
++<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:background="@android:color/holo_red_light">
++    <TextView
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_centerInParent="true"
++        android:text="Remainder Fragment"
++        android:textSize="30sp" />
++</RelativeLayout>
+\ No newline at end of file
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources>\r\n    <string name=\"app_name\">FundoApp</string>\r\n    <string name=\"email\">Email</string>\r\n    <string name=\"password\">Password</string>\r\n    <string name=\"not_registered_sign_up_here\">Not registered? Register here</string>\r\n    <string name=\"sign_in\">Sign In</string>\r\n    <string name=\"fundoo_app\">Fundoo App</string>\r\n    <string name=\"welcome_you_are_logged_in\">Welcome! You are logged in</string>\r\n    <string name=\"logout\">Logout</string>\r\n    <string name=\"email1\">Email</string>\r\n    <string name=\"password1\">Password</string>\r\n    <string name=\"already_have_an_account_sign_in_here\">Already have an account? Sign in here</string>\r\n    <string name=\"register\">Register</string>\r\n    <string name=\"name\">name</string>\r\n    <string name=\"phone\">phone</string>\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/strings.xml	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/res/values/strings.xml	(date 1619771580537)
+@@ -13,4 +13,8 @@
+     <string name="register">Register</string>
+     <string name="name">name</string>
+     <string name="phone">phone</string>
++    <string name="note">Note</string>
++    <string name="remainder">Remainder</string>
++    <string name="navigation_drawer_open">Open navigation drawer</string>
++    <string name="navigation_drawer_close">Close navigation drawer</string>
+ </resources>
+\ No newline at end of file
+Index: app/src/main/res/values/ids.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/ids.xml	(date 1619973493747)
++++ app/src/main/res/values/ids.xml	(date 1619973493747)
+@@ -0,0 +1,4 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources>
++    <item name="savenote" type="id" />
++</resources>
+\ No newline at end of file
+Index: app/src/main/res/values/colors.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<resources>\r\n    <color name=\"purple_200\">#FFBB86FC</color>\r\n    <color name=\"purple_500\">#FF6200EE</color>\r\n    <color name=\"purple_700\">#FF3700B3</color>\r\n    <color name=\"teal_200\">#FF03DAC5</color>\r\n    <color name=\"teal_700\">#FF018786</color>\r\n    <color name=\"black\">#FF000000</color>\r\n    <color name=\"white\">#FFFFFFFF</color>\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/colors.xml	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/res/values/colors.xml	(date 1620287039950)
+@@ -7,4 +7,14 @@
+     <color name="teal_700">#FF018786</color>
+     <color name="black">#FF000000</color>
+     <color name="white">#FFFFFFFF</color>
++    <color name="gray">#716199</color>
++    <color name="pink">#F02FE7</color>
++    <color name="lightgreen">#8BC34A</color>
++    <color name="skyblue">#2196F3</color>
++    <color name="color1">#673AB7</color>
++    <color name="color2">#E91E63</color>
++    <color name="color3">#F44336</color>
++    <color name="color4">#FFEB3B</color>
++    <color name="color5">#009688</color>
++    <color name="green">#F44336</color>
+ </resources>
+\ No newline at end of file
+Index: app/src/main/res/values/styles.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/styles.xml	(date 1620310520742)
++++ app/src/main/res/values/styles.xml	(date 1620310520742)
+@@ -0,0 +1,13 @@
++<resources>
++    <!-- Base application theme. -->
++    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
++        <!-- Customize your theme here. -->
++        <item name="colorPrimary">@color/purple_200</item>
++        <item name="colorPrimaryDark">@color/teal_200</item>
++        <item name="colorAccent">@color/purple_700</item>
++    </style>
++    <style name="AppTheme.NoActionBar">
++        <item name="windowActionBar">false</item>
++        <item name="windowNoTitle">true</item>
++    </style>
++</resources>
+\ No newline at end of file
+Index: app/src/main/res/drawable/ic_baseline_delete_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_baseline_delete_24.xml	(date 1619761195908)
++++ app/src/main/res/drawable/ic_baseline_delete_24.xml	(date 1619761195908)
+@@ -0,0 +1,10 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M6,19c0,1.1 0.9,2 2,2h8c1.1,0 2,-0.9 2,-2V7H6v12zM19,4h-3.5l-1,-1h-5l-1,1H5v2h14V4z"/>
++</vector>
+Index: app/src/main/res/drawable/ic_baseline_archive_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_baseline_archive_24.xml	(date 1619761168075)
++++ app/src/main/res/drawable/ic_baseline_archive_24.xml	(date 1619761168075)
+@@ -0,0 +1,10 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M20.54,5.23l-1.39,-1.68C18.88,3.21 18.47,3 18,3H6c-0.47,0 -0.88,0.21 -1.16,0.55L3.46,5.23C3.17,5.57 3,6.02 3,6.5V19c0,1.1 0.9,2 2,2h14c1.1,0 2,-0.9 2,-2V6.5c0,-0.48 -0.17,-0.93 -0.46,-1.27zM12,17.5L6.5,12H10v-2h4v2h3.5L12,17.5zM5.12,5l0.81,-1h12l0.94,1H5.12z"/>
++</vector>
+Index: app/src/main/res/drawable/ic_baseline_reminder.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_baseline_reminder.xml	(date 1619955573593)
++++ app/src/main/res/drawable/ic_baseline_reminder.xml	(date 1619955573593)
+@@ -0,0 +1,10 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M7.58,4.08L6.15,2.65C3.75,4.48 2.17,7.3 2.03,10.5h2c0.15,-2.65 1.51,-4.97 3.55,-6.42zM19.97,10.5h2c-0.15,-3.2 -1.73,-6.02 -4.12,-7.85l-1.42,1.43c2.02,1.45 3.39,3.77 3.54,6.42zM18,11c0,-3.07 -1.64,-5.64 -4.5,-6.32L13.5,4c0,-0.83 -0.67,-1.5 -1.5,-1.5s-1.5,0.67 -1.5,1.5v0.68C7.63,5.36 6,7.92 6,11v5l-2,2v1h16v-1l-2,-2v-5zM12,22c0.14,0 0.27,-0.01 0.4,-0.04 0.65,-0.14 1.18,-0.58 1.44,-1.18 0.1,-0.24 0.15,-0.5 0.15,-0.78h-4c0.01,1.1 0.9,2 2.01,2z"/>
++</vector>
+Index: app/src/main/res/drawable/fundoo.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/fundoo.xml	(date 1620383758428)
++++ app/src/main/res/drawable/fundoo.xml	(date 1620383758428)
+@@ -0,0 +1,46 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="500dp"
++    android:height="500dp"
++    android:viewportWidth="500"
++    android:viewportHeight="500">
++    <path
++        android:pathData="M141.8,210.5c-17.6,4.9 -20.2,6 -24.8,10.7 -6.5,6.5 -7.5,14.3 -3.6,28.3l2.2,8 1.3,-4.8c3.3,-11.6 11.6,-17.4 33.2,-23.3 7.4,-2 14.6,-4.2 16,-5 5.5,-2.8 5.9,-11.5 0.7,-15.9 -4,-3.4 -6.4,-3.2 -25,2z"
++        android:fillColor="#000000"
++        android:strokeColor="#00000000"/>
++    <path
++        android:pathData="M197.5,232.4c-4,1.7 -5.5,3.7 -6.2,8.1l-0.6,3.6 3.4,-2c2.8,-1.7 5.1,-2.1 12.5,-2.1 5.7,-0 9.4,-0.4 10.2,-1.2 1.8,-1.8 1.4,-5.6 -0.7,-6.8 -2.7,-1.4 -15,-1.2 -18.6,0.4z"
++        android:fillColor="#000000"
++        android:strokeColor="#00000000"/>
++    <path
++        android:pathData="M312,233.9c-0.5,1.1 -1,3.5 -1,5.5 0,3.4 0,3.5 -3.2,2.5 -7.4,-2.2 -17,3.8 -18.8,11.7 -2.5,10.9 7.6,20.9 18.6,18.4 4.6,-1.1 10.1,-6.4 11.4,-11 1.4,-5.1 1.3,-26.3 -0.2,-27.8 -1.8,-1.8 -5.6,-1.4 -6.8,0.7zM309.2,251.7c4.3,3.8 0.9,12.3 -5,12.3 -6.6,-0 -9.8,-7.4 -5.2,-12 2.4,-2.4 7.7,-2.6 10.2,-0.3z"
++        android:fillColor="#000000"
++        android:strokeColor="#00000000"/>
++    <path
++        android:pathData="M151.5,235.7c-8.5,1.9 -18.7,5.7 -22.2,8.3 -5.9,4.3 -8.7,10.5 -8.1,17.8 0.3,3.1 1.3,8.4 2.3,11.7 1.8,5.7 1.9,5.8 2.5,3 1.9,-8.7 9.5,-14.5 25.5,-19.5 11.1,-3.5 14.7,-8.8 10.9,-16.1 -1.2,-2.4 -7.2,-6.4 -8.6,-5.8 -0.2,0.1 -1.2,0.3 -2.3,0.6z"
++        android:fillColor="#000000"
++        android:strokeColor="#00000000"/>
++    <path
++        android:pathData="M220.8,242.1c-1.5,0.8 -1.8,2.5 -1.8,10 0,10.3 1.2,13.4 6.6,17.5 6.5,5 16.5,3.2 21.8,-3.9 1.7,-2.3 2.2,-4.6 2.4,-12.7 0.4,-9.1 0.2,-9.9 -1.7,-11 -1.5,-0.8 -2.7,-0.8 -4.1,-0 -1.7,0.9 -2,2.1 -2,8.6 0,10.4 -1.7,13.4 -7.7,13.4 -5.3,-0 -7.3,-3.7 -7.3,-13.1 0,-6.7 -0.3,-8 -1.9,-8.9 -2.3,-1.2 -2.2,-1.2 -4.3,0.1z"
++        android:fillColor="#000000"
++        android:strokeColor="#00000000"/>
++    <path
++        android:pathData="M263,243.2c-6.4,3.2 -9,8.7 -9,18.8 0,8.1 0.9,10 4.7,10 3.2,-0 4.3,-2.8 4.3,-11.3 0,-8.5 1.7,-11 7.2,-11 5.1,-0 6.8,3.1 6.8,12.3 0,8.4 1,10.4 5.2,9.8 2.2,-0.3 2.3,-0.7 2.6,-10.3 0.3,-11.9 -1.2,-15.4 -8.1,-18.5 -5.5,-2.5 -8.3,-2.5 -13.7,0.2z"
++        android:fillColor="#000000"
++        android:strokeColor="#00000000"/>
++    <path
++        android:pathData="M334.3,242.2c-1.7,0.6 -4.6,2.6 -6.4,4.4 -2.7,2.8 -3.3,4.3 -3.7,9 -0.8,10.2 4.7,16.4 14.8,16.4 9.2,-0 15.4,-6 15.4,-14.9 0,-10.6 -10.3,-18.2 -20.1,-14.9zM344.5,252c2.4,2.6 2.3,7.6 -0.1,10 -4.7,4.6 -12.4,1.5 -12.4,-5 0,-6.2 8.4,-9.5 12.5,-5z"
++        android:fillColor="#000000"
++        android:strokeColor="#00000000"/>
++    <path
++        android:pathData="M368.7,242.4c-4.9,1.8 -6.4,3.2 -8.8,7.7 -5.3,10.4 1.8,21.9 13.5,21.9 16.9,-0 21.8,-21.1 6.6,-28.8 -5.1,-2.5 -6.1,-2.6 -11.3,-0.8zM379,252.2c2.6,2.8 2.6,7.2 0,9.8 -3.3,3.3 -7.5,3 -10.7,-0.6 -2.8,-3.1 -2.9,-5.4 -0.2,-8.8 2.7,-3.4 7.9,-3.6 10.9,-0.4z"
++        android:fillColor="#000000"
++        android:strokeColor="#00000000"/>
++    <path
++        android:pathData="M197.2,248.5c-4.2,1.8 -6.2,6.5 -6.2,14.5 0,4.7 0.4,6.4 2,8 2.4,2.4 3.4,2.5 5.4,0.4 1,-1 1.6,-3.3 1.6,-6.5 0,-7.2 1.2,-8.9 6.1,-8.9 2.2,-0 4.9,-0.5 6,-1 2.5,-1.4 2.5,-5.6 0,-7 -2.8,-1.4 -11,-1.2 -14.9,0.5z"
++        android:fillColor="#000000"
++        android:strokeColor="#00000000"/>
++    <path
++        android:pathData="M143.4,264.2c-9.6,5.1 -14,11.6 -13.1,19.6 0.4,3.6 1.2,5.3 3.7,7.5 2.8,2.5 3.9,2.8 7.2,2.4 4.6,-0.6 6.7,-2.1 8.4,-6.3 1.1,-2.6 0.9,-4.4 -1.5,-13.6 -2.5,-9.8 -2.9,-10.5 -4.7,-9.6z"
++        android:fillColor="#000000"
++        android:strokeColor="#00000000"/>
++</vector>
+\ No newline at end of file
+Index: app/src/main/res/drawable/ic_baseline_more_vert_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_baseline_more_vert_24.xml	(date 1620279322552)
++++ app/src/main/res/drawable/ic_baseline_more_vert_24.xml	(date 1620279322552)
+@@ -0,0 +1,10 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal">
++    <path
++        android:fillColor="@android:color/white"
++        android:pathData="M12,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,10c-1.1,0 -2,0.9 -2,2s0.9,2 2,2 2,-0.9 2,-2 -0.9,-2 -2,-2zM12,16c-1.1,0 -2,0.9 -2,2s0.9,2 2,2 2,-0.9 2,-2 -0.9,-2 -2,-2z"/>
++</vector>
+\ No newline at end of file
+Index: app/src/main/res/drawable/ic_baseline_logout_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_baseline_logout_24.xml	(date 1619770839106)
++++ app/src/main/res/drawable/ic_baseline_logout_24.xml	(date 1619770839106)
+@@ -0,0 +1,11 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal"
++    android:autoMirrored="true">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M17,7l-1.41,1.41L18.17,11H8v2h10.17l-2.58,2.58L17,17l5,-5zM4,5h8V3H4c-1.1,0 -2,0.9 -2,2v14c0,1.1 0.9,2 2,2h8v-2H4V5z"/>
++</vector>
+Index: app/src/main/res/drawable/ic_baseline_help_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_baseline_help_24.xml	(date 1619761260442)
++++ app/src/main/res/drawable/ic_baseline_help_24.xml	(date 1619761260442)
+@@ -0,0 +1,11 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal"
++    android:autoMirrored="true">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM13,19h-2v-2h2v2zM15.07,11.25l-0.9,0.92C13.45,12.9 13,13.5 13,15h-2v-0.5c0,-1.1 0.45,-2.1 1.17,-2.83l1.24,-1.26c0.37,-0.36 0.59,-0.86 0.59,-1.41 0,-1.1 -0.9,-2 -2,-2s-2,0.9 -2,2L8,9c0,-2.21 1.79,-4 4,-4s4,1.79 4,4c0,0.88 -0.36,1.68 -0.93,2.25z"/>
++</vector>
+Index: app/src/main/res/drawable/ic_remainder_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_remainder_24.xml	(date 1619761135437)
++++ app/src/main/res/drawable/ic_remainder_24.xml	(date 1619761135437)
+@@ -0,0 +1,10 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M7.88,3.39L6.6,1.86 2,5.71l1.29,1.53 4.59,-3.85zM22,5.72l-4.6,-3.86 -1.29,1.53 4.6,3.86L22,5.72zM12,4c-4.97,0 -9,4.03 -9,9s4.02,9 9,9c4.97,0 9,-4.03 9,-9s-4.03,-9 -9,-9zM12,20c-3.87,0 -7,-3.13 -7,-7s3.13,-7 7,-7 7,3.13 7,7 -3.13,7 -7,7zM13,9h-2v3L8,12v2h3v3h2v-3h3v-2h-3L13,9z"/>
++</vector>
+Index: app/src/main/res/drawable/ic_attachment_96245832.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_attachment_96245832.xml	(date 1619256414641)
++++ app/src/main/res/drawable/ic_attachment_96245832.xml	(date 1619256414641)
+@@ -0,0 +1,46 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="500dp"
++    android:height="500dp"
++    android:viewportWidth="500"
++    android:viewportHeight="500">
++  <path
++      android:pathData="M141.8,210.5c-17.6,4.9 -20.2,6 -24.8,10.7 -6.5,6.5 -7.5,14.3 -3.6,28.3l2.2,8 1.3,-4.8c3.3,-11.6 11.6,-17.4 33.2,-23.3 7.4,-2 14.6,-4.2 16,-5 5.5,-2.8 5.9,-11.5 0.7,-15.9 -4,-3.4 -6.4,-3.2 -25,2z"
++      android:fillColor="#000000"
++      android:strokeColor="#00000000"/>
++  <path
++      android:pathData="M197.5,232.4c-4,1.7 -5.5,3.7 -6.2,8.1l-0.6,3.6 3.4,-2c2.8,-1.7 5.1,-2.1 12.5,-2.1 5.7,-0 9.4,-0.4 10.2,-1.2 1.8,-1.8 1.4,-5.6 -0.7,-6.8 -2.7,-1.4 -15,-1.2 -18.6,0.4z"
++      android:fillColor="#000000"
++      android:strokeColor="#00000000"/>
++  <path
++      android:pathData="M312,233.9c-0.5,1.1 -1,3.5 -1,5.5 0,3.4 0,3.5 -3.2,2.5 -7.4,-2.2 -17,3.8 -18.8,11.7 -2.5,10.9 7.6,20.9 18.6,18.4 4.6,-1.1 10.1,-6.4 11.4,-11 1.4,-5.1 1.3,-26.3 -0.2,-27.8 -1.8,-1.8 -5.6,-1.4 -6.8,0.7zM309.2,251.7c4.3,3.8 0.9,12.3 -5,12.3 -6.6,-0 -9.8,-7.4 -5.2,-12 2.4,-2.4 7.7,-2.6 10.2,-0.3z"
++      android:fillColor="#000000"
++      android:strokeColor="#00000000"/>
++  <path
++      android:pathData="M151.5,235.7c-8.5,1.9 -18.7,5.7 -22.2,8.3 -5.9,4.3 -8.7,10.5 -8.1,17.8 0.3,3.1 1.3,8.4 2.3,11.7 1.8,5.7 1.9,5.8 2.5,3 1.9,-8.7 9.5,-14.5 25.5,-19.5 11.1,-3.5 14.7,-8.8 10.9,-16.1 -1.2,-2.4 -7.2,-6.4 -8.6,-5.8 -0.2,0.1 -1.2,0.3 -2.3,0.6z"
++      android:fillColor="#000000"
++      android:strokeColor="#00000000"/>
++  <path
++      android:pathData="M220.8,242.1c-1.5,0.8 -1.8,2.5 -1.8,10 0,10.3 1.2,13.4 6.6,17.5 6.5,5 16.5,3.2 21.8,-3.9 1.7,-2.3 2.2,-4.6 2.4,-12.7 0.4,-9.1 0.2,-9.9 -1.7,-11 -1.5,-0.8 -2.7,-0.8 -4.1,-0 -1.7,0.9 -2,2.1 -2,8.6 0,10.4 -1.7,13.4 -7.7,13.4 -5.3,-0 -7.3,-3.7 -7.3,-13.1 0,-6.7 -0.3,-8 -1.9,-8.9 -2.3,-1.2 -2.2,-1.2 -4.3,0.1z"
++      android:fillColor="#000000"
++      android:strokeColor="#00000000"/>
++  <path
++      android:pathData="M263,243.2c-6.4,3.2 -9,8.7 -9,18.8 0,8.1 0.9,10 4.7,10 3.2,-0 4.3,-2.8 4.3,-11.3 0,-8.5 1.7,-11 7.2,-11 5.1,-0 6.8,3.1 6.8,12.3 0,8.4 1,10.4 5.2,9.8 2.2,-0.3 2.3,-0.7 2.6,-10.3 0.3,-11.9 -1.2,-15.4 -8.1,-18.5 -5.5,-2.5 -8.3,-2.5 -13.7,0.2z"
++      android:fillColor="#000000"
++      android:strokeColor="#00000000"/>
++  <path
++      android:pathData="M334.3,242.2c-1.7,0.6 -4.6,2.6 -6.4,4.4 -2.7,2.8 -3.3,4.3 -3.7,9 -0.8,10.2 4.7,16.4 14.8,16.4 9.2,-0 15.4,-6 15.4,-14.9 0,-10.6 -10.3,-18.2 -20.1,-14.9zM344.5,252c2.4,2.6 2.3,7.6 -0.1,10 -4.7,4.6 -12.4,1.5 -12.4,-5 0,-6.2 8.4,-9.5 12.5,-5z"
++      android:fillColor="#000000"
++      android:strokeColor="#00000000"/>
++  <path
++      android:pathData="M368.7,242.4c-4.9,1.8 -6.4,3.2 -8.8,7.7 -5.3,10.4 1.8,21.9 13.5,21.9 16.9,-0 21.8,-21.1 6.6,-28.8 -5.1,-2.5 -6.1,-2.6 -11.3,-0.8zM379,252.2c2.6,2.8 2.6,7.2 0,9.8 -3.3,3.3 -7.5,3 -10.7,-0.6 -2.8,-3.1 -2.9,-5.4 -0.2,-8.8 2.7,-3.4 7.9,-3.6 10.9,-0.4z"
++      android:fillColor="#000000"
++      android:strokeColor="#00000000"/>
++  <path
++      android:pathData="M197.2,248.5c-4.2,1.8 -6.2,6.5 -6.2,14.5 0,4.7 0.4,6.4 2,8 2.4,2.4 3.4,2.5 5.4,0.4 1,-1 1.6,-3.3 1.6,-6.5 0,-7.2 1.2,-8.9 6.1,-8.9 2.2,-0 4.9,-0.5 6,-1 2.5,-1.4 2.5,-5.6 0,-7 -2.8,-1.4 -11,-1.2 -14.9,0.5z"
++      android:fillColor="#000000"
++      android:strokeColor="#00000000"/>
++  <path
++      android:pathData="M143.4,264.2c-9.6,5.1 -14,11.6 -13.1,19.6 0.4,3.6 1.2,5.3 3.7,7.5 2.8,2.5 3.9,2.8 7.2,2.4 4.6,-0.6 6.7,-2.1 8.4,-6.3 1.1,-2.6 0.9,-4.4 -1.5,-13.6 -2.5,-9.8 -2.9,-10.5 -4.7,-9.6z"
++      android:fillColor="#000000"
++      android:strokeColor="#00000000"/>
++</vector>
+Index: app/src/main/res/drawable/ic_baseline_edit_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_baseline_edit_24.xml	(date 1620278959908)
++++ app/src/main/res/drawable/ic_baseline_edit_24.xml	(date 1620278959908)
+@@ -0,0 +1,10 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M3,17.25V21h3.75L17.81,9.94l-3.75,-3.75L3,17.25zM20.71,7.04c0.39,-0.39 0.39,-1.02 0,-1.41l-2.34,-2.34c-0.39,-0.39 -1.02,-0.39 -1.41,0l-1.83,1.83 3.75,3.75 1.83,-1.83z"/>
++</vector>
+Index: app/src/main/res/drawable/ic_baseline_add_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_baseline_add_24.xml	(date 1620124108883)
++++ app/src/main/res/drawable/ic_baseline_add_24.xml	(date 1620124108883)
+@@ -0,0 +1,10 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
++</vector>
+Index: app/src/main/res/drawable/ic_baseline_settings_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_baseline_settings_24.xml	(date 1619761224057)
++++ app/src/main/res/drawable/ic_baseline_settings_24.xml	(date 1619761224057)
+@@ -0,0 +1,10 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M19.14,12.94c0.04,-0.3 0.06,-0.61 0.06,-0.94c0,-0.32 -0.02,-0.64 -0.07,-0.94l2.03,-1.58c0.18,-0.14 0.23,-0.41 0.12,-0.61l-1.92,-3.32c-0.12,-0.22 -0.37,-0.29 -0.59,-0.22l-2.39,0.96c-0.5,-0.38 -1.03,-0.7 -1.62,-0.94L14.4,2.81c-0.04,-0.24 -0.24,-0.41 -0.48,-0.41h-3.84c-0.24,0 -0.43,0.17 -0.47,0.41L9.25,5.35C8.66,5.59 8.12,5.92 7.63,6.29L5.24,5.33c-0.22,-0.08 -0.47,0 -0.59,0.22L2.74,8.87C2.62,9.08 2.66,9.34 2.86,9.48l2.03,1.58C4.84,11.36 4.8,11.69 4.8,12s0.02,0.64 0.07,0.94l-2.03,1.58c-0.18,0.14 -0.23,0.41 -0.12,0.61l1.92,3.32c0.12,0.22 0.37,0.29 0.59,0.22l2.39,-0.96c0.5,0.38 1.03,0.7 1.62,0.94l0.36,2.54c0.05,0.24 0.24,0.41 0.48,0.41h3.84c0.24,0 0.44,-0.17 0.47,-0.41l0.36,-2.54c0.59,-0.24 1.13,-0.56 1.62,-0.94l2.39,0.96c0.22,0.08 0.47,0 0.59,-0.22l1.92,-3.32c0.12,-0.22 0.07,-0.47 -0.12,-0.61L19.14,12.94zM12,15.6c-1.98,0 -3.6,-1.62 -3.6,-3.6s1.62,-3.6 3.6,-3.6s3.6,1.62 3.6,3.6S13.98,15.6 12,15.6z"/>
++</vector>
+Index: app/src/main/res/drawable/ic_baseline_save_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_baseline_save_24.xml	(date 1620118509769)
++++ app/src/main/res/drawable/ic_baseline_save_24.xml	(date 1620118509769)
+@@ -0,0 +1,10 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M17,3L5,3c-1.11,0 -2,0.9 -2,2v14c0,1.1 0.89,2 2,2h14c1.1,0 2,-0.9 2,-2L21,7l-4,-4zM12,19c-1.66,0 -3,-1.34 -3,-3s1.34,-3 3,-3 3,1.34 3,3 -1.34,3 -3,3zM15,9L5,9L5,5h10v4z"/>
++</vector>
+Index: app/src/main/res/drawable/ic_baseline_note_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_baseline_note_24.xml	(date 1619760812971)
++++ app/src/main/res/drawable/ic_baseline_note_24.xml	(date 1619760812971)
+@@ -0,0 +1,10 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M22,10l-6,-6L4,4c-1.1,0 -2,0.9 -2,2v12.01c0,1.1 0.9,1.99 2,1.99l16,-0.01c1.1,0 2,-0.89 2,-1.99v-8zM15,5.5l5.5,5.5L15,11L15,5.5z"/>
++</vector>
+Index: app/src/main/res/drawable/ic_addnotes.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_addnotes.xml	(date 1619955648055)
++++ app/src/main/res/drawable/ic_addnotes.xml	(date 1619955648055)
+@@ -0,0 +1,22 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M17,19.22H5V7h7V5H5C3.9,5 3,5.9 3,7v12c0,1.1 0.9,2 2,2h12c1.1,0 2,-0.9 2,-2v-7h-2V19.22z"/>
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M19,2h-2v3h-3c0.01,0.01 0,2 0,2h3v2.99c0.01,0.01 2,0 2,0V7h3V5h-3V2z"/>
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M7,9h8v2h-8z"/>
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M7,12l0,2l8,0l0,-2l-3,0z"/>
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M7,15h8v2h-8z"/>
++</vector>
+Index: app/src/main/res/drawable/ic_attachment_96156449.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_attachment_96156449.xml	(date 1619256924951)
++++ app/src/main/res/drawable/ic_attachment_96156449.xml	(date 1619256924951)
+@@ -0,0 +1,30 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="500dp"
++    android:height="500dp"
++    android:viewportWidth="500"
++    android:viewportHeight="500">
++  <path
++      android:pathData="M180.5,160.4c-4.4,2 -8.3,6 -10.5,10.8 -1.9,4.1 -2,7 -1.8,62.8 0,32.2 0.3,57.5 0.5,56.2 0.5,-2.3 2.3,-3.1 2.3,-1 0,0.9 0.4,0.8 1,-0.2 0.9,-1.3 1.1,-1.3 2,-0 0.8,1.2 1,1 1.1,-1 0,-1.4 0.3,-1.9 0.6,-1.3 0.3,0.8 1.1,1 2.1,0.5 0.9,-0.5 5.2,-1.7 9.5,-2.7 4.3,-1 8.1,-2.4 8.4,-3.1 0.8,-2.2 3.2,-1.7 2.6,0.6 -0.3,1.1 0,2 0.6,2 0.6,-0 1.6,-2 2.2,-4.5 0.6,-2.5 1.3,-4.4 1.6,-4.1 0.2,0.2 -0.3,3.2 -1.2,6.6 -0.9,3.4 -1.5,6.4 -1.3,6.5 0.2,0.2 4.6,0.5 9.8,0.6l9.4,0.3 1.4,-4.9c3.6,-13.2 4.4,-15.5 5.3,-15.5 0.6,-0 0.7,0.6 0.2,1.2 -0.4,0.7 -0.8,1.7 -1,2.3 -0.1,0.5 -0.5,2.1 -0.9,3.5l-0.7,2.4 2.8,-2.2c1.5,-1.2 3.9,-2.2 5.2,-2.2 1.3,-0 3.3,-0.4 4.3,-1 1,-0.5 3.5,-1.1 5.4,-1.2 2.4,-0.2 3.5,-0.7 3.1,-1.6 -0.2,-0.6 0,-1.2 0.4,-1.2 0.5,-0 1.2,0.6 1.5,1.2 0.3,0.7 0.4,-0.1 0.1,-1.7 -0.5,-2.8 -0.4,-2.9 0.7,-0.8 1.1,1.8 1.6,2 3.3,1 1.1,-0.6 3.9,-1.2 6.3,-1.2 2.4,-0.1 7,-1.1 10.3,-2.1 5.4,-1.7 5.9,-2.1 6,-4.9 0.1,-2.5 0.3,-2.2 1,1.4 0.5,2.4 0.6,4.9 0.2,5.5 -0.3,0.6 -0.3,0.8 0.2,0.4 0.4,-0.4 2.1,0.9 3.7,2.9 6.1,7.8 15.1,11.4 22.9,9.3 11.3,-3.1 16.3,-8.8 19,-21.7 0.7,-3.4 1.5,-6 1.9,-5.8 0.3,0.2 0.5,-2.4 0.4,-5.8 -0.1,-3.4 0,-4.6 0.2,-2.7 0.7,5.6 1.4,8 2.4,8 0.6,-0 1,-1.2 1,-2.7 0,-2.5 0.1,-2.6 1.3,-0.8 1,1.3 1.6,1.5 2.1,0.6 0.4,-0.6 1,-16.3 1.3,-34.9 0.7,-37.7 0.2,-41.9 -5,-47.9 -1.6,-1.9 -4.7,-4.3 -6.8,-5.4 -3.7,-1.8 -6.4,-1.9 -69.6,-1.9 -52.5,0.1 -66.4,0.3 -68.8,1.4z"
++      android:fillColor="#000000"
++      android:strokeColor="#00000000"/>
++  <path
++      android:pathData="M197,340.8c0,4.9 0.4,6.2 2.4,8.1 4.6,4.3 14.9,3.6 18.2,-1.4 2,-3.1 1.6,-12 -0.6,-12 -1.1,-0 -1.6,1.4 -1.8,5 -0.2,2.7 -0.8,5.5 -1.4,6.2 -1.4,1.8 -10.2,1.7 -11.7,-0.1 -0.6,-0.8 -1.4,-3.7 -1.8,-6.5 -0.4,-3.3 -1,-5.1 -1.9,-5.1 -1,-0 -1.4,1.6 -1.4,5.8z"
++      android:fillColor="#000000"
++      android:strokeColor="#00000000"/>
++  <path
++      android:pathData="M222.4,336.3c-0.3,0.8 -0.4,4.5 -0.2,8.3 0.2,5.3 0.6,6.9 1.8,6.9 1.1,-0 1.6,-1.4 1.8,-5.3 0.2,-2.8 0.5,-5.2 0.8,-5.2 0.3,-0 3.7,2.5 7.6,5.5 3.8,3 7.6,5.5 8.4,5.5 1.1,-0 1.4,-1.9 1.4,-8.5 0,-6.9 -0.3,-8.5 -1.5,-8.5 -1.1,-0 -1.5,1.2 -1.5,4.9 0,2.8 -0.4,5.2 -0.9,5.5 -0.5,0.4 -3.9,-1.9 -7.6,-4.9 -6.9,-5.6 -9.2,-6.5 -10.1,-4.2z"
++      android:fillColor="#000000"
++      android:strokeColor="#00000000"/>
++  <path
++      android:pathData="M247.5,336c-1.3,2.1 0.9,3 7.9,3 5.8,-0 7.6,0.4 8.9,1.8 3.7,4.1 0.4,7.2 -7.6,7.2l-5.7,-0 0,-3.6c0,-2.8 -0.3,-3.5 -1.7,-3.2 -1.4,0.3 -1.8,1.4 -1.8,5.3l0,5 5.5,0.3c10.8,0.6 16,-1.9 16,-7.9 0,-4.3 -1.5,-6.5 -5.1,-7.8 -4,-1.4 -15.6,-1.4 -16.4,-0.1z"
++      android:fillColor="#000000"
++      android:strokeColor="#00000000"/>
++  <path
++      android:pathData="M277.1,336.7c-10.2,5.3 -3.3,16.4 9.3,14.9 8.9,-1 12.7,-8.3 7.1,-13.6 -3.4,-3.2 -11.6,-3.8 -16.4,-1.3z"
++      android:fillColor="#000000"
++      android:strokeColor="#00000000"/>
++  <path
++      android:pathData="M304.4,336.4c-7,3.1 -6.3,12.2 1.2,14.6 5.1,1.7 12,0.7 15,-2.1 3.2,-3 3.2,-7.8 -0.1,-10.9 -3.1,-2.9 -11.4,-3.7 -16.1,-1.6z"
++      android:fillColor="#000000"
++      android:strokeColor="#00000000"/>
++</vector>
+Index: app/src/main/res/values-v21/styles.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values-v21/styles.xml	(date 1619772073764)
++++ app/src/main/res/values-v21/styles.xml	(date 1619772073764)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources>
++    <style name="AppTheme.NoActionBar">
++        <item name="windowActionBar">false</item>
++        <item name="windowNoTitle">true</item>
++        <item name="android:statusBarColor">@android:color/transparent</item>
++    </style>
++</resources>
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_login.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:background=\"@drawable/walpaper\"\r\n    tools:context=\".LoginActivity\">\r\n\r\n    <com.google.android.gms.common.SignInButton\r\n        android:id=\"@+id/sign_in_button\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/textView\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/textView1\"\r\n        android:layout_width=\"253dp\"\r\n        android:layout_height=\"83dp\"\r\n        android:fontFamily=\"@font/aclonica\"\r\n        android:text=\"@string/fundoo_app\"\r\n        android:textColor=\"#FFEB3B\"\r\n        android:textSize=\"36sp\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.19\" />\r\n\r\n    <EditText\r\n        android:id=\"@+id/editText\"\r\n        android:layout_width=\"306dp\"\r\n        android:layout_height=\"65dp\"\r\n        android:layout_marginStart=\"84dp\"\r\n        android:layout_marginLeft=\"84dp\"\r\n        android:layout_marginTop=\"152dp\"\r\n        android:layout_marginEnd=\"85dp\"\r\n        android:layout_marginRight=\"85dp\"\r\n        android:layout_marginBottom=\"313dp\"\r\n        android:autofillHints=\"\"\r\n        android:ems=\"10\"\r\n        android:hint=\"@string/email\"\r\n        android:inputType=\"textEmailAddress\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.511\" />\r\n\r\n    <EditText\r\n        android:id=\"@+id/editText2\"\r\n        android:layout_width=\"303dp\"\r\n        android:layout_height=\"62dp\"\r\n        android:layout_marginStart=\"85dp\"\r\n        android:layout_marginTop=\"8dp\"\r\n        android:layout_marginEnd=\"85dp\"\r\n        android:layout_marginBottom=\"8dp\"\r\n        android:autofillHints=\"\"\r\n        android:ems=\"10\"\r\n        android:hint=\"@string/password\"\r\n        android:inputType=\"textPassword\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/editText\"\r\n        app:layout_constraintVertical_bias=\"0.052\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/textView\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"163dp\"\r\n        android:layout_marginEnd=\"163dp\"\r\n        android:layout_marginBottom=\"136dp\"\r\n        android:text=\"@string/not_registered_sign_up_here\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\" />\r\n\r\n    <Button\r\n        android:id=\"@+id/button2\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"8dp\"\r\n        android:layout_marginTop=\"8dp\"\r\n        android:layout_marginEnd=\"8dp\"\r\n        android:layout_marginBottom=\"8dp\"\r\n        android:text=\"@string/sign_in\"\r\n        app:layout_constraintBottom_toTopOf=\"@+id/textView\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/editText2\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/textView3\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"Forgot Password ?\"\r\n        app:layout_constraintBottom_toTopOf=\"@+id/textView\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/button2\" />\r\n\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_login.xml	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/res/layout-land/activity_main.xml	(date 1620651560527)
+@@ -5,21 +5,12 @@
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     android:background="@drawable/walpaper"
+-    tools:context=".LoginActivity">
++    tools:context=".authentication.RegisterActivity">
+ 
+-    <com.google.android.gms.common.SignInButton
+-        android:id="@+id/sign_in_button"
++    <TextView
++        android:id="@+id/textView1"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+-
+-    <TextView
+-        android:id="@+id/textView1"
+-        android:layout_width="253dp"
+-        android:layout_height="83dp"
+         android:fontFamily="@font/aclonica"
+         android:text="@string/fundoo_app"
+         android:textColor="#FFEB3B"
+@@ -28,32 +19,34 @@
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintVertical_bias="0.19" />
++        app:layout_constraintVertical_bias="0.044" />
++
+ 
+     <EditText
+         android:id="@+id/editText"
+-        android:layout_width="306dp"
+-        android:layout_height="65dp"
+-        android:layout_marginStart="84dp"
++        android:layout_width="157dp"
++        android:layout_height="48dp"
+         android:layout_marginLeft="84dp"
+         android:layout_marginTop="152dp"
+-        android:layout_marginEnd="85dp"
+         android:layout_marginRight="85dp"
+         android:layout_marginBottom="313dp"
+         android:autofillHints=""
+         android:ems="10"
+         android:hint="@string/email"
+         android:inputType="textEmailAddress"
++        android:textColorHighlight="#C61E3C"
++        android:textColorHint="@color/design_default_color_error"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.842"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintVertical_bias="0.511" />
++        app:layout_constraintVertical_bias="0.546" />
+ 
+     <EditText
+         android:id="@+id/editText2"
+-        android:layout_width="303dp"
+-        android:layout_height="62dp"
++        android:layout_width="382dp"
++        android:layout_height="63dp"
+         android:layout_marginStart="85dp"
+         android:layout_marginTop="8dp"
+         android:layout_marginEnd="85dp"
+@@ -62,11 +55,13 @@
+         android:ems="10"
+         android:hint="@string/password"
+         android:inputType="textPassword"
++        android:textColorHint="@color/design_default_color_error"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.497"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/editText"
+-        app:layout_constraintVertical_bias="0.052" />
++        app:layout_constraintVertical_bias="0.021" />
+ 
+     <TextView
+         android:id="@+id/textView"
+@@ -74,35 +69,58 @@
+         android:layout_height="wrap_content"
+         android:layout_marginStart="163dp"
+         android:layout_marginEnd="163dp"
+-        android:layout_marginBottom="136dp"
+-        android:text="@string/not_registered_sign_up_here"
++        android:layout_marginBottom="88dp"
++        android:text="@string/already_have_an_account_sign_in_here"
++        android:textColor="@android:color/holo_orange_dark"
++        android:textColorHighlight="@android:color/holo_orange_dark"
++        android:textColorHint="@android:color/holo_orange_dark"
++        android:textColorLink="@android:color/holo_orange_light"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.502"
+         app:layout_constraintStart_toStartOf="parent" />
+ 
+     <Button
+         android:id="@+id/button2"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
++        android:layout_width="167dp"
++        android:layout_height="64dp"
+         android:layout_marginStart="8dp"
+         android:layout_marginTop="8dp"
+         android:layout_marginEnd="8dp"
+-        android:layout_marginBottom="8dp"
+-        android:text="@string/sign_in"
+-        app:layout_constraintBottom_toTopOf="@+id/textView"
++        android:text="@string/register"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/editText2"
++        app:layout_constraintVertical_bias="0.857" />
++
++    <EditText
++        android:id="@+id/editTextPhone"
++        android:layout_width="383dp"
++        android:layout_height="55dp"
++        android:ems="10"
++        android:hint="@string/phone"
++        android:inputType="phone"
++        android:textColorHint="@android:color/holo_red_dark"
++        android:textColorLink="@color/design_default_color_error"
++        app:layout_constraintBottom_toTopOf="@+id/button2"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/editText2" />
++        app:layout_constraintTop_toBottomOf="@+id/editText2"
++        app:layout_constraintVertical_bias="0.309" />
+ 
+-    <TextView
+-        android:id="@+id/textView3"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:text="Forgot Password ?"
+-        app:layout_constraintBottom_toTopOf="@+id/textView"
++    <EditText
++        android:id="@+id/editTextName"
++        android:layout_width="213dp"
++        android:layout_height="48dp"
++        android:ems="10"
++        android:hint="@string/name"
++        android:inputType="textPersonName"
++        android:textColorHint="@color/design_default_color_error"
++        app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.27"
+         app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+-
+-
++        app:layout_constraintTop_toBottomOf="@+id/textView1"
++        app:layout_constraintVertical_bias="0.104" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout-land/activity_home.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout-land/activity_home.xml	(date 1620204700118)
++++ app/src/main/res/layout-land/activity_home.xml	(date 1620204700118)
+@@ -0,0 +1,40 @@
++<?xml version="1.0" encoding="utf-8"?>
++<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:background="@drawable/walpaper"
++    tools:context=".dashboard.HomeActivity">
++
++    <TextView
++        android:id="@+id/textView2"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_marginStart="163dp"
++        android:layout_marginTop="223dp"
++        android:layout_marginEnd="163dp"
++        android:layout_marginBottom="269dp"
++        android:text="@string/welcome_you_are_logged_in"
++        android:textColor="#FFEB3B"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent" />
++
++
++
++
++    <Button
++        android:id="@+id/logout"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_marginStart="8dp"
++        android:layout_marginTop="28dp"
++        android:layout_marginEnd="8dp"
++        android:text="@string/logout"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/textView2" />
++
++</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout-sw600dp/activity_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout-sw600dp/activity_main.xml	(date 1620651560625)
++++ app/src/main/res/layout-sw600dp/activity_main.xml	(date 1620651560625)
+@@ -0,0 +1,131 @@
++<?xml version="1.0" encoding="utf-8"?>
++<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:background="@drawable/walpaper"
++    tools:context=".authentication.RegisterActivity">
++
++    <TextView
++        android:id="@+id/textView1"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:fontFamily="@font/aclonica"
++        android:text="@string/fundoo_app"
++        android:textColor="#FFEB3B"
++        android:textSize="36sp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.486"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent"
++        app:layout_constraintVertical_bias="0.064" />
++
++
++    <EditText
++        android:id="@+id/editText"
++        android:layout_width="714dp"
++        android:layout_height="134dp"
++        android:layout_marginLeft="84dp"
++        android:layout_marginTop="152dp"
++        android:layout_marginRight="85dp"
++        android:layout_marginBottom="313dp"
++        android:autofillHints=""
++        android:ems="10"
++        android:hint="@string/email"
++        android:inputType="textEmailAddress"
++        android:textColorHint="#FB2020"
++        android:textSize="30sp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent"
++        app:layout_constraintVertical_bias="0.353" />
++
++    <EditText
++        android:id="@+id/editText2"
++        android:layout_width="687dp"
++        android:layout_height="112dp"
++        android:layout_marginStart="85dp"
++        android:layout_marginTop="8dp"
++        android:layout_marginEnd="85dp"
++        android:layout_marginBottom="8dp"
++        android:autofillHints=""
++        android:ems="10"
++        android:hint="@string/password"
++        android:inputType="textPassword"
++        android:textColor="#CF1A1A"
++        android:textColorHint="#E41818"
++        android:textSize="30sp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.368"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/editText"
++        app:layout_constraintVertical_bias="0.036" />
++
++    <TextView
++        android:id="@+id/textView"
++        android:layout_width="540dp"
++        android:layout_height="37dp"
++        android:text="@string/already_have_an_account_sign_in_here"
++        android:textColor="#FFEB3B"
++        android:textSize="18sp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.816"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent"
++        app:layout_constraintVertical_bias="0.982" />
++
++    <Button
++        android:id="@+id/button2"
++        android:layout_width="236dp"
++        android:layout_height="108dp"
++        android:layout_marginStart="8dp"
++        android:layout_marginTop="8dp"
++        android:layout_marginEnd="8dp"
++        android:text="@string/register"
++        android:textSize="30sp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/editText2"
++        app:layout_constraintVertical_bias="0.804" />
++
++    <EditText
++        android:id="@+id/editTextPhone"
++        android:layout_width="694dp"
++        android:layout_height="137dp"
++        android:ems="10"
++        android:hint="@string/phone"
++        android:inputType="phone"
++        android:textColorHint="#EC1D1D"
++        android:textSize="30sp"
++        app:layout_constraintBottom_toTopOf="@+id/button2"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.462"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/editText2"
++        app:layout_constraintVertical_bias="0.143" />
++
++    <EditText
++        android:id="@+id/editTextName"
++        android:layout_width="697dp"
++        android:layout_height="122dp"
++        android:ems="10"
++        android:hint="@string/name"
++        android:inputType="textPersonName"
++        android:textColor="#E81A1A"
++        android:textColorHint="#E11616"
++        android:textSize="30sp"
++        app:layout_constraintBottom_toTopOf="@+id/editText"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.501"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/textView1"
++        app:layout_constraintVertical_bias="0.857" />
++
++
++</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout-sw600dp/activity_home.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.drawerlayout.widget.DrawerLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:id=\"@+id/drawer_layout\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:fitsSystemWindows=\"true\"\r\n    tools:context=\"com.example.fundoapp.HomeActivity\"\r\n    tools:openDrawer=\"start\">\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:orientation=\"vertical\">\r\n\r\n        <androidx.appcompat.widget.Toolbar\r\n            android:id=\"@+id/toolbar\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"?attr/actionBarSize\"\r\n            android:background=\"#177CD6\"\r\n            android:elevation=\"4dp\"\r\n            android:theme=\"@style/ThemeOverlay.AppCompat.Dark.ActionBar\"\r\n            app:popupTheme=\"@style/ThemeOverlay.AppCompat.Light\" />\r\n\r\n        <FrameLayout\r\n            android:id=\"@+id/fragment_container\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"match_parent\" />\r\n\r\n    </LinearLayout>\r\n\r\n    <com.google.android.material.navigation.NavigationView\r\n        android:id=\"@+id/nav_view\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"match_parent\"\r\n        android:layout_gravity=\"start\"\r\n        app:headerLayout=\"@layout/navigation_header\"\r\n        app:menu=\"@menu/drawer_menu\" />\r\n\r\n</androidx.drawerlayout.widget.DrawerLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout-sw600dp/activity_home.xml	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/res/layout-sw600dp/activity_home.xml	(date 1620204700144)
+@@ -6,7 +6,7 @@
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     android:fitsSystemWindows="true"
+-    tools:context="com.example.fundoapp.HomeActivity"
++    tools:context="com.example.fundoapp.dashboard.HomeActivity"
+     tools:openDrawer="start">
+ 
+     <LinearLayout
+Index: app/src/main/res/layout-sw600dp-land/activity_login.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout-sw600dp-land/activity_login.xml	(date 1620651560582)
++++ app/src/main/res/layout-sw600dp-land/activity_login.xml	(date 1620651560582)
+@@ -0,0 +1,137 @@
++<?xml version="1.0" encoding="utf-8"?>
++<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:background="@drawable/walpaper"
++    tools:context=".authentication.LoginActivity">
++
++    <com.google.android.gms.common.SignInButton
++        android:id="@+id/sign_in_button"
++        android:layout_width="161dp"
++        android:layout_height="53dp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.502"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/textView"
++        app:layout_constraintVertical_bias="0.937" />
++
++    <TextView
++        android:id="@+id/textView1"
++        android:layout_width="464dp"
++        android:layout_height="65dp"
++        android:fontFamily="@font/aclonica"
++        android:text="@string/fundoo_app"
++        android:textColor="#FFEB3B"
++        android:textSize="30sp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.617"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent"
++        app:layout_constraintVertical_bias="0.017" />
++
++    <EditText
++        android:id="@+id/editText"
++        android:layout_width="672dp"
++        android:layout_height="83dp"
++        android:layout_marginStart="84dp"
++        android:layout_marginLeft="84dp"
++        android:layout_marginEnd="85dp"
++        android:layout_marginRight="85dp"
++        android:autofillHints=""
++        android:ems="10"
++        android:hint="@string/email"
++        android:inputType="textEmailAddress"
++        android:textColorHighlight="@color/design_default_color_error"
++        android:textColorHint="@color/design_default_color_error"
++        android:textSize="18sp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent"
++        app:layout_constraintVertical_bias="0.312" />
++
++    <EditText
++        android:id="@+id/editText2"
++        android:layout_width="672dp"
++        android:layout_height="94dp"
++        android:layout_marginStart="85dp"
++        android:layout_marginTop="8dp"
++        android:layout_marginEnd="85dp"
++        android:autofillHints=""
++        android:ems="10"
++        android:hint="@string/password"
++        android:inputType="textPassword"
++        android:textColorHint="@color/design_default_color_error"
++        android:textColorLink="@color/purple_500"
++        android:textSize="18sp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.499"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent"
++        app:layout_constraintVertical_bias="0.432" />
++
++    <TextView
++        android:id="@+id/textView"
++        android:layout_width="429dp"
++        android:layout_height="20dp"
++        android:layout_marginStart="163dp"
++        android:layout_marginEnd="163dp"
++        android:text="@string/not_registered_sign_up_here"
++        android:textColor="#B62C2C"
++        android:textSize="12sp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.627"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent"
++        app:layout_constraintVertical_bias="0.6" />
++
++    <Button
++        android:id="@+id/button2"
++        android:layout_width="150dp"
++        android:layout_height="51dp"
++        android:layout_marginStart="8dp"
++        android:layout_marginTop="8dp"
++        android:layout_marginEnd="8dp"
++        android:text="@string/sign_in"
++        android:textSize="10sp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.499"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/editText2"
++        app:layout_constraintVertical_bias="0.684" />
++
++    <TextView
++        android:id="@+id/textView3"
++        android:layout_width="340dp"
++        android:layout_height="21dp"
++        android:text="Forgot Password ?"
++        android:textColor="@color/design_default_color_error"
++        android:textSize="12sp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.569"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent"
++        app:layout_constraintVertical_bias="0.727" />
++
++    <ImageView
++        android:id="@+id/imageView2"
++        android:layout_width="167dp"
++        android:layout_height="89dp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.499"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent"
++        app:layout_constraintVertical_bias="0.163"
++        app:srcCompat="@drawable/image" />
++
++
++</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout-sw600dp-land/activity_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout-sw600dp-land/activity_main.xml	(date 1620651560594)
++++ app/src/main/res/layout-sw600dp-land/activity_main.xml	(date 1620651560594)
+@@ -0,0 +1,134 @@
++<?xml version="1.0" encoding="utf-8"?>
++<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:background="@drawable/walpaper"
++    tools:context=".authentication.RegisterActivity">
++
++
++    <TextView
++        android:id="@+id/textView1"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:fontFamily="@font/aclonica"
++        android:text="@string/fundoo_app"
++        android:textColor="#FFEB3B"
++        android:textSize="36sp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.488"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent"
++        app:layout_constraintVertical_bias="0.041" />
++
++    <EditText
++        android:id="@+id/editText"
++        android:layout_width="604dp"
++        android:layout_height="106dp"
++        android:layout_marginLeft="84dp"
++        android:layout_marginTop="152dp"
++        android:layout_marginRight="85dp"
++        android:layout_marginBottom="313dp"
++        android:autofillHints=""
++        android:ems="10"
++        android:hint="@string/email"
++        android:inputType="textEmailAddress"
++        android:textColorHint="#FB2020"
++        android:textSize="30sp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.499"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent"
++        app:layout_constraintVertical_bias="0.372" />
++
++    <EditText
++        android:id="@+id/editText2"
++        android:layout_width="602dp"
++        android:layout_height="100dp"
++        android:layout_marginStart="85dp"
++        android:layout_marginTop="8dp"
++        android:layout_marginEnd="85dp"
++        android:layout_marginBottom="8dp"
++        android:autofillHints=""
++        android:ems="10"
++        android:hint="@string/password"
++        android:inputType="textPassword"
++        android:textColor="#CF1A1A"
++        android:textColorHint="#E41818"
++        android:textSize="30sp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.494"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/editText"
++        app:layout_constraintVertical_bias="0.0" />
++
++    <TextView
++        android:id="@+id/textView"
++        android:layout_width="544dp"
++        android:layout_height="31dp"
++        android:layout_marginStart="163dp"
++        android:layout_marginEnd="163dp"
++        android:layout_marginBottom="16dp"
++        android:text="@string/already_have_an_account_sign_in_here"
++        android:textColor="#FFEB3B"
++        android:textSize="18sp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.7"
++        app:layout_constraintStart_toStartOf="parent" />
++
++    <Button
++        android:id="@+id/button2"
++        android:layout_width="210dp"
++        android:layout_height="51dp"
++        android:layout_marginStart="8dp"
++        android:layout_marginTop="8dp"
++        android:layout_marginEnd="8dp"
++        android:layout_marginBottom="8dp"
++        android:text="@string/register"
++        android:textSize="24sp"
++        app:layout_constraintBottom_toTopOf="@+id/textView"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/editText2"
++        app:layout_constraintVertical_bias="0.909" />
++
++    <EditText
++        android:id="@+id/editTextPhone"
++        android:layout_width="618dp"
++        android:layout_height="102dp"
++        android:ems="10"
++        android:hint="@string/phone"
++        android:inputType="phone"
++        android:textColorHint="#EC1D1D"
++        android:textSize="30sp"
++        app:layout_constraintBottom_toTopOf="@+id/button2"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.502"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/editText2"
++        app:layout_constraintVertical_bias="0.0" />
++
++    <EditText
++        android:id="@+id/editTextName"
++        android:layout_width="605dp"
++        android:layout_height="99dp"
++        android:ems="10"
++        android:hint="@string/name"
++        android:inputType="textPersonName"
++        android:textColor="#E81A1A"
++        android:textColorHint="#E11616"
++        android:textSize="30sp"
++        app:layout_constraintBottom_toTopOf="@+id/editText"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.501"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/textView1"
++        app:layout_constraintVertical_bias="0.857" />
++
++
++</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout-sw600dp-land/activity_home.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout-sw600dp-land/activity_home.xml	(date 1620204700189)
++++ app/src/main/res/layout-sw600dp-land/activity_home.xml	(date 1620204700189)
+@@ -0,0 +1,41 @@
++<?xml version="1.0" encoding="utf-8"?>
++<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:id="@+id/drawer_layout"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:fitsSystemWindows="true"
++    tools:context="com.example.fundoapp.dashboard.HomeActivity"
++    tools:openDrawer="start">
++
++    <LinearLayout
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:orientation="horizontal">
++
++        <androidx.appcompat.widget.Toolbar
++            android:id="@+id/toolbar"
++            android:layout_width="match_parent"
++            android:layout_height="?attr/actionBarSize"
++            android:background="#177CD6"
++            android:elevation="4dp"
++            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
++            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
++
++        <FrameLayout
++            android:id="@+id/fragment_container"
++            android:layout_width="match_parent"
++            android:layout_height="match_parent" />
++
++    </LinearLayout>
++
++    <com.google.android.material.navigation.NavigationView
++        android:id="@+id/nav_view"
++        android:layout_width="wrap_content"
++        android:layout_height="match_parent"
++        android:layout_gravity="start"
++        app:headerLayout="@layout/navigation_header"
++        app:menu="@menu/drawer_menu" />
++
++</androidx.drawerlayout.widget.DrawerLayout>
+\ No newline at end of file
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/vcs.xml	(date 1619179072782)
++++ .idea/vcs.xml	(date 1619179072782)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="$PROJECT_DIR$" vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/gradle.xml	(date 1619236769634)
++++ .idea/gradle.xml	(date 1619236769634)
+@@ -0,0 +1,22 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="GradleMigrationSettings" migrationVersion="1" />
++  <component name="GradleSettings">
++    <option name="linkedExternalProjectsSettings">
++      <GradleProjectSettings>
++        <option name="testRunner" value="PLATFORM" />
++        <option name="distributionType" value="DEFAULT_WRAPPED" />
++        <option name="externalProjectPath" value="$PROJECT_DIR$" />
++        <option name="gradleJvm" value="1.8" />
++        <option name="modules">
++          <set>
++            <option value="$PROJECT_DIR$" />
++            <option value="$PROJECT_DIR$/app" />
++          </set>
++        </option>
++        <option name="resolveModulePerSourceSet" value="false" />
++        <option name="useQualifiedModuleNames" value="true" />
++      </GradleProjectSettings>
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(date 1619167784134)
++++ .idea/misc.xml	(date 1619167784134)
+@@ -0,0 +1,52 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="NullableNotNullManager">
++    <option name="myDefaultNullable" value="org.jetbrains.annotations.Nullable" />
++    <option name="myDefaultNotNull" value="androidx.annotation.RecentlyNonNull" />
++    <option name="myNullables">
++      <value>
++        <list size="14">
++          <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.Nullable" />
++          <item index="1" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.Nullable" />
++          <item index="2" class="java.lang.String" itemvalue="android.support.annotation.Nullable" />
++          <item index="3" class="java.lang.String" itemvalue="androidx.annotation.Nullable" />
++          <item index="4" class="java.lang.String" itemvalue="androidx.annotation.RecentlyNullable" />
++          <item index="5" class="java.lang.String" itemvalue="com.android.annotations.Nullable" />
++          <item index="6" class="java.lang.String" itemvalue="javax.annotation.Nullable" />
++          <item index="7" class="java.lang.String" itemvalue="javax.annotation.CheckForNull" />
++          <item index="8" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.qual.Nullable" />
++          <item index="9" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NullableDecl" />
++          <item index="10" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NullableType" />
++          <item index="11" class="java.lang.String" itemvalue="org.eclipse.jdt.annotation.Nullable" />
++          <item index="12" class="java.lang.String" itemvalue="io.reactivex.annotations.Nullable" />
++          <item index="13" class="java.lang.String" itemvalue="io.reactivex.rxjava3.annotations.Nullable" />
++        </list>
++      </value>
++    </option>
++    <option name="myNotNulls">
++      <value>
++        <list size="13">
++          <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.NotNull" />
++          <item index="1" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.NonNull" />
++          <item index="2" class="java.lang.String" itemvalue="android.support.annotation.NonNull" />
++          <item index="3" class="java.lang.String" itemvalue="androidx.annotation.NonNull" />
++          <item index="4" class="java.lang.String" itemvalue="androidx.annotation.RecentlyNonNull" />
++          <item index="5" class="java.lang.String" itemvalue="com.android.annotations.NonNull" />
++          <item index="6" class="java.lang.String" itemvalue="javax.annotation.Nonnull" />
++          <item index="7" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.qual.NonNull" />
++          <item index="8" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NonNullDecl" />
++          <item index="9" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NonNullType" />
++          <item index="10" class="java.lang.String" itemvalue="org.eclipse.jdt.annotation.NonNull" />
++          <item index="11" class="java.lang.String" itemvalue="io.reactivex.annotations.NonNull" />
++          <item index="12" class="java.lang.String" itemvalue="io.reactivex.rxjava3.annotations.NonNull" />
++        </list>
++      </value>
++    </option>
++  </component>
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
++    <output url="file://$PROJECT_DIR$/build/classes" />
++  </component>
++  <component name="ProjectType">
++    <option name="id" value="Android" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/compiler.xml	(date 1619165759269)
++++ .idea/compiler.xml	(date 1619165759269)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="CompilerConfiguration">
++    <bytecodeTargetLevel target="1.8" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/.gitignore	(date 1619165759717)
++++ .idea/.gitignore	(date 1619165759717)
+@@ -0,0 +1,3 @@
++# Default ignored files
++/shelf/
++/workspace.xml
+Index: .idea/jarRepositories.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/jarRepositories.xml	(date 1619775685635)
++++ .idea/jarRepositories.xml	(date 1619775685635)
+@@ -0,0 +1,30 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="RemoteRepositoriesConfiguration">
++    <remote-repository>
++      <option name="id" value="central" />
++      <option name="name" value="Maven Central repository" />
++      <option name="url" value="https://repo1.maven.org/maven2" />
++    </remote-repository>
++    <remote-repository>
++      <option name="id" value="jboss.community" />
++      <option name="name" value="JBoss Community repository" />
++      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
++    </remote-repository>
++    <remote-repository>
++      <option name="id" value="BintrayJCenter" />
++      <option name="name" value="BintrayJCenter" />
++      <option name="url" value="https://jcenter.bintray.com/" />
++    </remote-repository>
++    <remote-repository>
++      <option name="id" value="Google" />
++      <option name="name" value="Google" />
++      <option name="url" value="https://dl.google.com/dl/android/maven2/" />
++    </remote-repository>
++    <remote-repository>
++      <option name="id" value="maven" />
++      <option name="name" value="maven" />
++      <option name="url" value="https://jitpack.io" />
++    </remote-repository>
++  </component>
++</project>
+\ No newline at end of file
+Index: app/src/main/java/com/example/fundoapp/SplashActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.fundoapp;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.os.Handler;\r\nimport android.view.WindowManager;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\n\r\npublic class SplashActivity extends AppCompatActivity {\r\n\r\n    private boolean isLoggedIn;\r\n    SharedPreference sharedPreference;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_splash);\r\n        sharedPreference = new SharedPreference(this);\r\n\r\n        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams\r\n                .FLAG_FULLSCREEN);\r\n\r\n        new Handler().postDelayed(() -> {\r\n\r\n            isLoggedIn = sharedPreference.getLoggedIN();\r\n            Intent intent;\r\n             if (isLoggedIn){\r\n                 intent = new Intent(SplashActivity.this, HomeActivity.class);\r\n             }else{\r\n                 intent = new Intent(SplashActivity.this, LoginActivity.class);\r\n             }\r\n            startActivity(intent);\r\n            finish();\r\n\r\n\r\n        },4000);\r\n\r\n    }\r\n}
+===================================================================
+--- app/src/main/java/com/example/fundoapp/SplashActivity.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/java/com/example/fundoapp/ui/SplashActivity.java	(date 1620651560570)
+@@ -1,4 +1,4 @@
+-package com.example.fundoapp;
++package com.example.fundoapp.ui;
+ 
+ import android.content.Intent;
+ import android.os.Bundle;
+@@ -7,6 +7,10 @@
+ 
+ import androidx.appcompat.app.AppCompatActivity;
+ 
++import com.example.fundoapp.dashboard.HomeActivity;
++import com.example.fundoapp.R;
++import com.example.fundoapp.SharedPreference;
++
+ 
+ public class SplashActivity extends AppCompatActivity {
+ 
+Index: app/src/main/java/com/example/fundoapp/ReminderFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.fundoapp;\r\n\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\n\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\n\r\npublic class ReminderFragment extends Fragment {\r\n\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        return inflater.inflate(R.layout.fragment_reminder, container, false);\r\n    }\r\n}\r\n
+===================================================================
+--- app/src/main/java/com/example/fundoapp/ReminderFragment.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/java/com/example/fundoapp/fragments/ReminderFragment.java	(date 1620203148255)
+@@ -1,4 +1,4 @@
+-package com.example.fundoapp;
++package com.example.fundoapp.fragments;
+ 
+ import android.os.Bundle;
+ import android.view.LayoutInflater;
+@@ -8,6 +8,8 @@
+ import androidx.annotation.Nullable;
+ import androidx.fragment.app.Fragment;
+ 
++import com.example.fundoapp.R;
++
+ public class ReminderFragment extends Fragment {
+ 
+     @Nullable
+Index: app/src/main/java/com/example/fundoapp/fragments/AddNotes_Fragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.fundoapp.fragments;\r\n\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.EditText;\r\nimport android.widget.ProgressBar;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport com.example.fundoapp.R;\r\nimport com.google.android.material.floatingactionbutton.FloatingActionButton;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\nimport com.google.firebase.firestore.DocumentReference;\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\n\r\nimport java.util.HashMap;\r\nimport java.util.Map;\r\nimport java.util.Objects;\r\n\r\npublic class AddNotes_Fragment extends Fragment {\r\n\r\n    private EditText mcreatetitleofnote,mcreatecontentofnote;\r\n    FirebaseAuth firebaseAuth;\r\n    FirebaseUser firebaseUser;\r\n    FirebaseFirestore firebaseFirestore;\r\n    ProgressBar mprogressbarofcreatenote;\r\n\r\n\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater,  ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        return inflater.inflate(R.layout.fragment_addnotes, container, false);\r\n    }\r\n\r\n    public void onActivityCreated(@Nullable Bundle savedInstanceState) {\r\n\r\n        super.onActivityCreated(savedInstanceState);\r\n\r\n        FloatingActionButton msavenote = (FloatingActionButton) Objects.requireNonNull(getView()).findViewById(R.id.savenote);\r\n        mcreatecontentofnote = (EditText) getView().findViewById(R.id.createcontentofnote);\r\n        mcreatetitleofnote = (EditText) getView().findViewById(R.id.createtitleofnote);\r\n        mprogressbarofcreatenote = (ProgressBar) getView().findViewById(R.id.progressbarofcreatenote);\r\n        firebaseAuth = FirebaseAuth.getInstance();\r\n        firebaseFirestore = FirebaseFirestore.getInstance();\r\n        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();\r\n\r\n        msavenote.setOnClickListener(this::onClick);\r\n\r\n    }\r\n\r\n    private void onClick(View v) {\r\n        String title = mcreatetitleofnote.getText().toString();\r\n        String content = mcreatecontentofnote.getText().toString();\r\n        String user = firebaseUser.getDisplayName();\r\n        String email = firebaseUser.getEmail();\r\n        if (title.isEmpty() || content.isEmpty()) {\r\n            Toast.makeText(getContext(), \"Both field are Require\", Toast.LENGTH_SHORT).show();\r\n        } else {\r\n            String currentUID = firebaseUser.getUid();\r\n            DocumentReference exist = firebaseFirestore.collection(\"Users\").document(firebaseUser.getUid());\r\n            if (currentUID.equals(exist.toString())) {\r\n                mprogressbarofcreatenote.setVisibility(View.VISIBLE);\r\n                DocumentReference documentReference = firebaseFirestore.collection(\"Users\")\r\n                        .document(firebaseUser.getUid()).collection(\"myNotes\").document();\r\n                Map<String, Object> note = new HashMap<>();\r\n                note.put(\"title\", title);\r\n                note.put(\"content\", content);\r\n//                note.put(\"user\",user);\r\n                mprogressbarofcreatenote.setVisibility(View.VISIBLE);\r\n                documentReference.set(note).addOnSuccessListener(aVoid -> Toast.makeText(getContext(),\r\n                        \"Note Created Succesffuly\", Toast.LENGTH_SHORT).show()).\r\n                        addOnFailureListener(e -> Toast.makeText(getContext(), \"Failed To Create Note\", Toast.LENGTH_SHORT).show());\r\n                mprogressbarofcreatenote.setVisibility(View.INVISIBLE);\r\n            } else\r\n                mprogressbarofcreatenote.setVisibility(View.VISIBLE);\r\n            Map<String, Object> note1 = new HashMap<>();\r\n            note1.put(\"UserName\", user);\r\n            note1.put(\"Email\", email);\r\n            DocumentReference documentReference;\r\n\r\n            documentReference = firebaseFirestore.collection(\"Users\")\r\n                    .document(firebaseUser.getUid()).collection(\"myNotes\").document();\r\n            Map<String, Object> note = new HashMap<>();\r\n            note.put(\"title\", title);\r\n            note.put(\"content\", content);\r\n            firebaseFirestore.collection(\"Users\").document(firebaseUser.getUid()).set(note1);\r\n\r\n\r\n//                note.put(\"user\",user);\r\n            mprogressbarofcreatenote.setVisibility(View.VISIBLE);\r\n            documentReference.set(note).addOnSuccessListener(aVoid -> Toast.makeText(getContext(),\r\n                    \"Note Created Succesffuly\", Toast.LENGTH_SHORT).show()).\r\n                    addOnFailureListener(e -> Toast.makeText(getContext(), \"Failed To Create Note\", Toast.LENGTH_SHORT).show());\r\n            mprogressbarofcreatenote.setVisibility(View.INVISIBLE);\r\n\r\n\r\n//                mprogressbarofcreatenote.setVisibility(View.VISIBLE);\r\n//                DocumentReference documentReference=firebaseFirestore.collection(\"Users\")\r\n//                        .document(firebaseUser.getUid()).collection(\"myNotes\").document();\r\n//                Map<String ,Object> note= new HashMap<>();\r\n//                note.put(\"title\",title);\r\n//                note.put(\"content\",content);\r\n////                note.put(\"user\",user);\r\n//                mprogressbarofcreatenote.setVisibility(View.VISIBLE);\r\n//                DocumentReference documentReferenc=firebaseFirestore.collection(\"Users\")\r\n//                        .document(firebaseUser.getUid()).collection(\"myNotes\").document();\r\n//                Map<String ,Object> note1= new HashMap<>();\r\n//                note.put(\"UserName\",user);\r\n//                note.put(\"Email\",email);\r\n\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/fundoapp/fragments/AddNotes_Fragment.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/java/com/example/fundoapp/fragments/AddNotes_Fragment.java	(date 1620386442607)
+@@ -24,7 +24,7 @@
+ 
+ public class AddNotes_Fragment extends Fragment {
+ 
+-    private EditText mcreatetitleofnote,mcreatecontentofnote;
++    private EditText mcreatetitleofnote, mcreatecontentofnote;
+     FirebaseAuth firebaseAuth;
+     FirebaseUser firebaseUser;
+     FirebaseFirestore firebaseFirestore;
+@@ -32,7 +32,7 @@
+ 
+ 
+     @Override
+-    public View onCreateView(LayoutInflater inflater,  ViewGroup container, @Nullable Bundle savedInstanceState) {
++    public View onCreateView(LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState) {
+         return inflater.inflate(R.layout.fragment_addnotes, container, false);
+     }
+ 
+@@ -40,10 +40,10 @@
+ 
+         super.onActivityCreated(savedInstanceState);
+ 
+-        FloatingActionButton msavenote = (FloatingActionButton) Objects.requireNonNull(getView()).findViewById(R.id.savenote);
+-        mcreatecontentofnote = (EditText) getView().findViewById(R.id.createcontentofnote);
+-        mcreatetitleofnote = (EditText) getView().findViewById(R.id.createtitleofnote);
+-        mprogressbarofcreatenote = (ProgressBar) getView().findViewById(R.id.progressbarofcreatenote);
++        FloatingActionButton msavenote = Objects.requireNonNull(getView()).findViewById(R.id.savenote);
++        mcreatecontentofnote = getView().findViewById(R.id.createcontentofnote);
++        mcreatetitleofnote = getView().findViewById(R.id.createtitleofnote);
++        mprogressbarofcreatenote = getView().findViewById(R.id.progressbarofcreatenote);
+         firebaseAuth = FirebaseAuth.getInstance();
+         firebaseFirestore = FirebaseFirestore.getInstance();
+         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+@@ -53,15 +53,22 @@
+     }
+ 
+     private void onClick(View v) {
++
++        addNotes();
++    }
++
++    private void addNotes() {
+         String title = mcreatetitleofnote.getText().toString();
+         String content = mcreatecontentofnote.getText().toString();
+-        String user = firebaseUser.getDisplayName();
++        String userName = firebaseUser.getDisplayName();
+         String email = firebaseUser.getEmail();
+         if (title.isEmpty() || content.isEmpty()) {
+             Toast.makeText(getContext(), "Both field are Require", Toast.LENGTH_SHORT).show();
+         } else {
+             String currentUID = firebaseUser.getUid();
+-            DocumentReference exist = firebaseFirestore.collection("Users").document(firebaseUser.getUid());
++            DocumentReference exist = firebaseFirestore.collection("Users")
++                    .document(firebaseUser.getUid());
++
+             if (currentUID.equals(exist.toString())) {
+                 mprogressbarofcreatenote.setVisibility(View.VISIBLE);
+                 DocumentReference documentReference = firebaseFirestore.collection("Users")
+@@ -77,9 +84,9 @@
+                 mprogressbarofcreatenote.setVisibility(View.INVISIBLE);
+             } else
+                 mprogressbarofcreatenote.setVisibility(View.VISIBLE);
+-            Map<String, Object> note1 = new HashMap<>();
+-            note1.put("UserName", user);
+-            note1.put("Email", email);
++            Map<String, Object> user = new HashMap<>();
++            user.put("UserName", userName);
++            user.put("Email", email);
+             DocumentReference documentReference;
+ 
+             documentReference = firebaseFirestore.collection("Users")
+@@ -87,8 +94,7 @@
+             Map<String, Object> note = new HashMap<>();
+             note.put("title", title);
+             note.put("content", content);
+-            firebaseFirestore.collection("Users").document(firebaseUser.getUid()).set(note1);
+-
++            firebaseFirestore.collection("Users").document(firebaseUser.getUid()).set(user);
+ 
+ //                note.put("user",user);
+             mprogressbarofcreatenote.setVisibility(View.VISIBLE);
+@@ -97,21 +103,6 @@
+                     addOnFailureListener(e -> Toast.makeText(getContext(), "Failed To Create Note", Toast.LENGTH_SHORT).show());
+             mprogressbarofcreatenote.setVisibility(View.INVISIBLE);
+ 
+-
+-//                mprogressbarofcreatenote.setVisibility(View.VISIBLE);
+-//                DocumentReference documentReference=firebaseFirestore.collection("Users")
+-//                        .document(firebaseUser.getUid()).collection("myNotes").document();
+-//                Map<String ,Object> note= new HashMap<>();
+-//                note.put("title",title);
+-//                note.put("content",content);
+-////                note.put("user",user);
+-//                mprogressbarofcreatenote.setVisibility(View.VISIBLE);
+-//                DocumentReference documentReferenc=firebaseFirestore.collection("Users")
+-//                        .document(firebaseUser.getUid()).collection("myNotes").document();
+-//                Map<String ,Object> note1= new HashMap<>();
+-//                note.put("UserName",user);
+-//                note.put("Email",email);
+-
+         }
+     }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/fundoapp/Archive_Fragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.fundoapp;\r\n\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\n\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\n\r\npublic class Archive_Fragment extends Fragment {\r\n\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        return inflater.inflate(R.layout.fragment_archive, container, false);\r\n    }\r\n}\r\n
+===================================================================
+--- app/src/main/java/com/example/fundoapp/Archive_Fragment.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/java/com/example/fundoapp/fragments/Archive_Fragment.java	(date 1620203148808)
+@@ -1,4 +1,4 @@
+-package com.example.fundoapp;
++package com.example.fundoapp.fragments;
+ 
+ import android.os.Bundle;
+ import android.view.LayoutInflater;
+@@ -8,6 +8,8 @@
+ import androidx.annotation.Nullable;
+ import androidx.fragment.app.Fragment;
+ 
++import com.example.fundoapp.R;
++
+ public class Archive_Fragment extends Fragment {
+ 
+     @Nullable
+Index: app/src/main/java/com/example/fundoapp/authentication/LoginActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.fundoapp.authentication;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.WindowManager;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AlertDialog;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport com.example.fundoapp.dashboard.HomeActivity;\r\nimport com.example.fundoapp.R;\r\nimport com.example.fundoapp.RegisterActivity;\r\nimport com.example.fundoapp.SharedPreference;\r\nimport com.google.android.gms.auth.api.signin.GoogleSignIn;\r\nimport com.google.android.gms.auth.api.signin.GoogleSignInAccount;\r\nimport com.google.android.gms.auth.api.signin.GoogleSignInClient;\r\nimport com.google.android.gms.auth.api.signin.GoogleSignInOptions;\r\nimport com.google.android.gms.common.SignInButton;\r\nimport com.google.android.gms.common.api.ApiException;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.firebase.auth.AuthCredential;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\nimport com.google.firebase.auth.GoogleAuthProvider;\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\n\r\nimport java.util.HashMap;\r\nimport java.util.Map;\r\n\r\npublic class LoginActivity extends AppCompatActivity {\r\n    private SignInButton signInButton;\r\n    private GoogleSignInClient mGoogleSignInClient;\r\n\r\n    private final String TAG = \"LoginActivity\";\r\n    private final int RC_SIGN_IN = 1;\r\n    EditText emailId, passwordId;\r\n    Button btnSignIn;\r\n    TextView textViewSignUp,forgotpassword;\r\n    FirebaseAuth mFirebaseAuth;\r\n    private FirebaseAuth.AuthStateListener mAuthStateListener;\r\n    SharedPreference sharedPreference;\r\n    FirebaseFirestore firebaseFirestore;\r\n    FirebaseUser firebaseUser;\r\n\r\n\r\n\r\n    @Override\r\n    protected void onStart() {\r\n        super.onStart();\r\n\r\n\r\n        FirebaseUser user = mFirebaseAuth.getCurrentUser();\r\n        if(user!=null){\r\n            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);\r\n            startActivity(intent);\r\n        }\r\n\r\n\r\n    }\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_login);\r\n        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);\r\n\r\n        findViews();\r\n        setupClickListeners();\r\n        setForgotpassword();\r\n\r\n    }\r\n    private void findViews(){\r\n\r\n        signInButton = findViewById(R.id.sign_in_button);\r\n        mFirebaseAuth = FirebaseAuth.getInstance();\r\n        emailId = findViewById(R.id.editText);\r\n        passwordId = findViewById(R.id.editText2);\r\n        btnSignIn = findViewById(R.id.button2);\r\n        textViewSignUp = findViewById(R.id.textView);\r\n        forgotpassword = findViewById(R.id.textView3);\r\n        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)\r\n                .requestIdToken(getString(R.string.default_web_client_id))\r\n                .requestEmail()\r\n                .build();\r\n\r\n        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);\r\n        sharedPreference = new SharedPreference(this);\r\n        firebaseFirestore = FirebaseFirestore.getInstance();\r\n        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();\r\n    }\r\n\r\n    private void setupClickListeners(){\r\n        btnSignIn.setOnClickListener( v -> signInValidation());\r\n\r\n        textViewSignUp.setOnClickListener(v -> {\r\n            Intent intSignUp = new Intent(LoginActivity.this, RegisterActivity.class);\r\n            startActivity(intSignUp);\r\n        });\r\n\r\n        signInButton.setOnClickListener(view -> signIn());\r\n\r\n    }\r\n\r\n    private void signIn(){\r\n        Intent signInIntent = mGoogleSignInClient.getSignInIntent();\r\n        startActivityForResult(signInIntent, RC_SIGN_IN);\r\n    }\r\n\r\n    @Override\r\n    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {\r\n        super.onActivityResult(requestCode, resultCode, data);\r\n\r\n        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);\r\n        if (requestCode == RC_SIGN_IN) {\r\n            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);\r\n            try {\r\n                // Google Sign In was successful, authenticate with Firebase\r\n                GoogleSignInAccount account = task.getResult(ApiException.class);\r\n                assert account != null;\r\n                Log.d(TAG, \"firebaseAuthWithGoogle:\" + account.getId() );\r\n                firebaseAuthWithGoogle(account.getIdToken());\r\n            } catch (ApiException e) {\r\n                // Google Sign In failed, update UI appropriately\r\n                Log.w(TAG, \"Google sign in failed\", e);\r\n            }\r\n        }\r\n    }\r\n\r\n    private void firebaseAuthWithGoogle(String idToken) {\r\n\r\n        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);\r\n        mFirebaseAuth.signInWithCredential(credential)\r\n                .addOnCompleteListener(this, task -> {\r\n\r\n                    if (task.isSuccessful()) {\r\n                        if (task.getResult().getAdditionalUserInfo().isNewUser()){\r\n                            String userName = firebaseUser.getDisplayName();\r\n                            String email = firebaseUser.getEmail();\r\n                            Map<String, Object> user = new HashMap<>();\r\n                            user.put(\"UserName\", userName);\r\n                            user.put(\"Email\", email);\r\n                            firebaseFirestore.collection(\"Users\").document(firebaseUser.getUid()).set(user);\r\n                        }\r\n                        // Sign in success, update UI with the signed-in user's information\r\n                        Log.d(TAG, \"signInWithCredential:success\");\r\n                        FirebaseUser user = mFirebaseAuth.getCurrentUser();\r\n                        Intent intent = new Intent(LoginActivity.this,HomeActivity.class);\r\n                        startActivity(intent);\r\n                        finish();\r\n                        updateUI(user);\r\n                    } else {\r\n                        // If sign in fails, display a message to the user.\r\n                        Log.w(TAG, \"signInWithCredential:failure\", task.getException());\r\n                        updateUI(null);\r\n                    }\r\n                });\r\n    }\r\n\r\n    private void updateUI(FirebaseUser user) {\r\n\r\n        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());\r\n        if(account !=  null){\r\n            String personName = account.getDisplayName();\r\n            String personEmail = account.getEmail();\r\n\r\n            Toast.makeText(LoginActivity.this,personName + personEmail ,Toast.LENGTH_SHORT).show();\r\n        }\r\n\r\n    }\r\n\r\n    private void setForgotpassword(){\r\n        forgotpassword.setOnClickListener( v -> {\r\n            final EditText resetMail = new EditText(v.getContext());\r\n            final AlertDialog.Builder passwordResetDialog = new AlertDialog.Builder(v.getContext());\r\n            passwordResetDialog.setTitle(\"Reset Password ?\");\r\n            passwordResetDialog.setMessage(\"Enter Your Email To Received Reset Link.\");\r\n            passwordResetDialog.setView(resetMail);\r\n\r\n            passwordResetDialog.setPositiveButton(\"Conform\", (dialog, which) -> {\r\n                // extract the email and send reset link\r\n                String mail = resetMail.getText().toString();\r\n                mFirebaseAuth.sendPasswordResetEmail(mail).addOnSuccessListener(aVoid -> Toast.makeText(LoginActivity.this, \"Reset Link Sent To Your Email.\", Toast.LENGTH_SHORT).show()).addOnFailureListener(e -> Toast.makeText(LoginActivity.this, \"Error ! Reset Link is Not Sent\" + e.getMessage(), Toast.LENGTH_SHORT).show());\r\n\r\n            });\r\n\r\n            passwordResetDialog.setNegativeButton(\"Cancel\", (dialog, which) -> {\r\n                // close the dialog\r\n            });\r\n\r\n            passwordResetDialog.create().show();\r\n\r\n\r\n        });\r\n    }\r\n\r\n    public void signInValidation(){\r\n        String email = emailId.getText().toString();\r\n        String password = passwordId.getText().toString();\r\n        if(email.isEmpty()){\r\n            emailId.setError(\"Please enter email id\");\r\n            emailId.requestFocus();\r\n        } else if(!email.matches(\"^[a-zA-Z]+([._+-]{0,1}[a-zA-Z0-9]+)*@[a-zA-Z0-9]+.[a-zA-Z]{2,4}+(?:\\\\.[a-z]{2,}){0,1}$\")) {\r\n            emailId.setError(\"Please enter valid email id\");\r\n            emailId.requestFocus();\r\n        }else  if(password.isEmpty()){\r\n            passwordId.setError(\"Please enter your password\");\r\n            passwordId.requestFocus();\r\n        } else  if(!password.matches(\"(^(?=.*[A-Z]))(?=.*[0-9])(?=.*[a-z])(?=.*[@*&^%#-*+!]{1}).{8,}$\")) {\r\n            passwordId.setError(\"Please enter Valid password\");\r\n            passwordId.requestFocus();\r\n        }\r\n        else  if(!(email.isEmpty() && password.isEmpty())){\r\n            mFirebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, task -> {\r\n                if(!task.isSuccessful()){\r\n                    Toast.makeText(LoginActivity.this,\"Login Error, Please Login Again\",Toast.LENGTH_SHORT).show();\r\n                }\r\n                else{\r\n                    sharedPreference.setLoggedIN(true);\r\n                    finish();\r\n                    Intent intToHome = new Intent(LoginActivity.this,HomeActivity.class);\r\n                    startActivity(intToHome);\r\n                }\r\n            });\r\n        }\r\n        else{\r\n            Toast.makeText(LoginActivity.this,\"Error Occurred!\",Toast.LENGTH_SHORT).show();\r\n\r\n        }\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/fundoapp/authentication/LoginActivity.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/java/com/example/fundoapp/authentication/LoginActivity.java	(date 1620651560636)
+@@ -15,7 +15,6 @@
+ 
+ import com.example.fundoapp.dashboard.HomeActivity;
+ import com.example.fundoapp.R;
+-import com.example.fundoapp.RegisterActivity;
+ import com.example.fundoapp.SharedPreference;
+ import com.google.android.gms.auth.api.signin.GoogleSignIn;
+ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+Index: app/src/main/java/com/example/fundoapp/authentication/RegisterActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.fundoapp.authentication;\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport com.example.fundoapp.LoginActivity;\r\nimport com.example.fundoapp.R;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\nimport com.google.firebase.firestore.DocumentReference;\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\n\r\nimport java.util.HashMap;\r\nimport java.util.Map;\r\n\r\npublic class RegisterActivity extends AppCompatActivity {\r\n   private EditText emailId, passwordId;\r\n   private Button btnSignUp;\r\n   private TextView nameId,textViewSignIn,phoneId;\r\n   private FirebaseAuth mFirebaseAuth;\r\n    FirebaseFirestore firebaseFirestore;\r\n    FirebaseUser firebaseUser;\r\n\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_main);\r\n\r\n        findViews();\r\n        setupClickListeners();\r\n    }\r\n\r\n    private void findViews() {\r\n        mFirebaseAuth = FirebaseAuth.getInstance();\r\n        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();\r\n        emailId = findViewById(R.id.editText);\r\n        passwordId = findViewById(R.id.editText2);\r\n        btnSignUp = findViewById(R.id.button2);\r\n        textViewSignIn = findViewById(R.id.textView);\r\n        nameId = findViewById(R.id.editTextName);\r\n        phoneId = findViewById(R.id.editTextPhone);\r\n        firebaseFirestore = FirebaseFirestore.getInstance();\r\n\r\n    }\r\n\r\n    private void setupClickListeners(){\r\n        btnSignUp.setOnClickListener( v -> registerUser());\r\n        textViewSignIn.setOnClickListener(v -> {\r\n            Intent i = new Intent(RegisterActivity.this, com.example.fundoapp.LoginActivity.class);\r\n            startActivity(i);\r\n        });\r\n    }\r\n\r\n    private boolean isValidName(String name){\r\n\r\n        if(name.isEmpty()) {\r\n            nameId.setError(\"Please enter name id\");\r\n            nameId.requestFocus();\r\n            return false;\r\n        } else if(name.matches(\"[0-9*$%#&^()@!_+{}';]*\")) {\r\n            nameId.setError(\"Please enter proper name id\");\r\n            nameId.requestFocus();\r\n            return false;\r\n\r\n        }else{\r\n            return true;\r\n        }\r\n    }\r\n\r\n    private boolean isValidEmail(String email){\r\n\r\n         if(email.isEmpty()) {\r\n            emailId.setError(\"Please enter email id\");\r\n            emailId.requestFocus();\r\n            return false;\r\n        } else if(!email.matches(\"^[a-zA-Z]+([._+-]{0,1}[a-zA-Z0-9]+)*@[a-zA-Z0-9]+.[a-zA-Z]{2,4}+(?:\\\\.[a-z]{2,}){0,1}$\")) {\r\n            emailId.setError(\"Please enter valid email id\");\r\n            emailId.requestFocus();\r\n             return false;\r\n        }else{\r\n            return true;\r\n        }\r\n    }\r\n\r\n    private boolean isValidPassword(String password){\r\n\r\n        if(password.isEmpty()) {\r\n            passwordId.setError(\"Please enter your password\");\r\n            passwordId.requestFocus();\r\n            return false;\r\n        } else  if(!password.matches(\"(^(?=.*[A-Z]))(?=.*[0-9])(?=.*[a-z])(?=.*[@*&^%#-*+!]{1}).{8,}$\")) {\r\n            passwordId.setError(\"Please enter Valid password\");\r\n            passwordId.requestFocus();\r\n            return false;\r\n        }else{\r\n            return true;\r\n        }\r\n    }\r\n\r\n    private boolean isValidPhone(String phone){\r\n\r\n        if(phone.isEmpty()) {\r\n            phoneId.setError(\"Please enter phone id\");\r\n            phoneId.requestFocus();\r\n            return false;\r\n        } else if(!phone.matches(\"(([0-9]{2})?)[ ][0-9]{10}\")) {\r\n            phoneId.setError(\"Please enter valid phone id\");\r\n            phoneId.requestFocus();\r\n            return false;\r\n        }else{\r\n            return true;\r\n        }\r\n    }\r\n\r\n    public void registerUser() {\r\n        String email = emailId.getText().toString();\r\n        String password = passwordId.getText().toString();\r\n        String name = nameId.getText().toString();\r\n        String phone = phoneId.getText().toString();\r\n\r\n        if (!isValidName(name)) {\r\n            return;\r\n        }\r\n        else if (!isValidEmail(email)) {\r\n            return;\r\n        }else if (!isValidPassword(password)) {\r\n            return;\r\n        } else if (!isValidPhone(phone)) {\r\n            return;\r\n        } else  if(email.isEmpty() && password.isEmpty()) {\r\n            Toast.makeText(RegisterActivity.this,\"Fields Are Empty!\",\r\n                    Toast.LENGTH_SHORT).show();\r\n        } else  if(!(email.isEmpty() && password.isEmpty())) {\r\n\r\n            mFirebaseAuth.createUserWithEmailAndPassword(email, password)\r\n                    .addOnCompleteListener(RegisterActivity.this,\r\n                            task -> {\r\n                                if(!task.isSuccessful()) {\r\n                                    Toast.makeText(RegisterActivity.this,\"SignUp Unsuccessful, Please Try Again\",\r\n                                            Toast.LENGTH_SHORT).show();\r\n                                }\r\n                                else {\r\n                                    DocumentReference documentReference = firebaseFirestore.collection(\"Users\")\r\n                                            .document(firebaseUser.getUid()).collection(\"myNotes\").document();\r\n                                    Map<String, Object> user = new HashMap<>();\r\n                                    user.put(\"UserName\", name);\r\n                                    user.put(\"Email\", email);\r\n                                    documentReference.set(user).addOnSuccessListener(aVoid -> Toast.\r\n                                            makeText(getApplicationContext(),\r\n                                            \"User information added Successfully\", Toast.LENGTH_SHORT).show()).\r\n                                            addOnFailureListener(e -> Toast.makeText(getApplicationContext(),\r\n                                                    \"Failed To add User information\", Toast.LENGTH_SHORT).show());\r\n                                    startActivity(new Intent(RegisterActivity.this, LoginActivity.class));\r\n                                }\r\n                            });\r\n        }\r\n        else{\r\n            Toast.makeText(RegisterActivity.this,\"Error Occurred!\",\r\n                    Toast.LENGTH_SHORT).show();\r\n\r\n        }\r\n    }\r\n\r\n\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/fundoapp/authentication/RegisterActivity.java	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/java/com/example/fundoapp/authentication/RegisterActivity.java	(date 1620651560516)
+@@ -8,7 +8,6 @@
+ 
+ import androidx.appcompat.app.AppCompatActivity;
+ 
+-import com.example.fundoapp.LoginActivity;
+ import com.example.fundoapp.R;
+ import com.google.firebase.auth.FirebaseAuth;
+ import com.google.firebase.auth.FirebaseUser;
+Index: .idea/dictionaries/VARUN_KUMAR.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/dictionaries/VARUN_KUMAR.xml	(date 1620293249755)
++++ .idea/dictionaries/VARUN_KUMAR.xml	(date 1620293249755)
+@@ -0,0 +1,3 @@
++<component name="ProjectDictionaryState">
++  <dictionary name="VARUN KUMAR" />
++</component>
+\ No newline at end of file
+Index: app/src/main/res/menu/drawer_menu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<menu xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    tools:showIn=\"navigation_view\">\r\n\r\n    <group android:checkableBehavior=\"single\">\r\n        <item android:id=\"@+id/note\"\r\n            android:icon=\"@drawable/ic_baseline_note_24\"\r\n            android:title=\"Note\"/>\r\n\r\n        <item android:id=\"@+id/remainder\"\r\n            android:icon=\"@drawable/ic_remainder_24\"\r\n            android:title=\"Remainder\"/>\r\n\r\n        <item android:id=\"@+id/archive\"\r\n            android:icon=\"@drawable/ic_baseline_archive_24\"\r\n            android:title=\"Archive\"/>\r\n\r\n        <item android:id=\"@+id/delete\"\r\n            android:icon=\"@drawable/ic_baseline_delete_24\"\r\n            android:title=\"Delete\"/>\r\n\r\n\r\n        <item android:id=\"@+id/help\"\r\n            android:icon=\"@drawable/ic_baseline_help_24\"\r\n            android:title=\"Help and Feedback\"/>\r\n        <item android:id=\"@+id/logout\"\r\n            android:icon=\"@drawable/ic_baseline_logout_24\"\r\n            android:title=\"@string/logout\"/>\r\n    </group>\r\n</menu>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/menu/drawer_menu.xml	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/res/menu/drawer_menu.xml	(date 1620122085666)
+@@ -6,10 +6,9 @@
+     <group android:checkableBehavior="single">
+         <item android:id="@+id/note"
+             android:icon="@drawable/ic_baseline_note_24"
+-            android:title="Note"/>
+-
++            android:title="Notes"/>
+         <item android:id="@+id/remainder"
+-            android:icon="@drawable/ic_remainder_24"
++            android:icon="@drawable/ic_baseline_reminder"
+             android:title="Remainder"/>
+ 
+         <item android:id="@+id/archive"
+Index: app/src/main/res/layout/activity_splash.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:background=\"@drawable/ic_attachment_96156449\"\r\n    tools:context=\".SplashActivity\">\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_splash.xml	(revision 19a4016d90cf296b7a30292612e5c23740f842aa)
++++ app/src/main/res/layout/activity_splash.xml	(date 1620383822869)
+@@ -4,7 +4,7 @@
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+-    android:background="@drawable/ic_attachment_96156449"
+-    tools:context=".SplashActivity">
++    android:background="@drawable/fundoo"
++    tools:context=".ui.SplashActivity">
+ 
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
