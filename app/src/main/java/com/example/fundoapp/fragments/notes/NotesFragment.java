@@ -1,23 +1,28 @@
-package com.example.fundoapp.fragments;
+package com.example.fundoapp.fragments.notes;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.fundoapp.Adapter;
 import com.example.fundoapp.R;
-import com.example.fundoapp.model.FireBaseNoteManager;
-import com.example.fundoapp.model.Note;
+import com.example.fundoapp.adapters.Adapter;
+import com.example.fundoapp.data_manager.model.FirebaseNoteModel;
+import com.example.fundoapp.fragments.AddNotes_Fragment;
+import com.example.fundoapp.data_manager.FirebaseNoteManager;
+import com.example.fundoapp.util.ViewState;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -26,71 +31,45 @@ import java.util.Objects;
 public class NotesFragment extends Fragment {
 
     RecyclerView recyclerView;
-    FireBaseNoteManager fireBaseNoteManager;
-
-    private final ArrayList<Note> notes = new ArrayList<Note>();
+    FirebaseNoteManager fireBaseNoteManager;
     private Adapter notesAdapter;
-
-
+    private static final String TAG = "FragmentNotes";
+    private final ArrayList<FirebaseNoteModel> firebaseNoteModels = new ArrayList<FirebaseNoteModel>();
+    private NotesViewModel notesViewModel;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notes, container, false);
-       // findViews(view);
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView = view.findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
-        //recyclerView.setAdapter(notesAdapter);
-        fireBaseNoteManager = new FireBaseNoteManager();
-
-
-
-
-        return inflater.inflate(R.layout.fragment_notes, container, false);
+        fireBaseNoteManager = new FirebaseNoteManager();
+        notesViewModel = new ViewModelProvider(this).get(NotesViewModel.class);
+        return view;
     }
-
-//    private void findViews(View view) {
-//        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-//        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-//        recyclerView = view.findViewById(R.id.recyclerview);
-//        recyclerView.setLayoutManager(linearLayoutManager);
-//        recyclerView.setHasFixedSize(true);
-//        //recyclerView.setAdapter(notesAdapter);
-//        fireBaseNoteManager = new FireBaseNoteManager();
-//
-//
-//        fireBaseNoteManager.getAllNotes(notesList -> {
-//            Log.e("bhaskar", "onNoteReceived: " + notesList);
-//
-//
-//
-//            notesAdapter = new Adapter(notesList,this.getContext());
-//
-//            recyclerView.setAdapter(notesAdapter);
-//        });
-////        Adapter notesAdapter = new Adapter(notes);
-////        recyclerView.setAdapter(notesAdapter);
-//
-//
-//    }
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        fireBaseNoteManager.getAllNotes(notesList -> {
-           Log.e("bhaskar", "onNoteReceived: " + notesList);
-
-
-
-          notesAdapter = new Adapter(notesList,this.getContext());
-
-            recyclerView.setAdapter(notesAdapter);
-            notesAdapter.notifyDataSetChanged();
+        notesViewModel.notesMutableLiveData.observe(getViewLifecycleOwner(), new Observer<ViewState<ArrayList<FirebaseNoteModel>>>() {
+            @Override
+            public void onChanged(ViewState<ArrayList<FirebaseNoteModel>> arrayListViewState) {
+                if (arrayListViewState instanceof ViewState.Loading) {
+                    Toast.makeText(getContext(), "Loading", Toast.LENGTH_SHORT).show();
+                } else if (arrayListViewState instanceof ViewState.Success) {
+                    ArrayList<FirebaseNoteModel> notes = ((ViewState.Success<ArrayList<FirebaseNoteModel>>) arrayListViewState).getData();
+                    Log.e(TAG, "onNoteReceived: " + notes);
+                    notesAdapter = new Adapter(notes);
+                    recyclerView.setAdapter(notesAdapter);
+                    notesAdapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(getContext(), "Something went Wrong", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
     }
 
@@ -98,6 +77,10 @@ public class NotesFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
         super.onActivityCreated(savedInstanceState);
+        setUpOnClickListeners();
+    }
+
+    private void setUpOnClickListeners() {
 
         FloatingActionButton addnote = Objects.requireNonNull(getView()).findViewById(R.id.addNotes);
         addnote.setOnClickListener(v -> {
