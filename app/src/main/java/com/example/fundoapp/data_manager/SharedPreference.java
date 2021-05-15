@@ -1,4 +1,4 @@
-package com.example.fundoapp;
+package com.example.fundoapp.data_manager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -15,27 +15,13 @@ public class SharedPreference  {
         sharedPreferences = context.getSharedPreferences(SHARED_PREFS,Context.MODE_PRIVATE);
 
     }
-//    public SharedPreference(LoginActivity loginActivity) {
-//        this.context = loginActivity;
-//    }
-//
-//    public SharedPreference(HomeActivity homeActivity) {
-//        this.context = homeActivity;
-//    }
-//
-//    public SharedPreference(SplashActivity splashActivity) {
-//        this.context = splashActivity;
-//    }
     public void setLoggedIN(boolean value){
         editor  = sharedPreferences.edit();
         editor.putBoolean(IS_LOGGED_IN,value);
         editor.apply();
-
     }
     public boolean getLoggedIN(){
         return sharedPreferences.getBoolean(IS_LOGGED_IN,false);
 
     }
-
-
 }
