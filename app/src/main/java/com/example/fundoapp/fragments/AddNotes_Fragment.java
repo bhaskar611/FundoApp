@@ -1,6 +1,7 @@
 package com.example.fundoapp.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ public class AddNotes_Fragment extends Fragment {
     FirebaseUser firebaseUser;
     FirebaseFirestore firebaseFirestore;
     ProgressBar mprogressbarofcreatenote;
+    private static final String TAG = "AddNotes_Fragment";
 
 
     @Override
@@ -69,7 +71,7 @@ public class AddNotes_Fragment extends Fragment {
                 Map<String, Object> note = new HashMap<>();
                 note.put("title", title);
                 note.put("content", content);
-//                note.put("user",user);
+                Log.e(TAG, "in if block " + user + " "+ title);
                 mprogressbarofcreatenote.setVisibility(View.VISIBLE);
                 documentReference.set(note).addOnSuccessListener(aVoid -> Toast.makeText(getContext(),
                         "Note Created Succesffuly", Toast.LENGTH_SHORT).show()).
@@ -80,38 +82,18 @@ public class AddNotes_Fragment extends Fragment {
             Map<String, Object> note1 = new HashMap<>();
             note1.put("UserName", user);
             note1.put("Email", email);
-            DocumentReference documentReference;
-
-            documentReference = firebaseFirestore.collection("Users")
+            DocumentReference documentReference = firebaseFirestore.collection("Users")
                     .document(firebaseUser.getUid()).collection("myNotes").document();
             Map<String, Object> note = new HashMap<>();
             note.put("title", title);
             note.put("content", content);
+            Log.e(TAG, "in else block " + user + " "+ title);
             firebaseFirestore.collection("Users").document(firebaseUser.getUid()).set(note1);
-
-
-//                note.put("user",user);
             mprogressbarofcreatenote.setVisibility(View.VISIBLE);
             documentReference.set(note).addOnSuccessListener(aVoid -> Toast.makeText(getContext(),
-                    "Note Created Succesffuly", Toast.LENGTH_SHORT).show()).
+                    "Note Created saved Succesffuly", Toast.LENGTH_SHORT).show()).
                     addOnFailureListener(e -> Toast.makeText(getContext(), "Failed To Create Note", Toast.LENGTH_SHORT).show());
             mprogressbarofcreatenote.setVisibility(View.INVISIBLE);
-
-
-//                mprogressbarofcreatenote.setVisibility(View.VISIBLE);
-//                DocumentReference documentReference=firebaseFirestore.collection("Users")
-//                        .document(firebaseUser.getUid()).collection("myNotes").document();
-//                Map<String ,Object> note= new HashMap<>();
-//                note.put("title",title);
-//                note.put("content",content);
-////                note.put("user",user);
-//                mprogressbarofcreatenote.setVisibility(View.VISIBLE);
-//                DocumentReference documentReferenc=firebaseFirestore.collection("Users")
-//                        .document(firebaseUser.getUid()).collection("myNotes").document();
-//                Map<String ,Object> note1= new HashMap<>();
-//                note.put("UserName",user);
-//                note.put("Email",email);
-
         }
     }
 }
