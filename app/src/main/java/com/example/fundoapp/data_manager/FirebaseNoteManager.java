@@ -1,9 +1,13 @@
 package com.example.fundoapp.data_manager;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.example.fundoapp.adapters.Adapter;
 import com.example.fundoapp.data_manager.model.FirebaseNoteModel;
 import com.example.fundoapp.util.CallBack;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -68,6 +72,16 @@ public class FirebaseNoteManager {
                 .collection("Users")
                 .document(firebaseUser.getUid())
                 .collection("myNotes").document(docID);
-        documentReference.delete();
+        documentReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.e(TAG, "onSuccess: Deleted "+ docID );
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e(TAG, "onFailure:Error Deleted "+ docID );
+            }
+        });
     }
 }

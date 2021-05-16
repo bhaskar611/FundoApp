@@ -50,20 +50,28 @@ public class NotesFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         fireBaseNoteManager = new FirebaseNoteManager();
         notesViewModel = new ViewModelProvider(this).get(NotesViewModel.class);
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
             @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
             }
+
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getBindingAdapterPosition();
-                notesAdapter.deleteItem(position);
-                notesAdapter.deleteFromFireStore(position);
-                Toast.makeText(getContext(), "Note deleted", Toast.LENGTH_SHORT).show();
+                try {
+                    String noteId = notesAdapter.getItem(position).getId();
+                    notesAdapter.removeNote(position);
+                    fireBaseNoteManager.deleteNote(noteId);
+                }catch(IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
             }
-        }).attachToRecyclerView(recyclerView);
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
             return view;
     }
     @Override

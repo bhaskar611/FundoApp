@@ -47,21 +47,26 @@ public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
     }
 
 
-    public void deleteItem(int position) {
-//        String docId = notesList.get(position).getId();
-//        noteManager.deleteNote(docId);
-        notesList.remove(position);
-        notifyItemRemoved(position);
-    }
+//    public void deleteItem(int position) {
+////        String docId = notesList.get(position).getId();
+////        noteManager.deleteNote(docId);
+//        notesList.remove(position);
+//        notifyItemRemoved(position);
+//    }
 
     public FirebaseNoteModel getItem(int position) {
         return notesList.get(position);
 
     }
 
-    public void deleteFromFireStore(int position) {
-      noteManager = new FirebaseNoteManager();
-        String docId = notesList.get(position).getId();
-        noteManager.deleteNote(docId);
+//    public void deleteFromFireStore(int position) {
+//      noteManager = new FirebaseNoteManager();
+//        String docId = notesList.get(position).getId();
+//        noteManager.deleteNote(docId);
+//    }
+
+    public void removeNote(int position) {
+        notesList.remove(position);
+        notifyItemRemoved(position);
     }
 }
