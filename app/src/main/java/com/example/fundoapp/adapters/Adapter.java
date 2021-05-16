@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fundoapp.R;
+import com.example.fundoapp.data_manager.FirebaseNoteManager;
 import com.example.fundoapp.data_manager.model.FirebaseNoteModel;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
 
     private final ArrayList<FirebaseNoteModel> notesList;
-
+    FirebaseNoteManager noteManager;
 
     public Adapter(ArrayList<FirebaseNoteModel> notesList){
         this.notesList = notesList;
@@ -46,6 +47,21 @@ public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
     }
 
 
+    public void deleteItem(int position) {
+//        String docId = notesList.get(position).getId();
+//        noteManager.deleteNote(docId);
+        notesList.remove(position);
+        notifyItemRemoved(position);
+    }
 
+    public FirebaseNoteModel getItem(int position) {
+        return notesList.get(position);
 
+    }
+
+    public void deleteFromFireStore(int position) {
+      noteManager = new FirebaseNoteManager();
+        String docId = notesList.get(position).getId();
+        noteManager.deleteNote(docId);
+    }
 }

@@ -14,14 +14,15 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fundoapp.R;
 import com.example.fundoapp.adapters.Adapter;
+import com.example.fundoapp.data_manager.FirebaseNoteManager;
 import com.example.fundoapp.data_manager.model.FirebaseNoteModel;
 import com.example.fundoapp.fragments.AddNotes_Fragment;
-import com.example.fundoapp.data_manager.FirebaseNoteManager;
 import com.example.fundoapp.util.ViewState;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -34,7 +35,7 @@ public class NotesFragment extends Fragment {
     FirebaseNoteManager fireBaseNoteManager;
     private Adapter notesAdapter;
     private static final String TAG = "FragmentNotes";
-    private final ArrayList<FirebaseNoteModel> firebaseNoteModels = new ArrayList<FirebaseNoteModel>();
+    private final ArrayList<FirebaseNoteModel> firebaseNoteModels = new ArrayList<>();
     private NotesViewModel notesViewModel;
 
     @Nullable
@@ -49,9 +50,22 @@ public class NotesFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         fireBaseNoteManager = new FirebaseNoteManager();
         notesViewModel = new ViewModelProvider(this).get(NotesViewModel.class);
-        return view;
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getBindingAdapterPosition();
+                notesAdapter.deleteItem(position);
+                notesAdapter.deleteFromFireStore(position);
+                Toast.makeText(getContext(), "Note deleted", Toast.LENGTH_SHORT).show();
+            }
+        }).attachToRecyclerView(recyclerView);
+            return view;
     }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

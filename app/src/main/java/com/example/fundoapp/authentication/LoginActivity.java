@@ -14,7 +14,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.fundoapp.R;
-import com.example.fundoapp.SharedPreference;
+import com.example.fundoapp.data_manager.SharedPreference;
 import com.example.fundoapp.dashboard.HomeActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;

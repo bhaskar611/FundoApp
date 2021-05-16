@@ -12,12 +12,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.fundoapp.Archive_Fragment;
+import com.example.fundoapp.fragments.Archive_Fragment;
 import com.example.fundoapp.R;
-import com.example.fundoapp.SharedPreference;
+import com.example.fundoapp.data_manager.SharedPreference;
 import com.example.fundoapp.authentication.LoginActivity;
-import com.example.fundoapp.fragments.NotesFragment;
-import com.example.fundoapp.ReminderFragment;
+import com.example.fundoapp.fragments.notes.NotesFragment;
+import com.example.fundoapp.fragments.ReminderFragment;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 

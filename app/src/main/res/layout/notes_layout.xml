@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/holo_blue_dark"
+    android:background="@android:color/black"
 
     android:padding="15dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -37,7 +37,7 @@
                     android:paddingTop="10dp"
                     android:paddingRight="10dp"
                     android:paddingBottom="10dp"
-                    android:text="This is your Title"
+                    android:text="@string/this_is_your_title"
                     android:textSize="20sp"
                     android:textColor="@color/black"
                     android:layout_weight="1"
@@ -54,7 +54,7 @@
                     android:id="@+id/menupopbutton"
                     android:layout_weight="0"
                     android:src="@drawable/noteslayout"
-                    ></ImageView>
+                    android:contentDescription="@string/todo" />
 
 
             </LinearLayout>

@@ -39,8 +39,8 @@ public class NotesViewModel extends ViewModel {
 
             }
         });
-
-
     }
+
+
 
 }
