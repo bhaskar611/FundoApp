@@ -18,7 +18,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.fundoapp.dashboard.HomeActivity;
-import com.example.fundoapp.fragments.NotesFragment;
+import com.example.fundoapp.fragments.notes.NotesFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

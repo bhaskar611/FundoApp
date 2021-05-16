@@ -15,4 +15,6 @@
     <string name="phone">phone</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="this_is_your_title">This is your Title</string>
+    <string name="todo">TODO</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.fundoapp;
+package com.example.fundoapp.userInterface;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,8 +7,10 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.fundoapp.R;
 import com.example.fundoapp.authentication.LoginActivity;
 import com.example.fundoapp.dashboard.HomeActivity;
+import com.example.fundoapp.data_manager.SharedPreference;
 
 
 public class SplashActivity extends AppCompatActivity {
