@@ -16,6 +16,7 @@ import com.example.fundoapp.fragments.Archive_Fragment;
 import com.example.fundoapp.R;
 import com.example.fundoapp.data_manager.SharedPreference;
 import com.example.fundoapp.authentication.LoginActivity;
+import com.example.fundoapp.fragments.Profile_Fragment;
 import com.example.fundoapp.fragments.notes.NotesFragment;
 import com.example.fundoapp.fragments.ReminderFragment;
 import com.google.android.material.navigation.NavigationView;
@@ -61,6 +62,9 @@ public class HomeActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.remainder) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new ReminderFragment()).commit();
+        }  else if (item.getItemId() == R.id.profile) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new Profile_Fragment()).commit();
         } else if (item.getItemId() == R.id.logout) {
             logout();
         } else if (item.getItemId() == R.id.delete) {
