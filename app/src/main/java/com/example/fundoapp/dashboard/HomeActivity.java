@@ -1,8 +1,12 @@
 package com.example.fundoapp.dashboard;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -12,6 +16,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.fundoapp.data_manager.FirebaseUserManager;
+import com.example.fundoapp.data_manager.model.FirebaseUserModel;
 import com.example.fundoapp.fragments.Archive_Fragment;
 import com.example.fundoapp.R;
 import com.example.fundoapp.data_manager.SharedPreference;
@@ -19,14 +25,23 @@ import com.example.fundoapp.authentication.LoginActivity;
 import com.example.fundoapp.fragments.Profile_Fragment;
 import com.example.fundoapp.fragments.notes.NotesFragment;
 import com.example.fundoapp.fragments.ReminderFragment;
+import com.example.fundoapp.util.CallBack;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 public class HomeActivity extends AppCompatActivity {
-    FirebaseAuth mFirebaseAuth;
+    FirebaseAuth fAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private DrawerLayout drawer;
     SharedPreference sharedPreference;
+    StorageReference storageReference;
+    private final FirebaseUserManager firebaseUserManager = new FirebaseUserManager();
+    FirebaseUser user;
 
 
 
@@ -38,6 +53,10 @@ public class HomeActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
         sharedPreference = new SharedPreference(this);
+        storageReference = FirebaseStorage.getInstance().getReference();
+        fAuth = FirebaseAuth.getInstance();
+        user = fAuth.getCurrentUser();
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this::onNavigationItemSelected);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
@@ -49,6 +68,27 @@ public class HomeActivity extends AppCompatActivity {
                     new NotesFragment()).commit();
             navigationView.setCheckedItem(R.id.note);
         }
+        View headerView = navigationView.getHeaderView(0);
+        TextView userName = headerView.findViewById(R.id.user_name_display);
+        TextView userEmail = headerView.findViewById(R.id.user_email_display);
+        ImageView userDp = headerView.findViewById(R.id.user_profile);
+        firebaseUserManager.getUserDetails(new CallBack<FirebaseUserModel>() {
+            @Override
+            public void onSuccess(FirebaseUserModel data) {
+                userName.setText(data.getUserName());
+                userEmail.setText(data.getUserEmail());
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+                Toast.makeText(HomeActivity.this,
+                        "Something went Wrong",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        StorageReference profileRef = storageReference.child("users/"+fAuth.getCurrentUser().getUid()+"/profile.jpg");
+        profileRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(userDp));
     }
 
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
