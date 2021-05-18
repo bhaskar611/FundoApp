@@ -4,8 +4,19 @@ public class FirebaseUserModel {
 
     private String userEmail;
 
-    public FirebaseUserModel(String userEmail) {
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    private String userName;
+
+    public FirebaseUserModel(String userEmail,String userName) {
         this.userEmail = userEmail;
+        this.userName = userName;
     }
 
     public FirebaseUserModel() {

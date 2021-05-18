@@ -10,9 +10,12 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.fundoapp.R;
 import com.example.fundoapp.data_manager.FirebaseNoteManager;
+import com.example.fundoapp.fragments.notes.NotesFragment;
 import com.example.fundoapp.util.CallBack;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -86,6 +89,7 @@ public class AddNotes_Fragment extends Fragment {
             } else{
                 Map<String, Object> noteGettingUserDetails = new HashMap<>();
             noteGettingUserDetails.put("Email", email);
+            noteGettingUserDetails.put("UserName",user);
             DocumentReference documentReference;
             documentReference = firebaseFirestore.collection("Users")
                     .document(firebaseUser.getUid()).collection("User Notes").document();
@@ -98,8 +102,14 @@ public class AddNotes_Fragment extends Fragment {
             documentReference.set(note).addOnSuccessListener(aVoid -> {
                 Toast.makeText(getContext(),
                         "Note Created and Saved Successfully", Toast.LENGTH_SHORT).show();
-                assert getFragmentManager() != null;
-                getFragmentManager().popBackStackImmediate();
+                Fragment fragment = new NotesFragment();
+                FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, fragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+//                assert getFragmentManager() != null;
+//                getFragmentManager().popBackStackImmediate();
             }).
                     addOnFailureListener(e -> Toast.makeText(getContext(),
                             "Note creation failed", Toast.LENGTH_SHORT).show());

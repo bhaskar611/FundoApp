@@ -12,12 +12,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+import com.example.fundoapp.dashboard.HomeActivity;
+import com.example.fundoapp.data_manager.FirebaseUserManager;
+import com.example.fundoapp.data_manager.model.FirebaseUserModel;
+import com.example.fundoapp.util.CallBack;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseUser;
@@ -43,6 +49,8 @@ public class Profile_Fragment extends Fragment {
     FirebaseAuth fAuth ;
     FirebaseFirestore fStore;
     FirebaseUser user;
+    private final FirebaseUserManager firebaseUserManager = new FirebaseUserManager();
+    ProgressBar mprogressbarofcreatenote;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -57,11 +65,28 @@ public class Profile_Fragment extends Fragment {
         fStore = FirebaseFirestore.getInstance();
         user = fAuth.getCurrentUser();
         storageReference = FirebaseStorage.getInstance().getReference();
-
+        mprogressbarofcreatenote = (ProgressBar) getView().findViewById(R.id.progressbarofcreatenote);
         profileImageView = requireNonNull(getView()).findViewById(R.id.profileImageView);
-        //saveBtn = saveBtn.findViewById(R.id.savebutton);
+        saveBtn = requireNonNull(getView()).findViewById(R.id.savebutton);
+        TextView userName = requireNonNull(getView()).findViewById(R.id.user_name_display);
+        TextView userEmail = requireNonNull(getView()).findViewById(R.id.user_email_display);
 
-        profileImageView.setOnClickListener(new View.OnClickListener() {
+        firebaseUserManager.getUserDetails(new CallBack<FirebaseUserModel>() {
+            @Override
+            public void onSuccess(FirebaseUserModel data) {
+                userName.setText(data.getUserName());
+                userEmail.setText(data.getUserEmail());
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+                Toast.makeText(getContext(),
+                        "Something went Wrong",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        saveBtn .setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent openGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -73,7 +98,11 @@ public class Profile_Fragment extends Fragment {
         profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                Picasso.get().load(uri).into(profileImageView);
+                //Picasso.get().load(uri).into(profileImageView);
+                Glide.with(getContext())
+                        .load(uri)
+                        .override(300, 200)
+                        .into(profileImageView);
             }
         });
     }
@@ -88,8 +117,6 @@ public class Profile_Fragment extends Fragment {
                 //profileImage.setImageURI(imageUri);
 
                 uploadImageToFirebase(imageUri);
-
-
             }
         }
 

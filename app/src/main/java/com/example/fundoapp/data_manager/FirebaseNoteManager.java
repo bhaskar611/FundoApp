@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FirebaseNoteManager {
+public class FirebaseNoteManager implements NoteManager {
 
     FirebaseUser firebaseUser;
     FirebaseFirestore firebaseFirestore;
@@ -30,7 +30,7 @@ public class FirebaseNoteManager {
         firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
         firebaseFirestore=FirebaseFirestore.getInstance();
         firebaseFirestore.collection("Users").document(firebaseUser.getUid())
-                .collection("myNotes").get().addOnSuccessListener(queryDocumentSnapshots -> {
+                .collection("User Notes").get().addOnSuccessListener(queryDocumentSnapshots -> {
             int i;
             for (i=0;i<queryDocumentSnapshots.size();i++){
                 DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(i);
@@ -52,7 +52,7 @@ public class FirebaseNoteManager {
         DocumentReference documentReference = firebaseFirestore
                 .collection("Users")
                 .document(firebaseUser.getUid())
-                .collection("myNotes").document();
+                .collection("User Notes").document();
         Map<String, Object> note = new HashMap<>();
         note.put("title", title);
         note.put("content",content);
@@ -71,7 +71,7 @@ public class FirebaseNoteManager {
         DocumentReference documentReference = firebaseFirestore
                 .collection("Users")
                 .document(firebaseUser.getUid())
-                .collection("myNotes").document(docID);
+                .collection("User Notes").document(docID);
         documentReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {

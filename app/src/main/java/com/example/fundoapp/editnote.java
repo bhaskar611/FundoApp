@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class editnote extends Fragment {
 
@@ -48,9 +50,14 @@ public class editnote extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        medittitleofnote= medittitleofnote.findViewById(R.id.edittitleofnote);
-        meditcontentofnote= meditcontentofnote.findViewById(R.id.editcontentofnote);
-        msaveeditnote= msaveeditnote.findViewById(R.id.saveeditnote);
+        String title = getArguments().getString("title");
+        String content = getArguments().getString("content");
+        meditcontentofnote.setText(content);
+        medittitleofnote.setText(title);
+
+        medittitleofnote= (EditText) Objects.requireNonNull(getView()).findViewById(R.id.edittitleofnote);
+        meditcontentofnote=(EditText) Objects.requireNonNull(getView()).findViewById(R.id.editcontentofnote);
+        msaveeditnote= Objects.requireNonNull(getView()).findViewById(R.id.saveeditnote);
 
         data=getActivity().getIntent();
 
@@ -76,7 +83,7 @@ public class editnote extends Fragment {
             }
             else
             {
-                DocumentReference documentReference=firebaseFirestore.collection("Users").document(firebaseUser.getUid()).collection("myNotes").document(data.getStringExtra("noteId"));
+                DocumentReference documentReference=firebaseFirestore.collection("Users").document(firebaseUser.getUid()).collection("User Notes").document(data.getStringExtra("noteId"));
                 Map<String,Object> note=new HashMap<>();
                 note.put("title",newtitle);
                 note.put("content",newcontent);

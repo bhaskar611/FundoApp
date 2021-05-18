@@ -24,9 +24,12 @@ public class FirebaseUserManager {
                 .document(firebaseUser.getUid()).get()
                 .addOnSuccessListener((OnSuccessListener<DocumentSnapshot>) documentSnapshots -> {
                     String userEmail = (String) documentSnapshots.getString("Email");
-                    Log.e(TAG, "getUserDetails: " + userEmail);
+                     Log.e(TAG, "getUserDetails: " + userEmail);
 
-                    FirebaseUserModel firebaseUserModel = new FirebaseUserModel(userEmail);
+                    String userName = (String) documentSnapshots.getString("UserName");
+                    Log.e(TAG, "getUserDetails: " + userName);
+
+                    FirebaseUserModel firebaseUserModel = new FirebaseUserModel(userEmail,userName);
                     listener.onSuccess(firebaseUserModel);
                 })
                 .addOnFailureListener((OnFailureListener) listener::onFailure);

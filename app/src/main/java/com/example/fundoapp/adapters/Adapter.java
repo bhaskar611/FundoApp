@@ -18,10 +18,10 @@ public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
 
     private final ArrayList<FirebaseNoteModel> notesList;
     FirebaseNoteManager noteManager;
+//    private MyViewHolder.OnNoteListener onNoteListener;
 
     public Adapter(ArrayList<FirebaseNoteModel> notesList){
         this.notesList = notesList;
-
     }
 
     @NonNull
@@ -69,4 +69,6 @@ public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
         notesList.remove(position);
         notifyItemRemoved(position);
     }
+
+
 }

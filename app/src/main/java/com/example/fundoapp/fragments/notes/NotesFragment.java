@@ -3,6 +3,7 @@ package com.example.fundoapp.fragments.notes;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -20,8 +21,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fundoapp.R;
 import com.example.fundoapp.adapters.Adapter;
+import com.example.fundoapp.adapters.MyViewHolder;
 import com.example.fundoapp.data_manager.FirebaseNoteManager;
 import com.example.fundoapp.data_manager.model.FirebaseNoteModel;
+import com.example.fundoapp.editnote;
 import com.example.fundoapp.fragments.AddNotes_Fragment;
 import com.example.fundoapp.util.ViewState;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -29,15 +32,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class NotesFragment extends Fragment {
-
+public class NotesFragment extends Fragment  {
+ //implements MyViewHolder.OnNoteListener
     RecyclerView recyclerView;
     FirebaseNoteManager fireBaseNoteManager;
     private Adapter notesAdapter;
     private static final String TAG = "FragmentNotes";
     private final ArrayList<FirebaseNoteModel> firebaseNoteModels = new ArrayList<>();
     private NotesViewModel notesViewModel;
-
+   // RecyclerView.ViewHolder viewHolder ;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -72,7 +75,36 @@ public class NotesFragment extends Fragment {
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
-            return view;
+//        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+//            @Override
+//            public void onTouchEvent(RecyclerView recycler, MotionEvent event) {
+//                // Handle on touch events here
+//
+//                Fragment fragment = new editnote();
+//                Bundle args = new Bundle();
+////                args.putString("title", title);
+////                args.putString("content", content);
+////                fragment.setArguments(args);
+//                FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
+//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                fragmentTransaction.replace(R.id.fragment_container, fragment);
+//                fragmentTransaction.addToBackStack(null);
+//                fragmentTransaction.commit();
+//
+//            }
+
+//            @Override
+//            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+//
+//            }
+//
+//            @Override
+//            public boolean onInterceptTouchEvent(RecyclerView recycler, MotionEvent event) {
+//                return false;
+//            }
+//
+//        });
+        return view;
     }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -115,4 +147,21 @@ public class NotesFragment extends Fragment {
 
         });
     }
+
+//    public void onNoteClick(int position, View viewHolder) {
+//
+//        String title = notesAdapter.getItem(position).getTitle();
+//        String content = notesAdapter.getItem(position).getContent();
+//
+//        Fragment fragment = new editnote();
+//        Bundle args = new Bundle();
+//        args.putString("title", title);
+//        args.putString("content", content);
+//        fragment.setArguments(args);
+//        FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.replace(R.id.fragment_container, fragment);
+//        fragmentTransaction.addToBackStack(null);
+//        fragmentTransaction.commit();
+//    }
 }
