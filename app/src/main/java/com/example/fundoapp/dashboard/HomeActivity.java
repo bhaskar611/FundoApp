@@ -8,6 +8,7 @@ import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,7 @@ public class HomeActivity extends AppCompatActivity {
     StorageReference storageReference;
     private final FirebaseUserManager firebaseUserManager = new FirebaseUserManager();
     FirebaseUser user;
+    ProgressBar mprogressbar;
 
 
 
@@ -77,7 +79,8 @@ public class HomeActivity extends AppCompatActivity {
         TextView userName = headerView.findViewById(R.id.user_name_display);
         TextView userEmail = headerView.findViewById(R.id.user_email_display);
         ImageView userDp = headerView.findViewById(R.id.user_profile);
-        FloatingActionButton changePic = headerView.findViewById(R.id.addNotes);
+        FloatingActionButton changePic = headerView.findViewById(R.id.changePicButton);
+        mprogressbar = headerView.findViewById(R.id.progressbarofcreatenote);
         firebaseUserManager.getUserDetails(new CallBack<FirebaseUserModel>() {
             @Override
             public void onSuccess(FirebaseUserModel data) {
@@ -122,6 +125,7 @@ public class HomeActivity extends AppCompatActivity {
         // uplaod image to firebase storage
         fAuth = FirebaseAuth.getInstance();
         final StorageReference fileRef = storageReference.child("users/"+fAuth.getCurrentUser().getUid()+"/profile.jpg");
+        mprogressbar.setVisibility(View.VISIBLE);
         fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -130,6 +134,8 @@ public class HomeActivity extends AppCompatActivity {
                     public void onSuccess(Uri uri) {
                         ImageView userDp= findViewById(R.id.user_profile);
                         Picasso.get().load(uri).into(userDp);
+                        mprogressbar.setVisibility(View.INVISIBLE);
+
                     }
                 });
             }

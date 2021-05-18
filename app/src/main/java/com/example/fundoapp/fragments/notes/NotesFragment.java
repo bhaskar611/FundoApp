@@ -3,7 +3,6 @@ package com.example.fundoapp.fragments.notes;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -24,7 +23,6 @@ import com.example.fundoapp.adapters.Adapter;
 import com.example.fundoapp.adapters.MyViewHolder;
 import com.example.fundoapp.data_manager.FirebaseNoteManager;
 import com.example.fundoapp.data_manager.model.FirebaseNoteModel;
-import com.example.fundoapp.editnote;
 import com.example.fundoapp.fragments.AddNotes_Fragment;
 import com.example.fundoapp.util.ViewState;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -32,7 +30,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class NotesFragment extends Fragment  {
+public class NotesFragment extends Fragment {
  //implements MyViewHolder.OnNoteListener
     RecyclerView recyclerView;
     FirebaseNoteManager fireBaseNoteManager;
@@ -117,7 +115,32 @@ public class NotesFragment extends Fragment  {
                 } else if (arrayListViewState instanceof ViewState.Success) {
                     ArrayList<FirebaseNoteModel> notes = ((ViewState.Success<ArrayList<FirebaseNoteModel>>) arrayListViewState).getData();
                     Log.e(TAG, "onNoteReceived: " + notes);
-                    notesAdapter = new Adapter(notes);
+                    notesAdapter = new Adapter(notes, new MyViewHolder.OnNoteListener() {
+                        @Override
+                        public void onNoteClick(int position, View viewHolder) {
+
+                            Toast.makeText(getContext(), "Note Clicked at Position " + position, Toast.LENGTH_SHORT).show();
+                            String title = notesAdapter.getItem(position).getTitle();
+                            String content = notesAdapter.getItem(position).getContent();
+                            String docID = notesAdapter.getItem(position).getId();
+                            //Put the value
+                            editnote ldf = new editnote();
+                            Bundle args1 = new Bundle();
+
+                            args1.putString("title", title);
+                            args1.putString("content",
+                                    content);
+                            args1.putString("docID",
+                                    docID);
+                            ldf.setArguments(args1);
+                            ldf.setArguments(args1);
+                            ldf.setArguments(args1);
+
+
+//Inflate the fragment
+                            getFragmentManager().beginTransaction().add(R.id.fragment_container, ldf).commit();
+                        }
+                    });
                     recyclerView.setAdapter(notesAdapter);
                     notesAdapter.notifyDataSetChanged();
                 } else {
@@ -136,7 +159,7 @@ public class NotesFragment extends Fragment  {
 
     private void setUpOnClickListeners() {
 
-        FloatingActionButton addnote = Objects.requireNonNull(getView()).findViewById(R.id.addNotes);
+        FloatingActionButton addnote = Objects.requireNonNull(getView()).findViewById(R.id.changePicButton);
         addnote.setOnClickListener(v -> {
             Fragment fragment = new AddNotes_Fragment();
             FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();

@@ -29,11 +29,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <TextView
+                <EditText
 
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/notetitle"
+                    android:id="@+id/editnotetitle"
                     android:paddingTop="10dp"
                     android:paddingRight="10dp"
                     android:paddingBottom="10dp"
@@ -46,23 +46,23 @@
 
 
 
-                </TextView>
+                </EditText>
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:id="@+id/editButton"
-                    android:layout_weight="0"
-                    android:src="@drawable/noteslayout"
-                    android:contentDescription="@string/todo" />
+<!--                <ImageView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:id="@+id/editButton"-->
+<!--                    android:layout_weight="0"-->
+<!--                    android:src="@drawable/noteslayout"-->
+<!--                    android:contentDescription="@string/todo" />-->
 
 
             </LinearLayout>
 
-            <TextView
+            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/notecontent"
+                android:id="@+id/editnotecontent"
 
                 android:paddingBottom="20dp"
                 android:paddingLeft="10dp"
@@ -72,7 +72,7 @@
                 android:textSize="15sp"
                 android:textColor="@color/black">
 
-            </TextView>
+            </EditText>
 
 
         </LinearLayout>
@@ -90,7 +90,7 @@
         android:layout_marginBottom="30dp"
         android:layout_marginRight="30dp"
         android:layout_gravity="bottom|end"
-        android:id="@+id/gotoeditnote"
+        android:id="@+id/updateeditnote"
         android:src="@drawable/edit"
         android:background="#A1F4FB"
         app:maxImageSize="40dp"

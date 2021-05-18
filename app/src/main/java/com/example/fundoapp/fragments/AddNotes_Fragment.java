@@ -1,6 +1,7 @@
 package com.example.fundoapp.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +16,14 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.fundoapp.R;
 import com.example.fundoapp.data_manager.FirebaseNoteManager;
+//import com.example.fundoapp.data_manager.DatabaseHelper;
 import com.example.fundoapp.fragments.notes.NotesFragment;
 import com.example.fundoapp.util.CallBack;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -35,6 +38,7 @@ public class AddNotes_Fragment extends Fragment {
     FirebaseFirestore firebaseFirestore;
     ProgressBar mprogressbarofcreatenote;
     private static final String TAG = "AddNotes_Fragment";
+   // DatabaseHelper mDatabaseHelper;
 
 
     @Override
@@ -63,6 +67,7 @@ public class AddNotes_Fragment extends Fragment {
         String content = mcreatecontentofnote.getText().toString();
         String user = firebaseUser.getDisplayName();
         String email = firebaseUser.getEmail();
+        long timeID = System.currentTimeMillis();
         if (title.isEmpty() || content.isEmpty()) {
             Toast.makeText(getContext(), "Both field are Require", Toast.LENGTH_SHORT).show();
         } else {
@@ -90,18 +95,37 @@ public class AddNotes_Fragment extends Fragment {
                 Map<String, Object> noteGettingUserDetails = new HashMap<>();
             noteGettingUserDetails.put("Email", email);
             noteGettingUserDetails.put("UserName",user);
-            DocumentReference documentReference;
-            documentReference = firebaseFirestore.collection("Users")
-                    .document(firebaseUser.getUid()).collection("User Notes").document();
-            Map<String, Object> note = new HashMap<>();
-            note.put("title", title);
-            note.put("content", content);
-            firebaseFirestore.collection("Users").document(firebaseUser.getUid())
-                    .set(noteGettingUserDetails);
-            mprogressbarofcreatenote.setVisibility(View.VISIBLE);
-            documentReference.set(note).addOnSuccessListener(aVoid -> {
-                Toast.makeText(getContext(),
-                        "Note Created and Saved Successfully", Toast.LENGTH_SHORT).show();
+                FirebaseNoteManager firebaseNoteManager = new FirebaseNoteManager();
+                firebaseNoteManager.addNote(title, content, new CallBack<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean data) {
+                        Toast.makeText(getContext(),
+                                "Note Created Successfully",
+                                Toast.LENGTH_SHORT).show();
+//                        assert getFragmentManager() != null;
+//                        getFragmentManager().popBackStackImmediate();
+                        Fragment fragment = new NotesFragment();
+                        FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment_container, fragment);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
+                    }
+
+                    @Override
+                    public void onFailure(Exception exception) {
+                        Toast.makeText(getContext(),
+                                "Failed To Create Note", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+//                mDatabaseHelper = new DatabaseHelper(getContext());
+//                if (title.length() != 0 && content.length() !=0) {
+//                   mDatabaseHelper.addData(user,timeID,title,content)
+//                    ;
+//                } else {
+//                    //toastMessage("You must put something in the text field!");
+//                }
                 Fragment fragment = new NotesFragment();
                 FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -110,10 +134,8 @@ public class AddNotes_Fragment extends Fragment {
                 fragmentTransaction.commit();
 //                assert getFragmentManager() != null;
 //                getFragmentManager().popBackStackImmediate();
-            }).
-                    addOnFailureListener(e -> Toast.makeText(getContext(),
-                            "Note creation failed", Toast.LENGTH_SHORT).show());
-        }
+            }
+
         mprogressbarofcreatenote.setVisibility(View.VISIBLE);
         }
     }

@@ -18,10 +18,12 @@ public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
 
     private final ArrayList<FirebaseNoteModel> notesList;
     FirebaseNoteManager noteManager;
-//    private MyViewHolder.OnNoteListener onNoteListener;
+   private MyViewHolder.OnNoteListener onNoteListener;
 
-    public Adapter(ArrayList<FirebaseNoteModel> notesList){
+    public Adapter(ArrayList<FirebaseNoteModel> notesList ,MyViewHolder.OnNoteListener onNoteListener ){
         this.notesList = notesList;
+        this.onNoteListener = onNoteListener;
+
     }
 
     @NonNull
@@ -29,7 +31,7 @@ public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.notes_layout,parent,false);
         Log.e("bhaskar", "onCreateViewHolder: " );
-        return new MyViewHolder(view);
+        return new MyViewHolder(view,onNoteListener);
     }
 
     @Override

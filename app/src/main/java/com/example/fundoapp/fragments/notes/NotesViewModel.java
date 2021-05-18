@@ -32,7 +32,6 @@ public class NotesViewModel extends ViewModel {
             public void onSuccess(ArrayList<FirebaseNoteModel> data) {
                 Log.e(TAG, "onNoteReceived: " + data);
                 notesMutableLiveData.setValue(new ViewState.Success<>(data));
-
             }
 
             @Override

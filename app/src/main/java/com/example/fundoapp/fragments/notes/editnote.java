@@ -1,7 +1,8 @@
-package com.example.fundoapp;
+package com.example.fundoapp.fragments.notes;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.fundoapp.R;
 import com.example.fundoapp.dashboard.HomeActivity;
 import com.example.fundoapp.fragments.notes.NotesFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -32,48 +34,51 @@ import java.util.Objects;
 
 public class editnote extends Fragment {
 
+    private static final String TAG = "edit note";
     Intent data;
     EditText medittitleofnote,meditcontentofnote;
     FloatingActionButton msaveeditnote;
     FirebaseFirestore firebaseFirestore;
     FirebaseUser firebaseUser;
     HomeActivity homeActivity;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //  View view = inflater.inflate(R.layout.fragment_notes, container, false);
-        return inflater.inflate(R.layout.edit_note, container, false);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+          View view = inflater.inflate(R.layout.note_details, container, false);
+//        medittitleofnote= (EditText) Objects.requireNonNull(getView()).findViewById(R.id.notetitle);
+//        meditcontentofnote=(EditText) Objects.requireNonNull(getView()).findViewById(R.id.notecontent);
+//        msaveeditnote= Objects.requireNonNull(getView()).findViewById(R.id.gotoeditnote);
         String title = getArguments().getString("title");
         String content = getArguments().getString("content");
+        String docID = getArguments().getString("docID");
+        Log.e(TAG, "onCreate: " +title);
+        Log.e(TAG, "onCreate: " +content);
+
+        medittitleofnote= (EditText) view.findViewById(R.id.editnotetitle);
+         meditcontentofnote = (EditText) view.findViewById(R.id.editnotecontent);
+        msaveeditnote=  view.findViewById(R.id.updateeditnote);
         meditcontentofnote.setText(content);
         medittitleofnote.setText(title);
 
-        medittitleofnote= (EditText) Objects.requireNonNull(getView()).findViewById(R.id.edittitleofnote);
-        meditcontentofnote=(EditText) Objects.requireNonNull(getView()).findViewById(R.id.editcontentofnote);
-        msaveeditnote= Objects.requireNonNull(getView()).findViewById(R.id.saveeditnote);
-
-        data=getActivity().getIntent();
+        //data=getActivity().getIntent();
 
         firebaseFirestore=FirebaseFirestore.getInstance();
         firebaseUser=FirebaseAuth.getInstance().getCurrentUser();
 
 
-        Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.toolbarofeditnote);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.toolbarofeditnote);
+//        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+//        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
 
         msaveeditnote.setOnClickListener(v -> {
             //Toast.makeText(getApplicationContext(),"savebuton click",Toast.LENGTH_SHORT).show();
-
             String newtitle=medittitleofnote.getText().toString();
             String newcontent=meditcontentofnote.getText().toString();
 
@@ -83,14 +88,18 @@ public class editnote extends Fragment {
             }
             else
             {
-                DocumentReference documentReference=firebaseFirestore.collection("Users").document(firebaseUser.getUid()).collection("User Notes").document(data.getStringExtra("noteId"));
+                firebaseFirestore=FirebaseFirestore.getInstance();
+                DocumentReference documentReference = firebaseFirestore
+                        .collection("Users")
+                        .document(firebaseUser.getUid())
+                        .collection("User Notes").document(docID);
                 Map<String,Object> note=new HashMap<>();
                 note.put("title",newtitle);
                 note.put("content",newcontent);
                 documentReference.set(note).addOnSuccessListener(aVoid -> {
                     Toast.makeText(getContext(),"Note is updated",Toast.LENGTH_SHORT).show();
                     Fragment fragment = new NotesFragment();
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.fragment_container, fragment);
                     fragmentTransaction.addToBackStack(null);
@@ -101,22 +110,10 @@ public class editnote extends Fragment {
         });
 
 
-        String notetitle=data.getStringExtra("title");
-        String notecontent=data.getStringExtra("content");
-        meditcontentofnote.setText(notecontent);
-        medittitleofnote.setText(notetitle);
+//        String notetitle=data.getStringExtra(title);
+//        String notecontent=data.getStringExtra(content);
+//        meditcontentofnote.setText(notecontent);
+//        medittitleofnote.setText(notetitle);
+        return view;
     }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        if(item.getItemId()==android.R.id.home)
-        {
-            homeActivity.onBackPressed();
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
 }

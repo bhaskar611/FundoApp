@@ -59,7 +59,9 @@ public class FirebaseNoteManager implements NoteManager {
         note.put("Creation Date", System.currentTimeMillis());
 
         documentReference.set(note)
-                .addOnSuccessListener(aVoid -> addListener.onSuccess(true))
+                .addOnSuccessListener(aVoid -> addListener.onSuccess(true)
+
+                )
                 .addOnFailureListener(addListener::onFailure
                 );
     }
