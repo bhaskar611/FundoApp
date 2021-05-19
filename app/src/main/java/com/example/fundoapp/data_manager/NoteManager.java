@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public interface NoteManager {
 
     void getAllNotes(CallBack<ArrayList<FirebaseNoteModel>> listener);
-    void addNote(String title, String description, CallBack<Boolean> addListener);
+    String addNote(String title, String description, CallBack<Boolean> addListener);
 //    void moveToTrash(String fromPath, String toPath, String noteId);
 
 }

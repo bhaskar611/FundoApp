@@ -30,38 +30,6 @@ public class MyViewHolder extends ViewHolder implements  View.OnClickListener  {
         mFirebaseAuth=FirebaseAuth.getInstance();
         this.onNoteListener = onNoteListener;
       itemView.setOnClickListener(this);
-//        updateButton.setOnClickListener( v -> {
-//
-//            final EditText resetMail = new EditText(v.getContext());
-//            final AlertDialog.Builder passwordResetDialog = new AlertDialog.Builder(v.getContext());
-//            passwordResetDialog.setTitle("Reset Password ?");
-//            passwordResetDialog.setMessage("Enter Your Email To Received Reset Link.");
-//            passwordResetDialog.setView(resetMail);
-//
-//            passwordResetDialog.setPositiveButton("Conform", (dialog, which) -> {
-//                // extract the email and send reset link
-//                String mail = resetMail.getText().toString();
-//                mFirebaseAuth.sendPasswordResetEmail(mail).addOnSuccessListener(aVoid ->
-//
-//                        .show())
-//                        .addOnFailureListener(e -> Toast.makeText(, "Error ! Reset Link is Not Sent" + e.getMessage(),
-//                                Toast.LENGTH_SHORT).show());
-//
-//            });
-//
-//            passwordResetDialog.setNegativeButton("Cancel", (dialog, which) -> {
-//                // close the dialog
-//            });
-//
-//            passwordResetDialog.create().show();
-//
-//
-//        });
-//        }
-//
-//
-//
-//        );
     }
 
 

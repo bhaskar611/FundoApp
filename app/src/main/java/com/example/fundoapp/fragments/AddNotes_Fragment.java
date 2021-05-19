@@ -15,8 +15,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.fundoapp.R;
+import com.example.fundoapp.data_manager.DBManger;
 import com.example.fundoapp.data_manager.FirebaseNoteManager;
 //import com.example.fundoapp.data_manager.DatabaseHelper;
+import com.example.fundoapp.data_manager.model.FirebaseNoteModel;
 import com.example.fundoapp.fragments.notes.NotesFragment;
 import com.example.fundoapp.util.CallBack;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -38,7 +40,7 @@ public class AddNotes_Fragment extends Fragment {
     FirebaseFirestore firebaseFirestore;
     ProgressBar mprogressbarofcreatenote;
     private static final String TAG = "AddNotes_Fragment";
-   // DatabaseHelper mDatabaseHelper;
+    DBManger mDatabaseHelper;
 
 
     @Override
@@ -96,7 +98,7 @@ public class AddNotes_Fragment extends Fragment {
             noteGettingUserDetails.put("Email", email);
             noteGettingUserDetails.put("UserName",user);
                 FirebaseNoteManager firebaseNoteManager = new FirebaseNoteManager();
-                firebaseNoteManager.addNote(title, content, new CallBack<Boolean>() {
+             String  docID = firebaseNoteManager.addNote(title, content, new CallBack<Boolean>() {
                     @Override
                     public void onSuccess(Boolean data) {
                         Toast.makeText(getContext(),
@@ -118,14 +120,16 @@ public class AddNotes_Fragment extends Fragment {
                                 "Failed To Create Note", Toast.LENGTH_SHORT).show();
                     }
                 });
+                Log.e(TAG, " docID  " + docID );
+                mDatabaseHelper = new DBManger(getContext());
+                if (title.length() != 0 && content.length() !=0) {
+                  if(mDatabaseHelper.addNotes(user,docID,title,content)){
+                      Toast.makeText(getContext(),"note saved in SqliteDB" + docID + " + " + title ,Toast.LENGTH_SHORT).show();
+                  }
 
-//                mDatabaseHelper = new DatabaseHelper(getContext());
-//                if (title.length() != 0 && content.length() !=0) {
-//                   mDatabaseHelper.addData(user,timeID,title,content)
-//                    ;
-//                } else {
-//                    //toastMessage("You must put something in the text field!");
-//                }
+                } else {
+                    //toastMessage("You must put something in the text field!");
+                }
                 Fragment fragment = new NotesFragment();
                 FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
