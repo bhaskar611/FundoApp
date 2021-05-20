@@ -41,6 +41,7 @@ public class AddNotes_Fragment extends Fragment {
     ProgressBar mprogressbarofcreatenote;
     private static final String TAG = "AddNotes_Fragment";
     DBManger mDatabaseHelper;
+    String docID;
 
 
     @Override
@@ -69,6 +70,7 @@ public class AddNotes_Fragment extends Fragment {
         String content = mcreatecontentofnote.getText().toString();
         String user = firebaseUser.getDisplayName();
         String email = firebaseUser.getEmail();
+
         long timeID = System.currentTimeMillis();
         if (title.isEmpty() || content.isEmpty()) {
             Toast.makeText(getContext(), "Both field are Require", Toast.LENGTH_SHORT).show();
@@ -77,9 +79,9 @@ public class AddNotes_Fragment extends Fragment {
             DocumentReference exist = firebaseFirestore.collection("Users").document(firebaseUser.getUid());
             if (currentUID.equals(exist.toString())) {
                 FirebaseNoteManager firebaseNoteManager = new FirebaseNoteManager();
-                firebaseNoteManager.addNote(title, content, new CallBack<Boolean>() {
+                firebaseNoteManager.addNote(title, content, new CallBack<String>() {
                     @Override
-                    public void onSuccess(Boolean data) {
+                    public void onSuccess(String data) {
                         Toast.makeText(getContext(),
                                 "Note Created Successfully",
                                 Toast.LENGTH_SHORT).show();
@@ -98,20 +100,30 @@ public class AddNotes_Fragment extends Fragment {
             noteGettingUserDetails.put("Email", email);
             noteGettingUserDetails.put("UserName",user);
                 FirebaseNoteManager firebaseNoteManager = new FirebaseNoteManager();
-             String  docID = firebaseNoteManager.addNote(title, content, new CallBack<Boolean>() {
+
+              firebaseNoteManager.addNote(title, content, new CallBack<String>() {
                     @Override
-                    public void onSuccess(Boolean data) {
+                    public void onSuccess(String data) {
                         Toast.makeText(getContext(),
                                 "Note Created Successfully",
                                 Toast.LENGTH_SHORT).show();
-//                        assert getFragmentManager() != null;
-//                        getFragmentManager().popBackStackImmediate();
-                        Fragment fragment = new NotesFragment();
-                        FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.fragment_container, fragment);
-                        fragmentTransaction.addToBackStack(null);
-                        fragmentTransaction.commit();
+
+                        docID = data;
+                        mDatabaseHelper = new DBManger(getContext());
+                        if (title.length() != 0 && content.length() !=0) {
+                            mDatabaseHelper.addNotes(user,docID,title,content);
+                                Toast.makeText(getContext(),"note saved in SqliteDB" + docID + " + " + title ,Toast.LENGTH_SHORT).show();
+
+
+                        } else {
+                            //toastMessage("You must put something in the text field!");
+                        }
+
+                        Log.e(TAG, "onSuccess: " + docID );
+
+                        assert getFragmentManager() != null;
+                        getFragmentManager().popBackStackImmediate();
+
                     }
 
                     @Override
@@ -120,24 +132,13 @@ public class AddNotes_Fragment extends Fragment {
                                 "Failed To Create Note", Toast.LENGTH_SHORT).show();
                     }
                 });
-                Log.e(TAG, " docID  " + docID );
-                mDatabaseHelper = new DBManger(getContext());
-                if (title.length() != 0 && content.length() !=0) {
-                  if(mDatabaseHelper.addNotes(user,docID,title,content)){
-                      Toast.makeText(getContext(),"note saved in SqliteDB" + docID + " + " + title ,Toast.LENGTH_SHORT).show();
-                  }
-
-                } else {
-                    //toastMessage("You must put something in the text field!");
-                }
                 Fragment fragment = new NotesFragment();
                 FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.fragment_container, fragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
-//                assert getFragmentManager() != null;
-//                getFragmentManager().popBackStackImmediate();
+
             }
 
         mprogressbarofcreatenote.setVisibility(View.VISIBLE);

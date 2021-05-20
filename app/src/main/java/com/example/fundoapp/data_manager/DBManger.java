@@ -12,6 +12,14 @@ import androidx.annotation.Nullable;
 public class DBManger extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME="fundoNotes.db";
+    private static final String NOTES = "notes";
+    private static final String KEY_ID = "docID";
+    private static final String KEY_NOTE ="note";
+    private static final String KEY_TITLE ="title";
+    private static final String USERS = "users";
+    private static final String KEY_UID = "userID";
+    private static final String FOREIGN_KEY ="foriegnKey";
+    private static final String TAG = "DBManager";
 
     public DBManger(@Nullable Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -20,8 +28,12 @@ public class DBManger extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db)
     {
-        String qry1="create table tbl_users (id integer primary key autoincrement, users text)";
-        String qry2="create table tbl_notes (id integer primary key autoincrement,noteID text, title text, content text)";
+        String qry1=("CREATE TABLE " + USERS + "("
+                + KEY_UID + " INTEGER PRIMARY KEY,"  + "INTEGER REFERENCES " + NOTES + ")");
+        String qry2=("CREATE TABLE " + NOTES + "("
+                + KEY_ID + " INTEGER PRIMARY KEY,"
+                + KEY_TITLE + " TEXT,"
+                + KEY_NOTE + " TEXT" + ")");
         db.execSQL(qry1);
         db.execSQL(qry2);
     }
@@ -29,27 +41,34 @@ public class DBManger extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
-        db.execSQL("DROP TABLE IF EXISTS tbl_users");
-        db.execSQL("DROP TABLE IF EXISTS tbl_notes");
-        onCreate(db);
+        if (oldVersion != newVersion) {
+            db.execSQL("DROP TABLE IF EXISTS " + USERS);
+            db.execSQL("DROP TABLE IF EXISTS " + NOTES);
+            onCreate(db);
+        }
     }
 
-    public  boolean addNotes(String user,String docID,String title,String content)
-    {
-        SQLiteDatabase db=this.getWritableDatabase();
+    public  void addNotes(String user,String docID,String title,String content) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues cv1 = new ContentValues();
+            cv1.put(KEY_UID, user);
+            ContentValues cv2 = new ContentValues();
+            cv2.put(KEY_ID, docID);
+            cv2.put(KEY_TITLE, title);
+            cv2.put(KEY_NOTE, content);
 
-        ContentValues cv1=new ContentValues();
-        cv1.put("userID",user);
-        ContentValues cv2=new ContentValues();
-        cv2.put("docID",docID);
-        cv2.put("title",title);
-        cv2.put("content",content);
+            db.insert(USERS, null, cv1);
+            db.insert(NOTES, null, cv2);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to add post to database");
+        } finally {
+            db.endTransaction();
+        }
 
-        db.insert("tbl_users",null,cv1);
-        db.insert("tbl_users_note_id",null,cv2);
-        return true;
+
     }
-
-
 
 }

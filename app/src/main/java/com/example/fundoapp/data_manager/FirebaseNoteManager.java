@@ -47,7 +47,7 @@ public class FirebaseNoteManager implements NoteManager {
                 .addOnFailureListener(e -> listener.onFailure(e));
     }
 
-    public String addNote(String title, String content, CallBack<Boolean> addListener) {
+    public void addNote(String title, String content, CallBack<String> addListener) {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseFirestore=FirebaseFirestore.getInstance();
         DocumentReference documentReference = firebaseFirestore
@@ -63,15 +63,21 @@ public class FirebaseNoteManager implements NoteManager {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        addListener.onSuccess(true);
+                        newNoteID = documentReference.getId();
+                        addListener.onSuccess(newNoteID);
+
                        newNoteID = documentReference.getId();
+                       FirebaseNoteModel firebaseNoteModel = new FirebaseNoteModel();
+                       firebaseNoteModel.setId(newNoteID);
                         Log.e(TAG, "newNoteID "+ newNoteID );
                     }
                 }
                 )
                 .addOnFailureListener(addListener::onFailure
                 );
-        return newNoteID;
+        Log.e(TAG, "addNote: " + newNoteID );
+       // return newNoteID;
+
     }
 
     public void deleteNote(String docID){
