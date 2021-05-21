@@ -68,7 +68,7 @@ public class AddNotes_Fragment extends Fragment {
     private void onClick(View v) {
         String title = mcreatetitleofnote.getText().toString();
         String content = mcreatecontentofnote.getText().toString();
-        String user = firebaseUser.getDisplayName();
+        String user = firebaseUser.getUid();
         String email = firebaseUser.getEmail();
 
         long timeID = System.currentTimeMillis();
@@ -100,14 +100,14 @@ public class AddNotes_Fragment extends Fragment {
             noteGettingUserDetails.put("Email", email);
             noteGettingUserDetails.put("UserName",user);
                 FirebaseNoteManager firebaseNoteManager = new FirebaseNoteManager();
-
+                //String  docID =
               firebaseNoteManager.addNote(title, content, new CallBack<String>() {
                     @Override
                     public void onSuccess(String data) {
                         Toast.makeText(getContext(),
                                 "Note Created Successfully",
                                 Toast.LENGTH_SHORT).show();
-
+                        FirebaseNoteModel firebaseNoteModel =new FirebaseNoteModel();
                         docID = data;
                         mDatabaseHelper = new DBManger(getContext());
                         if (title.length() != 0 && content.length() !=0) {
@@ -118,12 +118,17 @@ public class AddNotes_Fragment extends Fragment {
                         } else {
                             //toastMessage("You must put something in the text field!");
                         }
-
+                       // data = firebaseNoteModel.getId();
                         Log.e(TAG, "onSuccess: " + docID );
 
                         assert getFragmentManager() != null;
                         getFragmentManager().popBackStackImmediate();
-
+                        Fragment fragment = new NotesFragment();
+                        FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment_container, fragment);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
                     }
 
                     @Override
@@ -138,7 +143,8 @@ public class AddNotes_Fragment extends Fragment {
                 fragmentTransaction.replace(R.id.fragment_container, fragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
-
+//                assert getFragmentManager() != null;
+//                getFragmentManager().popBackStackImmediate();
             }
 
         mprogressbarofcreatenote.setVisibility(View.VISIBLE);

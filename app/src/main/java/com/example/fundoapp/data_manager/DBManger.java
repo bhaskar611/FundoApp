@@ -29,11 +29,12 @@ public class DBManger extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db)
     {
         String qry1=("CREATE TABLE " + USERS + "("
-                + KEY_UID + " INTEGER PRIMARY KEY,"  + "INTEGER REFERENCES " + NOTES + ")");
+                + KEY_UID + " TEXT PRIMARY KEY" +  ")");
         String qry2=("CREATE TABLE " + NOTES + "("
-                + KEY_ID + " INTEGER PRIMARY KEY,"
+                + KEY_ID + " TEXT PRIMARY KEY,"
                 + KEY_TITLE + " TEXT,"
-                + KEY_NOTE + " TEXT" + ")");
+                + KEY_NOTE + " TEXT,"
+                 + KEY_UID + " TEXT REFERENCES " + NOTES + ")");
         db.execSQL(qry1);
         db.execSQL(qry2);
     }

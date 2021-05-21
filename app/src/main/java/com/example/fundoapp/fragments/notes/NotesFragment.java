@@ -1,10 +1,13 @@
 package com.example.fundoapp.fragments.notes;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +27,7 @@ import com.example.fundoapp.adapters.MyViewHolder;
 import com.example.fundoapp.data_manager.FirebaseNoteManager;
 import com.example.fundoapp.data_manager.model.FirebaseNoteModel;
 import com.example.fundoapp.fragments.AddNotes_Fragment;
+import com.example.fundoapp.util.CallBack;
 import com.example.fundoapp.util.ViewState;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -73,35 +77,54 @@ public class NotesFragment extends Fragment {
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
-//        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-//            @Override
-//            public void onTouchEvent(RecyclerView recycler, MotionEvent event) {
-//                // Handle on touch events here
-//
-//                Fragment fragment = new editnote();
-//                Bundle args = new Bundle();
-////                args.putString("title", title);
-////                args.putString("content", content);
-////                fragment.setArguments(args);
-//                FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
-//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//                fragmentTransaction.replace(R.id.fragment_container, fragment);
-//                fragmentTransaction.addToBackStack(null);
-//                fragmentTransaction.commit();
-//
-//            }
+        EditText inputSearch = view.findViewById(R.id.inputSearch);
+        inputSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-//            @Override
-//            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    notesAdapter.cancelTimer();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+               // FirebaseNoteManager = new firebaseNoteManager();
+                fireBaseNoteManager.getAllNotes(new CallBack<ArrayList<FirebaseNoteModel>>() {
+                    @Override
+                    public void onSuccess(ArrayList<FirebaseNoteModel> data) {
+                        Log.e(TAG, "onNoteReceived: " + data);
+                        if (data.size() != 0) {
+                            notesAdapter.searchNotes(s.toString());
+                        }
+                       // notesMutableLiveData.setValue(new ViewState.Success<>(data));
+                    }
+
+                    @Override
+                    public void onFailure(Exception exception) {
+                        //notesMutableLiveData.setValue(new ViewState.Failure<>(exception));
+                    }
+
+                });
+//                firebaseNoteManager.getAllNotes(new CallBack<ArrayList<FirebaseNoteModel>>() {
+//                    @Override
+//                    public void onSuccess(ArrayList<FirebaseNoteModel> data) {
+//                        Log.e(TAG, "onNoteReceived: " + data);
+//                       // notesMutableLiveData.setValue(new ViewState.Success<>(data));
+//                    }
 //
-//            }
+//                    @Override
+//                    public void onFailure(Exception exception) {
+//                        //notesMutableLiveData.setValue(new ViewState.Failure<>(exception));
 //
-//            @Override
-//            public boolean onInterceptTouchEvent(RecyclerView recycler, MotionEvent event) {
-//                return false;
-//            }
-//
-//        });
+//                    }
+//                });
+
+            }
+        });
+
         return view;
     }
     @Override
