@@ -4,9 +4,6 @@ public class FirebaseNoteModel {
         private  String title;
         private  String content;
         private String id;
-        public FirebaseNoteModel(){
-
-        }
 
     public String getId() {
         return id;

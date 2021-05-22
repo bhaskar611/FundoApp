@@ -1,5 +1,6 @@
 package com.example.fundoapp.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -32,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class AddNotes_Fragment extends Fragment {
+public class AddNotes_Fragment extends Fragment  {
 
     private EditText mcreatetitleofnote,mcreatecontentofnote;
     FirebaseAuth firebaseAuth;
@@ -42,7 +44,13 @@ public class AddNotes_Fragment extends Fragment {
     private static final String TAG = "AddNotes_Fragment";
     DBManger mDatabaseHelper;
     String docID;
+    AddNoteListner addNoteListner;
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        addNoteListner = (AddNoteListner) context;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater,  ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -96,9 +104,9 @@ public class AddNotes_Fragment extends Fragment {
                     }
                 });
             } else{
-                Map<String, Object> noteGettingUserDetails = new HashMap<>();
-            noteGettingUserDetails.put("Email", email);
-            noteGettingUserDetails.put("UserName",user);
+//                Map<String, Object> noteGettingUserDetails = new HashMap<>();
+//            noteGettingUserDetails.put("Email", email);
+//            noteGettingUserDetails.put("UserName",user);
                 FirebaseNoteManager firebaseNoteManager = new FirebaseNoteManager();
                 //String  docID =
               firebaseNoteManager.addNote(title, content, new CallBack<String>() {
@@ -107,7 +115,8 @@ public class AddNotes_Fragment extends Fragment {
                         Toast.makeText(getContext(),
                                 "Note Created Successfully",
                                 Toast.LENGTH_SHORT).show();
-                        FirebaseNoteModel firebaseNoteModel =new FirebaseNoteModel();
+                        FirebaseNoteModel firebaseNoteModel = new FirebaseNoteModel(title,content,data);
+                        addNoteListner.onNoteAdded(firebaseNoteModel);
                         docID = data;
                         mDatabaseHelper = new DBManger(getContext());
                         if (title.length() != 0 && content.length() !=0) {
@@ -123,12 +132,6 @@ public class AddNotes_Fragment extends Fragment {
 
                         assert getFragmentManager() != null;
                         getFragmentManager().popBackStackImmediate();
-                        Fragment fragment = new NotesFragment();
-                        FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.fragment_container, fragment);
-                        fragmentTransaction.addToBackStack(null);
-                        fragmentTransaction.commit();
                     }
 
                     @Override
@@ -137,17 +140,10 @@ public class AddNotes_Fragment extends Fragment {
                                 "Failed To Create Note", Toast.LENGTH_SHORT).show();
                     }
                 });
-                Fragment fragment = new NotesFragment();
-                FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container, fragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-//                assert getFragmentManager() != null;
-//                getFragmentManager().popBackStackImmediate();
             }
 
         mprogressbarofcreatenote.setVisibility(View.VISIBLE);
         }
+
     }
 }

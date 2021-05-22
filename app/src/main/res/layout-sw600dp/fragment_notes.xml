@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/teal_200"
+    android:background="@color/white"
     tools:context=".dashboard.HomeActivity">
 
 
@@ -21,10 +21,10 @@
         android:layout_marginBottom="16dp"
 
         android:background="#A1F4FB"
-        app:srcCompat="@drawable/addnote"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:maxImageSize="40dp">
+        app:maxImageSize="40dp"
+        app:srcCompat="@drawable/addnote">
 
 
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
@@ -45,13 +45,13 @@
 
     <EditText
         android:id="@+id/inputSearch"
-        android:layout_width="371dp"
-        android:layout_height="53dp"
+        android:layout_width="548dp"
+        android:layout_height="63dp"
         android:ems="10"
         android:hint="Search Notes"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@+id/recyclerview"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/switch1"
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -62,10 +62,31 @@
         android:contentDescription="TODO"
         app:layout_constraintBottom_toTopOf="@+id/recyclerview"
         app:layout_constraintEnd_toStartOf="@+id/inputSearch"
-        app:layout_constraintHorizontal_bias="0.53"
+        app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.592"
+        app:layout_constraintVertical_bias="0.571"
         app:srcCompat="@drawable/ic_baseline_search_24" />
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/switchLayout"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/inputSearch"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+    <!--        android:id="@+id/floatingActionButton"-->
+    <!--        android:layout_width="73dp"-->
+    <!--        android:layout_height="57dp"-->
+    <!--        android:clickable="true"-->
+    <!--        app:layout_constraintBottom_toTopOf="@+id/recyclerview"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toEndOf="@+id/inputSearch"-->
+    <!--        app:layout_constraintTop_toTopOf="parent"-->
+    <!--        app:srcCompat="@drawable/ic_baseline_view_quilt_24" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

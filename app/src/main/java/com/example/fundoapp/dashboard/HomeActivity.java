@@ -20,11 +20,15 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.fundoapp.data_manager.FirebaseUserManager;
+import com.example.fundoapp.data_manager.model.FirebaseNoteModel;
 import com.example.fundoapp.data_manager.model.FirebaseUserModel;
+import com.example.fundoapp.fragments.AddNoteListner;
+import com.example.fundoapp.fragments.AddNotes_Fragment;
 import com.example.fundoapp.fragments.Archive_Fragment;
 import com.example.fundoapp.R;
 import com.example.fundoapp.data_manager.SharedPreference;
 import com.example.fundoapp.authentication.LoginActivity;
+import com.example.fundoapp.fragments.Label_Fragment;
 import com.example.fundoapp.fragments.Profile_Fragment;
 import com.example.fundoapp.fragments.notes.NotesFragment;
 import com.example.fundoapp.fragments.ReminderFragment;
@@ -40,7 +44,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements AddNoteListner {
     FirebaseAuth fAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private DrawerLayout drawer;
@@ -49,6 +53,7 @@ public class HomeActivity extends AppCompatActivity {
     private final FirebaseUserManager firebaseUserManager = new FirebaseUserManager();
     FirebaseUser user;
     ProgressBar mprogressbar;
+    NotesFragment notesFragment;
 
 
 
@@ -63,6 +68,7 @@ public class HomeActivity extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference();
         fAuth = FirebaseAuth.getInstance();
         user = fAuth.getCurrentUser();
+        notesFragment = new NotesFragment();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this::onNavigationItemSelected);
@@ -72,7 +78,7 @@ public class HomeActivity extends AppCompatActivity {
         toggle.syncState();
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new NotesFragment()).commit();
+                    notesFragment).commit();
             navigationView.setCheckedItem(R.id.note);
         }
         View headerView = navigationView.getHeaderView(0);
@@ -80,6 +86,7 @@ public class HomeActivity extends AppCompatActivity {
         TextView userEmail = headerView.findViewById(R.id.user_email_display);
         ImageView userDp = headerView.findViewById(R.id.user_profile);
         FloatingActionButton changePic = headerView.findViewById(R.id.changePicButton);
+
         mprogressbar = headerView.findViewById(R.id.progressbarofcreatenote);
         firebaseUserManager.getUserDetails(new CallBack<FirebaseUserModel>() {
             @Override
@@ -155,10 +162,13 @@ public class HomeActivity extends AppCompatActivity {
         item.getItemId();
         if (item.getItemId() == R.id.note) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new NotesFragment()).commit();
+                    notesFragment).commit();
         } else if (item.getItemId() == R.id.archive) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new Archive_Fragment()).commit();
+        } else if (item.getItemId() == R.id.labelTag) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new Label_Fragment()).commit();
         } else if (item.getItemId() == R.id.remainder) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new ReminderFragment()).commit();
@@ -194,4 +204,8 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onNoteAdded(FirebaseNoteModel note) {
+        notesFragment.addnote(note);
+    }
 }

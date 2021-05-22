@@ -11,6 +11,8 @@ public interface NoteManager {
 
     void getAllNotes(CallBack<ArrayList<FirebaseNoteModel>> listener);
     void addNote(String title, String description, CallBack<String> addListener);
+    void adddLabel(String label,CallBack<Boolean> listner);
+    void getAllLabels(CallBack<ArrayList<FirebaseLabelModel>> listCallBack);
 //    void moveToTrash(String fromPath, String toPath, String noteId);
 
 }

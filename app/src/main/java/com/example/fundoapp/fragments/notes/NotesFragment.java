@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,9 +18,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.example.fundoapp.R;
 import com.example.fundoapp.adapters.Adapter;
@@ -42,18 +45,22 @@ public class NotesFragment extends Fragment {
     private static final String TAG = "FragmentNotes";
     private final ArrayList<FirebaseNoteModel> firebaseNoteModels = new ArrayList<>();
     private NotesViewModel notesViewModel;
-   // RecyclerView.ViewHolder viewHolder ;
+    RecyclerView.LayoutManager linearLayoutManager ;
+    //boolean flag = true;
+
+    // RecyclerView.ViewHolder viewHolder ;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_notes, container, false);
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView = view.findViewById(R.id.recyclerview);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setHasFixedSize(true);
-        fireBaseNoteManager = new FirebaseNoteManager();
+            View view = inflater.inflate(R.layout.fragment_notes, container, false);
+            //linearLayoutManager = new RecyclerView.LayoutManager(getContext());
+            switchViews(view);
+            //linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            recyclerView = view.findViewById(R.id.recyclerview);
+            recyclerView.setLayoutManager(linearLayoutManager);
+            recyclerView.setHasFixedSize(true);
+            fireBaseNoteManager = new FirebaseNoteManager();
         notesViewModel = new ViewModelProvider(this).get(NotesViewModel.class);
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -108,25 +115,41 @@ public class NotesFragment extends Fragment {
                     }
 
                 });
-//                firebaseNoteManager.getAllNotes(new CallBack<ArrayList<FirebaseNoteModel>>() {
-//                    @Override
-//                    public void onSuccess(ArrayList<FirebaseNoteModel> data) {
-//                        Log.e(TAG, "onNoteReceived: " + data);
-//                       // notesMutableLiveData.setValue(new ViewState.Success<>(data));
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Exception exception) {
-//                        //notesMutableLiveData.setValue(new ViewState.Failure<>(exception));
-//
-//                    }
-//                });
-
             }
         });
 
         return view;
     }
+
+    private void switchViews(View  view) {
+        Switch switchview = view.findViewById(R.id.switch1);
+        switchview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int spanCount ;
+                if (switchview.isChecked()){
+                    spanCount =1;
+
+                } else {
+                    spanCount =getResources().getInteger(R.integer.span_count);
+                }
+                linearLayoutManager = new StaggeredGridLayoutManager(spanCount,StaggeredGridLayoutManager.VERTICAL);
+                recyclerView.setLayoutManager(linearLayoutManager);
+//                    linearLayoutManager= new
+//                            LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false);
+//                    recyclerView.setLayoutManager(linearLayoutManager);
+//                    Toast.makeText(getContext(), "Switched to  view!", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    linearLayoutManager = new StaggeredGridLayoutManager()GridLayoutManager(getContext(),2,GridLayoutManager.VERTICAL,false);
+//                    recyclerView.setLayoutManager(linearLayoutManager);
+//                    Toast.makeText(getContext(), "Switched to grid view!", Toast.LENGTH_SHORT).show();
+//                }
+            }
+        });
+//
+
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -194,20 +217,7 @@ public class NotesFragment extends Fragment {
         });
     }
 
-//    public void onNoteClick(int position, View viewHolder) {
-//
-//        String title = notesAdapter.getItem(position).getTitle();
-//        String content = notesAdapter.getItem(position).getContent();
-//
-//        Fragment fragment = new editnote();
-//        Bundle args = new Bundle();
-//        args.putString("title", title);
-//        args.putString("content", content);
-//        fragment.setArguments(args);
-//        FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.replace(R.id.fragment_container, fragment);
-//        fragmentTransaction.addToBackStack(null);
-//        fragmentTransaction.commit();
-//    }
+    public void addnote(FirebaseNoteModel note) {
+        notesAdapter.addNote(note);
+    }
 }

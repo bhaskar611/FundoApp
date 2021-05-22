@@ -34,7 +34,7 @@ public class DBManger extends SQLiteOpenHelper {
                 + KEY_ID + " TEXT PRIMARY KEY,"
                 + KEY_TITLE + " TEXT,"
                 + KEY_NOTE + " TEXT,"
-                 + KEY_UID + " TEXT REFERENCES " + NOTES + ")");
+                + KEY_UID + " TEXT REFERENCES " + NOTES + ")");
         db.execSQL(qry1);
         db.execSQL(qry2);
     }

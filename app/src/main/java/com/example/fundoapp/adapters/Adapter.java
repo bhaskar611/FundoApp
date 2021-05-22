@@ -102,4 +102,8 @@ public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
     }
 
 
+    public void addNote(FirebaseNoteModel note) {
+        notesList.add(0,note);
+        notifyItemInserted(0);
+    }
 }

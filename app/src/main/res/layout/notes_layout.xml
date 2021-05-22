@@ -47,13 +47,12 @@
 
                 </TextView>
 
-                <ImageView
-                    android:id="@+id/editButton"
-                    android:layout_width="100dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/edit" />
+                <ImageButton
+                    android:id="@+id/imageButton2"
+                    android:layout_width="25dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/ic_baseline_label_24" />
 
 
             </LinearLayout>
