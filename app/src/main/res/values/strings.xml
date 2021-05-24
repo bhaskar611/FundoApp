@@ -20,4 +20,5 @@
     <string name="user_name">User</string>
     <string name="user_email">Email</string>
     <string name="switchLayout">Switch</string>
+    <string name="this_is_your_label">label_view</string>
 </resources>

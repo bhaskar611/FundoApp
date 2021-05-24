@@ -45,7 +45,9 @@ public class NotesFragment extends Fragment {
     private static final String TAG = "FragmentNotes";
     private final ArrayList<FirebaseNoteModel> firebaseNoteModels = new ArrayList<>();
     private NotesViewModel notesViewModel;
-    RecyclerView.LayoutManager linearLayoutManager ;
+//    RecyclerView.LayoutManager linearLayoutManager ;
+private RecyclerView.LayoutManager layoutManager;
+
     //boolean flag = true;
 
     // RecyclerView.ViewHolder viewHolder ;
@@ -54,12 +56,22 @@ public class NotesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment_notes, container, false);
-            //linearLayoutManager = new RecyclerView.LayoutManager(getContext());
-            switchViews(view);
-            //linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+//            linearLayoutManager = new RecyclerView.LayoutManager(getContext());
+//
+//            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        final StaggeredGridLayoutManager layoutManager = new
+                StaggeredGridLayoutManager(1,
+                StaggeredGridLayoutManager.VERTICAL);
+
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+//        switchViews(view);
+//        linearLayoutManager = new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL);
+//            recyclerView.setLayoutManager(layoutManager);
+
             recyclerView = view.findViewById(R.id.recyclerview);
-            recyclerView.setLayoutManager(linearLayoutManager);
+            recyclerView.setLayoutManager(layoutManager);
             recyclerView.setHasFixedSize(true);
+            switchViews(view);
             fireBaseNoteManager = new FirebaseNoteManager();
         notesViewModel = new ViewModelProvider(this).get(NotesViewModel.class);
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0,
@@ -133,17 +145,9 @@ public class NotesFragment extends Fragment {
                 } else {
                     spanCount =getResources().getInteger(R.integer.span_count);
                 }
-                linearLayoutManager = new StaggeredGridLayoutManager(spanCount,StaggeredGridLayoutManager.VERTICAL);
-                recyclerView.setLayoutManager(linearLayoutManager);
-//                    linearLayoutManager= new
-//                            LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false);
-//                    recyclerView.setLayoutManager(linearLayoutManager);
-//                    Toast.makeText(getContext(), "Switched to  view!", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    linearLayoutManager = new StaggeredGridLayoutManager()GridLayoutManager(getContext(),2,GridLayoutManager.VERTICAL,false);
-//                    recyclerView.setLayoutManager(linearLayoutManager);
-//                    Toast.makeText(getContext(), "Switched to grid view!", Toast.LENGTH_SHORT).show();
-//                }
+                layoutManager = new StaggeredGridLayoutManager(spanCount,StaggeredGridLayoutManager.VERTICAL);
+                recyclerView.setLayoutManager(layoutManager);
+//
             }
         });
 //

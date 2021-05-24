@@ -94,12 +94,12 @@ public class Profile_Fragment extends Fragment {
             }
         });
 
-        StorageReference profileRef = storageReference.child("users/"+fAuth.getCurrentUser().getUid()+"/profile.jpg");
+        StorageReference profileRef = storageReference.child("users/"+ requireNonNull(fAuth.getCurrentUser()).getUid()+"/profile.jpg");
         profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 //Picasso.get().load(uri).into(profileImageView);
-                Glide.with(getContext())
+                Glide.with(requireNonNull(getContext()))
                         .load(uri)
                         .override(300, 200)
                         .into(profileImageView);

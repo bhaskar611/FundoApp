@@ -19,9 +19,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.fundoapp.data_manager.FirebaseLabelModel;
 import com.example.fundoapp.data_manager.FirebaseUserManager;
 import com.example.fundoapp.data_manager.model.FirebaseNoteModel;
 import com.example.fundoapp.data_manager.model.FirebaseUserModel;
+import com.example.fundoapp.fragments.AddLabelListner;
 import com.example.fundoapp.fragments.AddNoteListner;
 import com.example.fundoapp.fragments.AddNotes_Fragment;
 import com.example.fundoapp.fragments.Archive_Fragment;
@@ -44,7 +46,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
-public class HomeActivity extends AppCompatActivity implements AddNoteListner {
+import java.util.Objects;
+
+public class HomeActivity extends AppCompatActivity implements AddNoteListner, AddLabelListner {
     FirebaseAuth fAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private DrawerLayout drawer;
@@ -54,6 +58,7 @@ public class HomeActivity extends AppCompatActivity implements AddNoteListner {
     FirebaseUser user;
     ProgressBar mprogressbar;
     NotesFragment notesFragment;
+    Label_Fragment label_fragment;
 
 
 
@@ -69,6 +74,7 @@ public class HomeActivity extends AppCompatActivity implements AddNoteListner {
         fAuth = FirebaseAuth.getInstance();
         user = fAuth.getCurrentUser();
         notesFragment = new NotesFragment();
+        label_fragment = new Label_Fragment();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this::onNavigationItemSelected);
@@ -109,7 +115,7 @@ public class HomeActivity extends AppCompatActivity implements AddNoteListner {
                 startActivityForResult(openGalleryIntent,1000);
             }
         });
-        StorageReference profileRef = storageReference.child("users/"+fAuth.getCurrentUser().getUid()+"/profile.jpg");
+        StorageReference profileRef = storageReference.child("users/"+ Objects.requireNonNull(fAuth.getCurrentUser()).getUid()+"/profile.jpg");
         profileRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(userDp));
     }
 
@@ -168,7 +174,7 @@ public class HomeActivity extends AppCompatActivity implements AddNoteListner {
                     new Archive_Fragment()).commit();
         } else if (item.getItemId() == R.id.labelTag) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new Label_Fragment()).commit();
+                    label_fragment).commit();
         } else if (item.getItemId() == R.id.remainder) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new ReminderFragment()).commit();
@@ -207,5 +213,11 @@ public class HomeActivity extends AppCompatActivity implements AddNoteListner {
     @Override
     public void onNoteAdded(FirebaseNoteModel note) {
         notesFragment.addnote(note);
+    }
+
+
+    @Override
+    public void onLabelAdded(FirebaseLabelModel label) {
+        label_fragment.addLabel(label);
     }
 }

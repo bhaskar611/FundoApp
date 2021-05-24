@@ -6,10 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
-        android:layout_width="931dp"
-        android:layout_height="245dp"
+        android:layout_width="810dp"
+        android:layout_height="135dp"
         android:layout_margin="18dp"
         android:background="#8E2727"
         app:cardBackgroundColor="#8BC34A"
@@ -17,9 +18,10 @@
         app:cardElevation="6dp"
         app:layout_constraintBottom_toTopOf="@+id/recyclerviewLabel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.36"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.98"
         tools:ignore="MissingConstraints">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -37,13 +39,13 @@
                 app:layout_constraintEnd_toStartOf="@+id/createLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.066"
+                app:layout_constraintVertical_bias="0.354"
                 app:srcCompat="@drawable/addnote" />
 
             <EditText
                 android:id="@+id/createLabel"
-                android:layout_width="534dp"
-                android:layout_height="152dp"
+                android:layout_width="513dp"
+                android:layout_height="66dp"
                 android:ems="10"
                 android:hint="Craete Label"
                 android:inputType="textPersonName"
@@ -52,7 +54,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/save_Label"
                 app:layout_constraintStart_toEndOf="@+id/imageView8"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.583" />
+                app:layout_constraintVertical_bias="1.0" />
 
             <ImageButton
                 android:id="@+id/save_Label"
@@ -67,17 +69,30 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerviewLabel"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:padding="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/card_view"
-        tools:listitem="@layout/item_view"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.343"
+        tools:listitem="@layout/label_view" />
+
+    <ImageView
+        android:id="@+id/backButton"
+        android:layout_width="116dp"
+        android:layout_height="63dp"
+        app:layout_constraintBottom_toTopOf="@+id/card_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/backbutton" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

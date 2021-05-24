@@ -25,6 +25,7 @@ public class FirebaseNoteManager implements NoteManager {
     private static final String TAG = "FirebaseNoteManager";
     Adapter adapter;
     String newNoteID;
+    String newLabelID;
 
     public void  getAllNotes(CallBack listener) {
         ArrayList<FirebaseNoteModel> noteslist = new ArrayList<FirebaseNoteModel>();
@@ -99,7 +100,7 @@ public class FirebaseNoteManager implements NoteManager {
     }
 
     @Override
-    public void adddLabel(String label, CallBack<Boolean> listner) {
+    public void adddLabel(String label, CallBack<String> listner) {
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseFirestore=FirebaseFirestore.getInstance();
@@ -115,8 +116,8 @@ public class FirebaseNoteManager implements NoteManager {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                           @Override
                                           public void onSuccess(Void aVoid) {
-                                              newNoteID = documentReference.getId();
-                                              listner.onSuccess(true);
+                                              newLabelID = documentReference.getId();
+                                              listner.onSuccess(newLabelID);
                                               Log.e(TAG, "newNoteID "+ newNoteID );
                                           }
                                       }
@@ -146,6 +147,28 @@ public class FirebaseNoteManager implements NoteManager {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.e(TAG, "onFailure:Error Deleted "+ docID );
+            }
+        });
+    }
+
+    public void deleteLabel(String labelID){
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        firebaseFirestore=FirebaseFirestore.getInstance();
+        assert firebaseUser != null;
+        DocumentReference documentReference = firebaseFirestore
+                .collection("Users")
+                .document(firebaseUser.getUid())
+                .collection("Labels").document(labelID);
+        documentReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.e(TAG, "onSuccess: Deleted "+ labelID );
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e(TAG, "onFailure:Error Deleted "+ labelID );
             }
         });
     }
