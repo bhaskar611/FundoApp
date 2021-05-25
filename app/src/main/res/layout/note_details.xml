@@ -1,104 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/walpaper"
+    android:layout_height="match_parent"
+    android:background="#65587C">
 
-    android:padding="15dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <EditText
+        android:id="@+id/editnotetitle"
+        android:layout_width="0dp"
+        android:layout_height="96dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/white"
+        android:hint="Title"
+        android:padding="20dp"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/editnotecontent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="5dp"
-        app:cardCornerRadius="5dp"
-        app:cardMaxElevation="5dp"
-        android:id="@+id/notecard">
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:id="@+id/note"
-            android:orientation="vertical">
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <EditText
-
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/editnotetitle"
-                    android:paddingTop="10dp"
-                    android:paddingRight="10dp"
-                    android:paddingBottom="10dp"
-                    android:text="@string/this_is_your_title"
-                    android:textSize="20sp"
-                    android:textColor="@color/black"
-                    android:layout_weight="1"
-
-                    android:paddingLeft="10dp">
-
-
-
-                </EditText>
-
-<!--                <ImageView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:id="@+id/editButton"-->
-<!--                    android:layout_weight="0"-->
-<!--                    android:src="@drawable/noteslayout"-->
-<!--                    android:contentDescription="@string/todo" />-->
-
-
-            </LinearLayout>
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/editnotecontent"
-
-                android:paddingBottom="20dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp"
-                android:text="This is your code which appear here"
-                android:textSize="15sp"
-                android:textColor="@color/black">
-
-            </EditText>
-
-
-        </LinearLayout>
-
-
-
-    </androidx.cardview.widget.CardView>
+    <EditText
+        android:id="@+id/editnotecontent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/white"
+        android:gravity="start"
+        android:hint="Content"
+        android:padding="15dp"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editnotetitle" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_gravity="bottom|end"
-        android:id="@+id/updateeditnote"
-        android:src="@drawable/edit"
-        android:background="#A1F4FB"
-        app:maxImageSize="40dp"
-
-        >
+        android:id="@+id/update_button"
+        android:layout_width="60dp"
+        android:layout_height="560dp"
+        android:contentDescription="@string/floatingbutton"
+        app:srcCompat="@drawable/edit"
+        android:backgroundTint="@color/teal_700"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.895"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.899"
+        app:maxImageSize="60dp">
 
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
 
-
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

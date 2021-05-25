@@ -40,7 +40,9 @@ public class FirebaseNoteManager implements NoteManager {
                 String title = documentSnapshot.getString("title");
                 String content = documentSnapshot.getString("content");
                 String docID = documentSnapshot.getId();
+                long timestamp = documentSnapshot.getLong("Creation Date");
                 FirebaseNoteModel firebaseNoteModel = new FirebaseNoteModel(title, content,docID);
+                firebaseNoteModel.setCreationTime(timestamp);
                 noteslist.add(firebaseNoteModel);
             }
             listener.onSuccess(noteslist);

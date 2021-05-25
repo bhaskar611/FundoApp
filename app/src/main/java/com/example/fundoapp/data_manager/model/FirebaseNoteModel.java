@@ -4,6 +4,18 @@ public class FirebaseNoteModel {
         private  String title;
         private  String content;
         private String id;
+        private long creationTime;
+
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public FirebaseNoteModel(){
+        }
 
     public String getId() {
         return id;

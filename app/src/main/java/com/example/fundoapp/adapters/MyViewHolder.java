@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import com.example.fundoapp.R;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class MyViewHolder extends ViewHolder implements  View.OnClickListener  {
+public abstract class MyViewHolder  extends BaseViewHolder implements  View.OnClickListener  {
     //implements  View.OnClickListener
     TextView noteTitle,noteContent;
     View view;
@@ -19,6 +19,8 @@ public class MyViewHolder extends ViewHolder implements  View.OnClickListener  {
     Button updateButton;
     FirebaseAuth mFirebaseAuth;
    OnNoteListener onNoteListener;
+
+
 
     public MyViewHolder(@NonNull View itemView, OnNoteListener onNoteListener) {
         super(itemView);
@@ -31,8 +33,6 @@ public class MyViewHolder extends ViewHolder implements  View.OnClickListener  {
         this.onNoteListener = onNoteListener;
       itemView.setOnClickListener(this);
     }
-
-
 
     @Override
     public void onClick(View v) {

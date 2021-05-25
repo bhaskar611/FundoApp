@@ -61,7 +61,7 @@ public class editnote extends Fragment {
 
         medittitleofnote= (EditText) view.findViewById(R.id.editnotetitle);
          meditcontentofnote = (EditText) view.findViewById(R.id.editnotecontent);
-        msaveeditnote=  view.findViewById(R.id.updateeditnote);
+        msaveeditnote=  view.findViewById(R.id.update_button);
         meditcontentofnote.setText(content);
         medittitleofnote.setText(title);
 

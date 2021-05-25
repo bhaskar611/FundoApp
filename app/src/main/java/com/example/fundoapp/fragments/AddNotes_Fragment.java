@@ -46,6 +46,7 @@ public class AddNotes_Fragment extends Fragment  {
     String docID;
     AddNoteListner addNoteListner;
 
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
