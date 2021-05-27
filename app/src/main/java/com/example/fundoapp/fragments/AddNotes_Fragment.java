@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -17,7 +18,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.fundoapp.R;
-import com.example.fundoapp.data_manager.DBManger;
+//import com.example.fundoapp.data_manager.DBManger;
 import com.example.fundoapp.data_manager.FirebaseNoteManager;
 //import com.example.fundoapp.data_manager.DatabaseHelper;
 import com.example.fundoapp.data_manager.model.FirebaseNoteModel;
@@ -42,7 +43,7 @@ public class AddNotes_Fragment extends Fragment  {
     FirebaseFirestore firebaseFirestore;
     ProgressBar mprogressbarofcreatenote;
     private static final String TAG = "AddNotes_Fragment";
-    DBManger mDatabaseHelper;
+//    DBManger mDatabaseHelper;
     String docID;
     AddNoteListner addNoteListner;
 
@@ -119,17 +120,19 @@ public class AddNotes_Fragment extends Fragment  {
                         FirebaseNoteModel firebaseNoteModel = new FirebaseNoteModel(title,content,data);
                         addNoteListner.onNoteAdded(firebaseNoteModel);
                         docID = data;
-                        mDatabaseHelper = new DBManger(getContext());
-                        if (title.length() != 0 && content.length() !=0) {
-                            mDatabaseHelper.addNotes(user,docID,title,content);
-                                Toast.makeText(getContext(),"note saved in SqliteDB" + docID + " + " + title ,Toast.LENGTH_SHORT).show();
-
-
-                        } else {
-                            //toastMessage("You must put something in the text field!");
-                        }
-                       // data = firebaseNoteModel.getId();
-                        Log.e(TAG, "onSuccess: " + docID );
+                        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+//                        mDatabaseHelper = new DBManger(getContext());
+//                        if (title.length() != 0 && content.length() !=0) {
+//                            mDatabaseHelper.addNotes(user,docID,title,content);
+//                                Toast.makeText(getContext(),"note saved in SqliteDB" + docID + " + " + title ,Toast.LENGTH_SHORT).show();
+//
+//
+//                        } else {
+//                            //toastMessage("You must put something in the text field!");
+//                        }
+//                       // data = firebaseNoteModel.getId();
+//                        Log.e(TAG, "onSuccess: " + docID );
 
                         assert getFragmentManager() != null;
                         getFragmentManager().popBackStackImmediate();

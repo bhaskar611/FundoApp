@@ -79,8 +79,7 @@ public class NotesFragment extends Fragment  {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment_notes, container, false);
-//        ButterKnife.bind(this);
-//        swipeRefresh.setOnRefreshListener(this);
+
         final StaggeredGridLayoutManager layoutManager = new
                 StaggeredGridLayoutManager(1,
                 StaggeredGridLayoutManager.VERTICAL);
@@ -89,13 +88,16 @@ public class NotesFragment extends Fragment  {
             recyclerView = view.findViewById(R.id.recyclerview);
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.setHasFixedSize(true);
-            switchViews(view);
-            recyclerView.addOnScrollListener(new PaginationListener(layoutManager) {
+        recyclerView.addOnScrollListener(new PaginationListener(layoutManager) {
                                                  @Override
                                                  protected void loadMoreItems() {
-                                                     isLoading = true;
+//                                                     fetchNotes(notesAdapter.getItem(CURRENT_NOTES_COUNT-1).getCreationTime());
 
-                                                     fetchNotes(notesAdapter.getItem(notesAdapter.getItemCount()-1).getCreationTime());
+                                                     isLoading = true;
+                                                     fetchNotes(notesAdapter.getItem(notesAdapter.getItemCount()-2).getCreationTime());
+//                                                     fetchNotes(notesAdapter.getItem(notesAdapter.getItemCount()).getCreationTime());
+                                                     Log.e(TAG, "loadMoreItems: " + CURRENT_NOTES_COUNT );
+//                                                     fetchNotes(0);
                                                  }
 
                                                  @Override
@@ -105,7 +107,7 @@ public class NotesFragment extends Fragment  {
 
                                                  @Override
                                                  public boolean isLoading() {
-                                                     return false;
+                                                     return isLoading;
                                                  }
                                              });
                     fireBaseNoteManager = new FirebaseNoteManager();
@@ -193,25 +195,25 @@ public class NotesFragment extends Fragment  {
     }
 
 
-    private void switchViews(View view) {
-        Switch switchview = view.findViewById(R.id.switch1);
-        switchview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int spanCount ;
-                if (switchview.isChecked()){
-                    spanCount =1;
-
-                } else {
-                    spanCount =getResources().getInteger(R.integer.span_count);
-                }
-                layoutManager = new StaggeredGridLayoutManager(spanCount,StaggeredGridLayoutManager.VERTICAL);
-                recyclerView.setLayoutManager(layoutManager);
+//    private void switchViews(View view) {
+//        Switch switchview = view.findViewById(R.id.switch1);
+//        switchview.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                int spanCount ;
+//                if (switchview.isChecked()){
+//                    spanCount =1;
 //
-            }
-        });
-//
-    }
+//                } else {
+//                    spanCount =getResources().getInteger(R.integer.span_count);
+//                }
+//                layoutManager = new StaggeredGridLayoutManager(spanCount,StaggeredGridLayoutManager.VERTICAL);
+//                recyclerView.setLayoutManager(layoutManager);
+////
+//            }
+//        });
+////
+//    }
 
 
     private void fetchNotes(long timestamp) {
@@ -227,6 +229,7 @@ public class NotesFragment extends Fragment  {
                         .collection("User Notes")
                         .orderBy("Creation Date")
                         .startAfter(timestamp)
+//                        .startAt(timestamp)
                         .limit(LIMIT)
                         .get()
                         .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -244,21 +247,28 @@ public class NotesFragment extends Fragment  {
                                     FirebaseNoteModel note = new FirebaseNoteModel(title, content, docID);
                                     note.setCreationTime(timestamp);
                                     noteslist.add(note);
+//                                    CURRENT_NOTES_COUNT += i;
                                 }
-                                CURRENT_NOTES_COUNT += LIMIT;
-                                notesAdapter.addItems(noteslist);
-                                if (CURRENT_NOTES_COUNT != 0) notesAdapter.removeLoading();
-                                if (CURRENT_NOTES_COUNT < TOTAL_NOTES_COUNT - 1) {
+//
+//                                if (CURRENT_NOTES_COUNT != 0)
+//                                    notesAdapter.removeLoading();
+//                                notesAdapter.addItems(noteslist);
+                                if (CURRENT_NOTES_COUNT < TOTAL_NOTES_COUNT ) {
                                     Log.e(TAG, "onSuccess: Current & Total "+ CURRENT_NOTES_COUNT + " : " + TOTAL_NOTES_COUNT );
-                                    notesAdapter.addLoading();
+//                                    notesAdapter.addLoading();
                                 } else {
                                     Log.e(TAG, "onSuccess: is last page true " + CURRENT_NOTES_COUNT + " : " + TOTAL_NOTES_COUNT );
 
                                     isLastPage = true;
                                 }
                                 isLoading = false;
+                                CURRENT_NOTES_COUNT += queryDocumentSnapshots.size() ;
+                                notesAdapter.addItems(noteslist);
                             }
                         });
+
+                recyclerView.setAdapter(notesAdapter);
+                notesAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -363,8 +373,8 @@ public class NotesFragment extends Fragment  {
 //            }
 //        });
         });
-        recyclerView.setAdapter(notesAdapter);
-        notesAdapter.notifyDataSetChanged();
+//        recyclerView.setAdapter(notesAdapter);
+//        notesAdapter.notifyDataSetChanged();
 
     }
 

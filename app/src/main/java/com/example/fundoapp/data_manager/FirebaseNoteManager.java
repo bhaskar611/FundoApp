@@ -36,7 +36,7 @@ public class FirebaseNoteManager implements NoteManager {
             int i;
             for (i=0;i<queryDocumentSnapshots.size();i++){
                 DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(i);
-                Log.e(TAG, "onSuccess: "+ documentSnapshot);
+//                Log.e(TAG, "onSuccess: "+ documentSnapshot);
                 String title = documentSnapshot.getString("title");
                 String content = documentSnapshot.getString("content");
                 String docID = documentSnapshot.getId();
@@ -96,7 +96,7 @@ public class FirebaseNoteManager implements NoteManager {
                 )
                 .addOnFailureListener(addListener::onFailure
                 );
-        Log.e(TAG, "addNote: " + newNoteID );
+//        Log.e(TAG, "addNote: " + newNoteID );
        // return newNoteID;
 
     }
@@ -126,7 +126,7 @@ public class FirebaseNoteManager implements NoteManager {
                 )
                 .addOnFailureListener(listner::onFailure
                 );
-        Log.e(TAG, "addNote: " + newNoteID );
+//        Log.e(TAG, "addNote: " + newNoteID );
         // return newNoteID;
 
     }

@@ -9,19 +9,19 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
-        android:layout_width="810dp"
-        android:layout_height="135dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_margin="18dp"
         android:background="#8E2727"
         app:cardBackgroundColor="#8BC34A"
         app:cardCornerRadius="8dp"
         app:cardElevation="6dp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerviewLabel"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.36"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.98"
+        app:layout_constraintTop_toBottomOf="@+id/backButton"
+        app:layout_constraintVertical_bias="0.0"
         tools:ignore="MissingConstraints">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -64,6 +64,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/createLabel"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.064"
                 app:srcCompat="@drawable/ic_baseline_save_24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -78,20 +79,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.343"
+        app:layout_constraintTop_toBottomOf="@+id/card_view"
+        app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/label_view" />
 
     <ImageView
         android:id="@+id/backButton"
         android:layout_width="116dp"
         android:layout_height="63dp"
-        app:layout_constraintBottom_toTopOf="@+id/card_view"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="844dp"
+        android:layout_marginRight="844dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/backbutton" />
 
 

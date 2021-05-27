@@ -120,10 +120,14 @@ public class Adapter extends RecyclerView.Adapter<BaseViewHolder> {
         isLoaderVisible = true;
         notesList.add(new FirebaseNoteModel());
         notifyItemInserted(notesList.size() - 1);
+//        notifyItemInserted(notesList.size());
+
     }
     public void removeLoading() {
         isLoaderVisible = false;
+//        int position = notesList.size() ;
         int position = notesList.size() - 1;
+
         FirebaseNoteModel item = getItem(position);
         if (item != null) {
             notesList.remove(position);

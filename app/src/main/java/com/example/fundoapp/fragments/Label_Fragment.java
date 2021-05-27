@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -30,7 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fundoapp.R;
 import com.example.fundoapp.adapters.Label_Adapter;
-import com.example.fundoapp.data_manager.DBManger;
+//import com.example.fundoapp.data_manager.DBManger;
 import com.example.fundoapp.data_manager.FirebaseLabelModel;
 import com.example.fundoapp.data_manager.FirebaseNoteManager;
 import com.example.fundoapp.data_manager.model.FirebaseNoteModel;
@@ -60,7 +61,7 @@ public class Label_Fragment extends Fragment {
     ProgressBar mprogressbarofcreatenote;
     FirebaseNoteManager fireBaseNoteManager;
     private static final String TAG = "LabelNotes_Fragment";
-    DBManger mDatabaseHelper;
+//    DBManger mDatabaseHelper;
     String docID;
     RecyclerView recyclerView;
     Label_View_Model label_view_model;
@@ -208,6 +209,9 @@ public class Label_Fragment extends Fragment {
                     public void onSuccess(String data) {
                         Toast.makeText(getContext(),
                                 "Created Label", Toast.LENGTH_SHORT).show();
+                        mCreateLabel.setText(null);
+                        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                         assert getFragmentManager() != null;
                         getFragmentManager().popBackStackImmediate();
                         FirebaseLabelModel firebaseLabelModel = new FirebaseLabelModel(label,data);
@@ -221,7 +225,6 @@ public class Label_Fragment extends Fragment {
                     }
                 });
                 assert getFragmentManager() != null;
-                getFragmentManager().popBackStackImmediate();
             }
 
            // mprogressbarofcreatenote.setVisibility(View.VISIBLE);
