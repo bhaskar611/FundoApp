@@ -250,12 +250,12 @@ public class NotesFragment extends Fragment  {
 //                                    CURRENT_NOTES_COUNT += i;
                                 }
 //
-//                                if (CURRENT_NOTES_COUNT != 0)
-//                                    notesAdapter.removeLoading();
+                                if (CURRENT_NOTES_COUNT != 0)
+                                    notesAdapter.removeLoading();
 //                                notesAdapter.addItems(noteslist);
                                 if (CURRENT_NOTES_COUNT < TOTAL_NOTES_COUNT ) {
                                     Log.e(TAG, "onSuccess: Current & Total "+ CURRENT_NOTES_COUNT + " : " + TOTAL_NOTES_COUNT );
-//                                    notesAdapter.addLoading();
+  //                                 notesAdapter.addLoading();
                                 } else {
                                     Log.e(TAG, "onSuccess: is last page true " + CURRENT_NOTES_COUNT + " : " + TOTAL_NOTES_COUNT );
 

@@ -35,12 +35,15 @@ import com.example.fundoapp.fragments.Profile_Fragment;
 import com.example.fundoapp.fragments.notes.NotesFragment;
 import com.example.fundoapp.fragments.ReminderFragment;
 import com.example.fundoapp.util.CallBack;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -59,7 +62,6 @@ public class HomeActivity extends AppCompatActivity implements AddNoteListner, A
     ProgressBar mprogressbar;
     NotesFragment notesFragment;
     Label_Fragment label_fragment;
-
 
 
     @Override
@@ -112,18 +114,33 @@ public class HomeActivity extends AppCompatActivity implements AddNoteListner, A
             @Override
             public void onClick(View v) {
                 Intent openGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(openGalleryIntent,1000);
+                startActivityForResult(openGalleryIntent, 1000);
             }
         });
-        StorageReference profileRef = storageReference.child("users/"+ Objects.requireNonNull(fAuth.getCurrentUser()).getUid()+"/profile.jpg");
+        StorageReference profileRef = storageReference.child("users/" + Objects.requireNonNull(fAuth.getCurrentUser()).getUid() + "/profile.jpg");
         profileRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(userDp));
+        getNotificationFromFirebase();
     }
+
+    private void getNotificationFromFirebase() {
+        FirebaseMessaging.getInstance().subscribeToTopic("weather")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "Got Notifiaction";
+                        if (!task.isSuccessful()) {
+                            msg = "failed";
+                        }
+                    }
+                });
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1000){
-            if(resultCode == Activity.RESULT_OK){
+        if (requestCode == 1000) {
+            if (resultCode == Activity.RESULT_OK) {
                 Uri imageUri = data.getData();
 
                 //profileImage.setImageURI(imageUri);
@@ -137,7 +154,7 @@ public class HomeActivity extends AppCompatActivity implements AddNoteListner, A
     private void uploadImageToFirebase(Uri imageUri) {
         // uplaod image to firebase storage
         fAuth = FirebaseAuth.getInstance();
-        final StorageReference fileRef = storageReference.child("users/"+fAuth.getCurrentUser().getUid()+"/profile.jpg");
+        final StorageReference fileRef = storageReference.child("users/" + fAuth.getCurrentUser().getUid() + "/profile.jpg");
         mprogressbar.setVisibility(View.VISIBLE);
         fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -145,7 +162,7 @@ public class HomeActivity extends AppCompatActivity implements AddNoteListner, A
                 fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        ImageView userDp= findViewById(R.id.user_profile);
+                        ImageView userDp = findViewById(R.id.user_profile);
                         Picasso.get().load(uri).into(userDp);
                         mprogressbar.setVisibility(View.INVISIBLE);
 
@@ -162,8 +179,6 @@ public class HomeActivity extends AppCompatActivity implements AddNoteListner, A
     }
 
 
-
-
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         item.getItemId();
         if (item.getItemId() == R.id.note) {
@@ -178,7 +193,7 @@ public class HomeActivity extends AppCompatActivity implements AddNoteListner, A
         } else if (item.getItemId() == R.id.remainder) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new ReminderFragment()).commit();
-        }  else if (item.getItemId() == R.id.profile) {
+        } else if (item.getItemId() == R.id.profile) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new Profile_Fragment()).commit();
         } else if (item.getItemId() == R.id.logout) {

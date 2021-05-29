@@ -1,6 +1,9 @@
 package com.example.fundoapp.fragments;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +16,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -46,6 +51,9 @@ public class AddNotes_Fragment extends Fragment  {
 //    DBManger mDatabaseHelper;
     String docID;
     AddNoteListner addNoteListner;
+    public static final String CHANNEL_ID = "MyNotifications";
+    private static final String CHANNEL_NAME = "AddNote";
+    private static final String CHANNEL_DESC = "Simplified Coding Notifications";
 
 
     @Override
@@ -122,18 +130,18 @@ public class AddNotes_Fragment extends Fragment  {
                         docID = data;
                         InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-//                        mDatabaseHelper = new DBManger(getContext());
-//                        if (title.length() != 0 && content.length() !=0) {
-//                            mDatabaseHelper.addNotes(user,docID,title,content);
-//                                Toast.makeText(getContext(),"note saved in SqliteDB" + docID + " + " + title ,Toast.LENGTH_SHORT).show();
-//
-//
-//                        } else {
-//                            //toastMessage("You must put something in the text field!");
-//                        }
-//                       // data = firebaseNoteModel.getId();
-//                        Log.e(TAG, "onSuccess: " + docID );
 
+                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
+                            NotificationManager manager = getContext().getSystemService(NotificationManager.class);
+                            manager.createNotificationChannel(channel);
+                        }
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(),CHANNEL_ID)
+                                .setContentTitle("Fundoo Notes App")
+                                .setContentText("Note Added")
+                                .setSmallIcon(R.drawable.ic_launcher_background);
+                        NotificationManagerCompat manager = NotificationManagerCompat.from(getContext());
+                        manager.notify(1,builder.build());
                         assert getFragmentManager() != null;
                         getFragmentManager().popBackStackImmediate();
                     }

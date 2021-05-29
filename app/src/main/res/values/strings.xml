@@ -22,4 +22,5 @@
     <string name="switchLayout">Switch</string>
     <string name="this_is_your_label">label_view</string>
     <string name="floatingbutton">saveEdit</string>
+    <string name="Token">Token</string>
 </resources>
