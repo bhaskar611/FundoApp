@@ -1,6 +1,11 @@
 package com.example.fundoapp.fragments.notes;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,12 +14,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -28,11 +36,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class editnote extends Fragment {
+public class editnote extends Fragment    {
 
     private static final String TAG = "edit note";
     Intent data;
@@ -41,6 +50,7 @@ public class editnote extends Fragment {
     FirebaseFirestore firebaseFirestore;
     FirebaseUser firebaseUser;
     HomeActivity homeActivity;
+    Button dateAndTime;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,13 +69,14 @@ public class editnote extends Fragment {
         Log.e(TAG, "onCreate: " +title);
         Log.e(TAG, "onCreate: " +content);
 
-        medittitleofnote= (EditText) view.findViewById(R.id.editnotetitle);
-         meditcontentofnote = (EditText) view.findViewById(R.id.editnotecontent);
+        medittitleofnote= (EditText) view.findViewById(R.id.edit_note_title);
+         meditcontentofnote = (EditText) view.findViewById(R.id.edit_note_description);
+        dateAndTime = view.findViewById(R.id.timePicker     );
+
         msaveeditnote=  view.findViewById(R.id.update_button);
         meditcontentofnote.setText(content);
         medittitleofnote.setText(title);
 
-        //data=getActivity().getIntent();
 
         firebaseFirestore=FirebaseFirestore.getInstance();
         firebaseUser=FirebaseAuth.getInstance().getCurrentUser();
@@ -75,10 +86,15 @@ public class editnote extends Fragment {
 //        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 //        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
+        dateAndTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment timePicker =new TimePickerFragment();
+                timePicker.show(getFragmentManager(),"time picker");
+            }
+        });
 
         msaveeditnote.setOnClickListener(v -> {
-            //Toast.makeText(getApplicationContext(),"savebuton click",Toast.LENGTH_SHORT).show();
             String newtitle=medittitleofnote.getText().toString();
             String newcontent=meditcontentofnote.getText().toString();
 
@@ -96,6 +112,8 @@ public class editnote extends Fragment {
                 Map<String,Object> note=new HashMap<>();
                 note.put("title",newtitle);
                 note.put("content",newcontent);
+                note.put("Creation Date", System.currentTimeMillis());
+
                 documentReference.set(note).addOnSuccessListener(aVoid -> {
                     Toast.makeText(getContext(),"Note is updated",Toast.LENGTH_SHORT).show();
                     Fragment fragment = new NotesFragment();
@@ -104,6 +122,8 @@ public class editnote extends Fragment {
                     fragmentTransaction.replace(R.id.fragment_container, fragment);
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
+//                    assert getFragmentManager() != null;
+//                    getFragmentManager().popBackStackImmediate();
                 }).addOnFailureListener(e -> Toast.makeText(getContext(),"Failed To update",Toast.LENGTH_SHORT).show());
             }
 
@@ -116,4 +136,7 @@ public class editnote extends Fragment {
 //        medittitleofnote.setText(notetitle);
         return view;
     }
+
+
+
 }

@@ -1,15 +1,22 @@
 package com.example.fundoapp.dashboard;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,13 +32,13 @@ import com.example.fundoapp.data_manager.model.FirebaseNoteModel;
 import com.example.fundoapp.data_manager.model.FirebaseUserModel;
 import com.example.fundoapp.fragments.AddLabelListner;
 import com.example.fundoapp.fragments.AddNoteListner;
-import com.example.fundoapp.fragments.AddNotes_Fragment;
 import com.example.fundoapp.fragments.Archive_Fragment;
 import com.example.fundoapp.R;
 import com.example.fundoapp.data_manager.SharedPreference;
 import com.example.fundoapp.authentication.LoginActivity;
 import com.example.fundoapp.fragments.Label_Fragment;
 import com.example.fundoapp.fragments.Profile_Fragment;
+import com.example.fundoapp.fragments.notes.AlertReceiver;
 import com.example.fundoapp.fragments.notes.NotesFragment;
 import com.example.fundoapp.fragments.ReminderFragment;
 import com.example.fundoapp.util.CallBack;
@@ -49,9 +56,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.util.Calendar;
 import java.util.Objects;
 
-public class HomeActivity extends AppCompatActivity implements AddNoteListner, AddLabelListner {
+public class HomeActivity extends AppCompatActivity implements AddNoteListner, AddLabelListner , TimePickerDialog.OnTimeSetListener {
+    private static final String TAG = "Retrive Token";
     FirebaseAuth fAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private DrawerLayout drawer;
@@ -119,10 +128,32 @@ public class HomeActivity extends AppCompatActivity implements AddNoteListner, A
         });
         StorageReference profileRef = storageReference.child("users/" + Objects.requireNonNull(fAuth.getCurrentUser()).getUid() + "/profile.jpg");
         profileRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(userDp));
-        getNotificationFromFirebase();
+        getNotificationFromWeather();
+        retrivePushToken();
     }
 
-    private void getNotificationFromFirebase() {
+    private void retrivePushToken() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        // Get new FCM registration token
+                        String token = task.getResult();
+
+                        // Log and toast
+                        String msg = token;
+                        Log.d(TAG, msg);
+                        Toast.makeText(HomeActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void getNotificationFromWeather() {
         FirebaseMessaging.getInstance().subscribeToTopic("weather")
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -234,5 +265,34 @@ public class HomeActivity extends AppCompatActivity implements AddNoteListner, A
     @Override
     public void onLabelAdded(FirebaseLabelModel label) {
         label_fragment.addLabel(label);
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        int dayOfMonth = 0;
+        int month = 0;
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.MONTH, month);
+        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        c.set(Calendar.MINUTE, minute);
+        c.set(Calendar.SECOND, 0);
+
+        startAlarm(c);
+    }
+
+    private void startAlarm(Calendar c) {
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlertReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+
+        if (c.before(Calendar.getInstance())) {
+            c.add(Calendar.DATE, 1);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+        }
     }
 }

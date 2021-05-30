@@ -52,7 +52,7 @@
         android:layout_marginRight="30dp"
         android:layout_gravity="bottom|end"
         android:id="@+id/savenote"
-        android:src="@drawable/ic_baseline_save_24"
+        app:srcCompat="@drawable/ic_baseline_save_24"
         android:background="#A1F4FB"
         app:maxImageSize="56dp"
 
