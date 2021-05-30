@@ -10,12 +10,15 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
 import com.example.fundoapp.R;
+import com.example.fundoapp.data_manager.SharedPreference;
 
 public class NotificationHelper extends ContextWrapper {
     public static final String channelID = "channelID";
     public static final String channelName = "Channel Name";
 
     private NotificationManager mManager;
+
+    SharedPreference sharedPreference = new SharedPreference(this);
 
     public NotificationHelper(Context base) {
         super(base);
@@ -38,11 +41,14 @@ public class NotificationHelper extends ContextWrapper {
 
         return mManager;
     }
+    String title = sharedPreference.getNoteTitle();
+    String content = sharedPreference.getNoteContent();
+
 
     public NotificationCompat.Builder getChannelNotification() {
         return new NotificationCompat.Builder(this, channelID)
-                .setContentTitle("Alarm!")
-                .setContentText("Your AlarmManager is working.")
+                .setContentTitle(title)
+                .setContentText(content)
                 .setSmallIcon(R.drawable.ic_launcher_background);
     }
 }

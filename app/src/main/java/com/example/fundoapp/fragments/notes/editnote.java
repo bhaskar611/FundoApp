@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -29,6 +30,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.fundoapp.R;
 import com.example.fundoapp.dashboard.HomeActivity;
+import com.example.fundoapp.data_manager.SharedPreference;
 import com.example.fundoapp.fragments.notes.NotesFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,12 +52,14 @@ public class editnote extends Fragment    {
     FirebaseFirestore firebaseFirestore;
     FirebaseUser firebaseUser;
     HomeActivity homeActivity;
-    Button dateAndTime;
+    Button dateAndTime,datePicker;
+    SharedPreference sharedPreference;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -71,7 +75,9 @@ public class editnote extends Fragment    {
 
         medittitleofnote= (EditText) view.findViewById(R.id.edit_note_title);
          meditcontentofnote = (EditText) view.findViewById(R.id.edit_note_description);
-        dateAndTime = view.findViewById(R.id.timePicker     );
+        dateAndTime = view.findViewById(R.id.timePicker);
+        datePicker = view.findViewById(R.id.datePicker);
+
 
         msaveeditnote=  view.findViewById(R.id.update_button);
         meditcontentofnote.setText(content);
@@ -80,6 +86,8 @@ public class editnote extends Fragment    {
 
         firebaseFirestore=FirebaseFirestore.getInstance();
         firebaseUser=FirebaseAuth.getInstance().getCurrentUser();
+
+        sharedPreference = new SharedPreference(this.getContext());
 
 
 //        Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.toolbarofeditnote);
@@ -94,9 +102,19 @@ public class editnote extends Fragment    {
             }
         });
 
+        datePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment datePicker = new DatePickerFragment();
+                datePicker.show(getFragmentManager(), "date picker");
+            }
+        });
+
         msaveeditnote.setOnClickListener(v -> {
             String newtitle=medittitleofnote.getText().toString();
             String newcontent=meditcontentofnote.getText().toString();
+            sharedPreference.setNoteTitle(newtitle);
+            sharedPreference.setNoteContent(newcontent);
 
             if(newtitle.isEmpty()||newcontent.isEmpty())
             {

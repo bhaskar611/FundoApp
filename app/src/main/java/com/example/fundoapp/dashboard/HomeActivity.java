@@ -2,6 +2,7 @@ package com.example.fundoapp.dashboard;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.DatePickerDialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -59,7 +61,7 @@ import com.squareup.picasso.Picasso;
 import java.util.Calendar;
 import java.util.Objects;
 
-public class HomeActivity extends AppCompatActivity implements AddNoteListner, AddLabelListner , TimePickerDialog.OnTimeSetListener {
+public class HomeActivity extends AppCompatActivity implements AddNoteListner, AddLabelListner , TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
     private static final String TAG = "Retrive Token";
     FirebaseAuth fAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -294,5 +296,13 @@ public class HomeActivity extends AppCompatActivity implements AddNoteListner, A
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
         }
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR,year);
+        c.set(Calendar.MONTH, month);
+        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
     }
 }
