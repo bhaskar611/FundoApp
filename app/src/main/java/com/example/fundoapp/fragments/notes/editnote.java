@@ -54,6 +54,7 @@ public class editnote extends Fragment    {
     HomeActivity homeActivity;
     Button dateAndTime,datePicker;
     SharedPreference sharedPreference;
+    public Calendar schedule;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +94,7 @@ public class editnote extends Fragment    {
 //        Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.toolbarofeditnote);
 //        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 //        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        schedule = Calendar.getInstance();
 
         dateAndTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,9 +115,6 @@ public class editnote extends Fragment    {
         msaveeditnote.setOnClickListener(v -> {
             String newtitle=medittitleofnote.getText().toString();
             String newcontent=meditcontentofnote.getText().toString();
-            sharedPreference.setNoteTitle(newtitle);
-            sharedPreference.setNoteContent(newcontent);
-
             if(newtitle.isEmpty()||newcontent.isEmpty())
             {
                 Toast.makeText(getContext(),"Something is empty",Toast.LENGTH_SHORT).show();
@@ -134,6 +133,9 @@ public class editnote extends Fragment    {
 
                 documentReference.set(note).addOnSuccessListener(aVoid -> {
                     Toast.makeText(getContext(),"Note is updated",Toast.LENGTH_SHORT).show();
+                    sharedPreference.setNoteTitle(newtitle);
+                    sharedPreference.setNoteContent(newcontent);
+                    startAlarm(schedule);
                     Fragment fragment = new NotesFragment();
                     FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -155,6 +157,19 @@ public class editnote extends Fragment    {
         return view;
     }
 
+    private void startAlarm(Calendar c) {
+        AlarmManager alarmManager = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getContext(), AlertReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 1, intent, 0);
+
+        if (c.before(Calendar.getInstance())) {
+            c.add(Calendar.DATE, 1);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+        }
+    }
 
 
 }

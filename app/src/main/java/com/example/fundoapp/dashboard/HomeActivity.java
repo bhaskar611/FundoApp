@@ -75,6 +75,7 @@ public class HomeActivity extends AppCompatActivity implements AddNoteListner, A
     Label_Fragment label_fragment;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -271,38 +272,17 @@ public class HomeActivity extends AppCompatActivity implements AddNoteListner, A
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        int dayOfMonth = 0;
-        int month = 0;
-
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.MONTH, month);
-        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        c.set(Calendar.MINUTE, minute);
-        c.set(Calendar.SECOND, 0);
-
-        startAlarm(c);
+        notesFragment.editnotes.schedule.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        notesFragment.editnotes.schedule.set(Calendar.MINUTE, minute);
+        notesFragment.editnotes.schedule.set(Calendar.SECOND, 0);
     }
 
-    private void startAlarm(Calendar c) {
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlertReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
 
-        if (c.before(Calendar.getInstance())) {
-            c.add(Calendar.DATE, 1);
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
-        }
-    }
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.YEAR,year);
-        c.set(Calendar.MONTH, month);
-        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        notesFragment.editnotes.schedule.set(Calendar.YEAR,year);
+        notesFragment.editnotes.schedule.set(Calendar.MONTH, month);
+        notesFragment.editnotes.schedule.set(Calendar.DAY_OF_MONTH, dayOfMonth);
     }
 }

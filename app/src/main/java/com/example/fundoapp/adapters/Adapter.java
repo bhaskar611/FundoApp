@@ -114,12 +114,13 @@ public class Adapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     public void addItems(ArrayList<FirebaseNoteModel> postItems) {
         notesList.addAll(postItems);
+        notifyItemRangeInserted(getItemCount(),notesList.size());
         notifyDataSetChanged();
     }
     public void addLoading() {
         isLoaderVisible = true;
         notesList.add(new FirebaseNoteModel());
-        notifyItemInserted(notesList.size() - 1);
+        notifyItemInserted(notesList.size());
 //        notifyItemInserted(notesList.size());
 
     }
@@ -139,10 +140,14 @@ public class Adapter extends RecyclerView.Adapter<BaseViewHolder> {
         notifyDataSetChanged();
     }
 
-    public FirebaseNoteModel getItem(int position) {
-        return notesList.get(position);
-
-    }
+        public FirebaseNoteModel getItem(int position) {
+            try{
+                return notesList.get(position);
+            }catch (ArrayIndexOutOfBoundsException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
 
 
     public void removeNote(int position) {

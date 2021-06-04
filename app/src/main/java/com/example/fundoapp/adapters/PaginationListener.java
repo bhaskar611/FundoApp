@@ -13,13 +13,7 @@ public abstract class PaginationListener extends RecyclerView.OnScrollListener {
 
     @NonNull
     private StaggeredGridLayoutManager layoutManager;
-    /**
-     * Set scrolling threshold here (for now i'm assuming 10 item in one page)
-     */
-//    private static final int PAGE_SIZE = 10;
-    /**
-     * Supporting only LinearLayoutManager for now.
-     */
+
     public PaginationListener(@NonNull StaggeredGridLayoutManager layoutManager) {
         this.layoutManager = layoutManager;
     }

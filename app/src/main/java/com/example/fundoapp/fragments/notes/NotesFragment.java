@@ -71,6 +71,7 @@ public class NotesFragment extends Fragment  {
     int itemCount = 0;
     private static int TOTAL_NOTES_COUNT = 0;
     private static int CURRENT_NOTES_COUNT = 0;
+   public editnote editnotes;
 
 
 
@@ -94,7 +95,14 @@ public class NotesFragment extends Fragment  {
 //                                                     fetchNotes(notesAdapter.getItem(CURRENT_NOTES_COUNT-1).getCreationTime());
 
                                                      isLoading = true;
-                                                     fetchNotes(notesAdapter.getItem(notesAdapter.getItemCount()-2).getCreationTime());
+                                                     recyclerView.post(new Runnable() {
+                                                         @Override
+                                                         public void run() {
+                                                             notesAdapter.addLoading();
+                                                         }
+                                                     });
+
+                                                     fetchNotes(notesAdapter.getItem(notesAdapter.getItemCount()-1).getCreationTime());
 //                                                     fetchNotes(notesAdapter.getItem(notesAdapter.getItemCount()).getCreationTime());
                                                      Log.e(TAG, "loadMoreItems: " + CURRENT_NOTES_COUNT );
 //                                                     fetchNotes(0);
@@ -252,6 +260,11 @@ public class NotesFragment extends Fragment  {
 //
                                 if (CURRENT_NOTES_COUNT != 0)
                                     notesAdapter.removeLoading();
+                                isLoading = false;
+                                CURRENT_NOTES_COUNT += queryDocumentSnapshots.size() ;
+                                notesAdapter.addItems(noteslist);
+
+
 //                                notesAdapter.addItems(noteslist);
                                 if (CURRENT_NOTES_COUNT < TOTAL_NOTES_COUNT ) {
                                     Log.e(TAG, "onSuccess: Current & Total "+ CURRENT_NOTES_COUNT + " : " + TOTAL_NOTES_COUNT );
@@ -261,9 +274,9 @@ public class NotesFragment extends Fragment  {
 
                                     isLastPage = true;
                                 }
-                                isLoading = false;
-                                CURRENT_NOTES_COUNT += queryDocumentSnapshots.size() ;
-                                notesAdapter.addItems(noteslist);
+//                                isLoading = false;
+//                                CURRENT_NOTES_COUNT += queryDocumentSnapshots.size() ;
+//                                notesAdapter.addItems(noteslist);
                             }
                         });
 
@@ -313,7 +326,7 @@ public class NotesFragment extends Fragment  {
                 String content = notesAdapter.getItem(position).getContent();
                 String docID = notesAdapter.getItem(position).getId();
                 //Put the value
-                editnote ldf = new editnote();
+                 editnotes = new editnote();
                 Bundle args1 = new Bundle();
 
                 args1.putString("title", title);
@@ -321,13 +334,13 @@ public class NotesFragment extends Fragment  {
                         content);
                 args1.putString("docID",
                         docID);
-                ldf.setArguments(args1);
-                ldf.setArguments(args1);
-                ldf.setArguments(args1);
+                editnotes.setArguments(args1);
+                editnotes.setArguments(args1);
+                editnotes.setArguments(args1);
 
 
 //Inflate the fragment
-                getFragmentManager().beginTransaction().add(R.id.fragment_container, ldf).commit();
+                getFragmentManager().beginTransaction().add(R.id.fragment_container, editnotes).commit();
 
             }
 
